@@ -13,11 +13,11 @@
 
 class MyThread {
 public:
-    static void createNewTestData(JNIEnv *env, jclass type, int id, jstring str, JavaVM *javaVM);
+    static void createNewTestData(JNIEnv *env, jobject type, jint id, jstring str);
 };
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_mktest_ThreadManager_newThread(JNIEnv *env, jclass type, jint id);
+Java_com_example_iyuro_mktest_ThreadManager_newThread(JNIEnv*, jobject, jint);
 
 #endif //MKTEST_MYTHREAD_H

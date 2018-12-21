@@ -11,7 +11,7 @@
 
 class TestData {
 public:
-    static jobject getNewTestData(JNIEnv *env, jclass type,
+    static jobject getNewTestData(JNIEnv *env, jobject type,
                            jint x);
 
     static void deleteGlobalRef(JNIEnv *env, jobject obj);

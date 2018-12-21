@@ -1,4 +1,5 @@
 #include <iostream>
+#include <android/log.h>
 #include "TestData.h"
 
 extern "C"
@@ -8,41 +9,77 @@ Java_com_example_iyuro_mktest_MainActivity_getNewTestData(JNIEnv *env, jclass ty
     return TestData::getNewTestData(env, type, x);
 }
 
-jobject TestData::getNewTestData(JNIEnv *env, jclass type,
+jobject TestData::getNewTestData(JNIEnv *env, jobject type,
                                  jint x) {
     jclass jclazz = nullptr;
     jclazz = env->FindClass("com/example/iyuro/mktest/TestData");
-    jmethodID jmethodID = nullptr;
+    jmethodID mjmethodID = nullptr;
     jobject newObject = nullptr;
     if (jclazz != nullptr)
-        jmethodID = env->GetMethodID(jclazz, "<init>", "(I)V");
-    if (jmethodID != nullptr) {
+        mjmethodID = env->GetMethodID(jclazz, "<init>", "(I)V");
+    if (mjmethodID != nullptr) {
         try {
-            newObject = env->NewObject(jclazz, jmethodID, x);
+            newObject = env->NewObject(jclazz, mjmethodID, x);
         } catch (const std::exception &e){
             std::cout << e.what();
         }
     }
 
-    if (newObject == nullptr) {
-        jclassReference testDataReference = main::getJclassReferenceByName(
-                "com/example/iyuro/mktest/TestData");
+    // start test code
 
-        jclazz = testDataReference.getJclazz();
-        if (jclazz == nullptr)
-            return nullptr;
+//    jclass testClass = main::findClass("com/example/iyuro/mktest/TestData");
+//    if (testClass != nullptr)
+//        jmethodID = env->GetMethodID(testClass, "<init>", "(I)V");
+//    if (jmethodID != nullptr) {
+//        try {
+//            newObject = env->NewObject(testClass, jmethodID, x);
+//        } catch (const std::exception &e){
+//            std::cout << e.what();
+//        }
+//    }
 
-        jmethodID = testDataReference.getJconstructorID();
-        if (jmethodID != nullptr) {
-            try {
-                newObject = env->NewObject(jclazz, jmethodID, x);
-            } catch (const std::exception &e) {
-                std::cout << e.what();
-            }
-        }
-    }
+    // end test code
 
-    env->DeleteLocalRef(jclazz);
+//    jobject newObject;
+//    jclass jclazz;
+//    jmethodID mjmethodID;
+////    if (newObject == nullptr) {
+//        jclassReference testDataReference = main::getJclassReferenceByName(
+//                "com/example/iyuro/mktest/TestData");
+//
+//        jclazz = testDataReference.getJclazz();
+//        if (jclazz == nullptr)
+//            return nullptr;
+//
+////        mjmethodID = testDataReference.getJconstructorID();
+//        mjmethodID = env->GetMethodID(jclazz, "<init>", "(I)V");
+//        if (mjmethodID != nullptr) {
+//            try {
+//                newObject = env->NewObject(jclazz, mjmethodID, x);
+//            } catch (const std::exception &e) {
+//                std::cout << e.what();
+//            }
+//        }
+//    }
+
+//    jclass cls = env->GetObjectClass(type);
+//    jboolean flag = env->ExceptionCheck();
+//    if (flag) {
+//        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "error1");
+//    }
+//    jmethodID mid = env->GetMethodID(cls, "logg", "(Ljava/lang/String;)V");
+//    flag = env->ExceptionCheck();
+//    if (flag) {
+//        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "error2");
+//    }
+//    if (mid == 0) {
+//        return nullptr;
+//    }
+//    jstring text = env->NewStringUTF("it works");
+//    env->CallVoidMethod(type, mid, text);
+
+//    env->DeleteLocalRef(jclazz);
+
 //    env->DeleteGlobalRef(newObject);
 
     return newObject;

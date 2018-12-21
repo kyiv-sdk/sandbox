@@ -5,11 +5,6 @@ import android.widget.Toast;
 
 public class ThreadManager {
 
-    static {
-//        System.loadLibrary("native-lib");
-        System.loadLibrary("hello-jni");
-    }
-
     Context context;
 
     public ThreadManager(Context c) {
@@ -25,6 +20,6 @@ public class ThreadManager {
         }
     }
 
-    public static native void newThread(int id);
+    public native void newThread(int id);
     public native void init();
 }

@@ -1,13 +1,20 @@
 package com.example.iyuro.mktest;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+    static {
+//        System.loadLibrary("native-lib");
+        System.loadLibrary("hello-jni");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
 //        tv.setText(stringFromJNI());
-        tv.setText(helloJNI());
+//        tv.setText(helloJNI());
 
         final MyLog myLog = new MyLog();
 
@@ -92,9 +99,10 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
 
-    // Used to load the 'native-lib' library on application startup.
-    static {
-//        System.loadLibrary("native-lib");
-        System.loadLibrary("hello-jni");
+    public void logg(String text){
+        Log.i("MyLog", text);
     }
+
+    // Used to load the 'native-lib' library on application startup.
+
 }

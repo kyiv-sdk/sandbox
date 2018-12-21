@@ -17,7 +17,10 @@ public:
     static std::map<std::string, jclassReference> jclassesGlobalReferences;
     static jclassReference getJclassReferenceByName(std::string jclassName);
 
-    static JNIEnv *getEnv();
+    JNIEnv *getEnv();
+    JNIEnv *attachEnv();
+
+    void detachMyThread();
 
     static jclass findClass(const char* name);
 
@@ -25,6 +28,8 @@ public:
     static jclass getMainActivityClassObject();
     static jmethodID getShowToastmid();
     static JavaVM* getJVM();
+private:
+    JNIEnv *env;
 };
 
 
