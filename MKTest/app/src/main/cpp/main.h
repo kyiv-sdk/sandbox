@@ -1,0 +1,31 @@
+//
+// Created by Ivan Yurovych on 12/19/18.
+//
+
+#ifndef MKTEST_MAIN_H
+#define MKTEST_MAIN_H
+
+#include <jni.h>
+#include <vector>
+#include <map>
+#include <string>
+#include <utility>
+#include "jclassReference.h"
+
+class main {
+public:
+    static std::map<std::string, jclassReference> jclassesGlobalReferences;
+    static jclassReference getJclassReferenceByName(std::string jclassName);
+
+    static JNIEnv *getEnv();
+
+    static jclass findClass(const char* name);
+
+
+    static jclass getMainActivityClassObject();
+    static jmethodID getShowToastmid();
+    static JavaVM* getJVM();
+};
+
+
+#endif //MKTEST_MAIN_H
