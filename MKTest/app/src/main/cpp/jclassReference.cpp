@@ -4,9 +4,9 @@
 
 #include "jclassReference.h"
 
-jclassReference::jclassReference(jclass jclz, jmethodID jconstrID) {
+jclassReference::jclassReference(jclass jclz, jmethodID njmID) {
     jclazz = jclz;
-    jconstructorID = jconstrID;
+    jmID = njmID;
 }
 
 jclass jclassReference::getJclazz() const {
@@ -17,10 +17,10 @@ jclass jclassReference::getJclazz() const {
 //    jclassReference::jclazz = jclazz;
 //}
 
-jmethodID jclassReference::getJconstructorID() const {
-    return jconstructorID;
+jmethodID jclassReference::getJmID() const {
+    return jmID;
 }
 
-//void jclassReference::setJconstructorID(const _jmethodID *jconstructorID) {
-//    jclassReference::jconstructorID = jconstructorID;
+//void jclassReference::setJconstructorID(const _jmethodID *jmID) {
+//    jclassReference::jmID = jmID;
 //}

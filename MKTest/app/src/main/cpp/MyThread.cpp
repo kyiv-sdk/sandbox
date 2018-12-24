@@ -4,46 +4,54 @@
 
 #include "MyThread.h"
 
-void MyThread::createNewTestData(JNIEnv *env, jobject type, jint id, jstring str){
-    main m;
-    m.attachEnv();
-    JNIEnv *new_env = m.getEnv();
-    jclass jclazz = new_env->FindClass("com/example/iyuro/mktest/TestData");
-//    bool attached = true;
-//    if (javaVM->GetEnv(reinterpret_cast<void**>(&new_env), JNI_VERSION_1_6) == JNI_EDETACHED){
-//        attached = false;
-//        if (javaVM->AttachCurrentThread(&new_env, nullptr) == JNI_OK){
-//            attached = true;
-//        }
-//    }
-//    if (attached) {
-        jobject obj = TestData::getNewTestData(new_env, type, id);
-//        MyLog myLog;
-//        if (obj != nullptr){
-//            std::string s = "Thread #" + std::to_string(id);
-////        MyLog::showToast(s);
-//            myLog.log(s);
-//            TestData::deleteGlobalRef(new_env, obj);
-//        } else {
-//            std::string s = "Not created :(";
-//            myLog.log(s);
-//            obj = TestData::getNewTestData(env, type, rand() % 10);
-//        }
+struct targs{
+    jobject type;
+    jint id;
+    jobject obj;
+};
 
-//        javaVM->DetachCurrentThread();
-//    }
-        m.detachMyThread();
+void checkPendingExceptions(JNIEnv *env, std::string s){
+    jboolean flag = env->ExceptionCheck();
+    if (flag) {
+        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", s.c_str());
+    }
 }
 
+void *createNewTestDataPThread(void* params){
+    struct targs *args;
+    args = (struct targs*)params;
+
+    main m;
+    m.attachEnv();
+
+    JNIEnv *new_env = m.getEnv();
+    checkPendingExceptions(new_env, "1");
+
+    jobject obj = TestData::getNewTestData(new_env, args->type, args->id);
+
+    args->obj = obj;
+
+    checkPendingExceptions(new_env, "2");
+
+    m.detachMyThread();
+    pthread_exit(NULL);
+}
+
+
 extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_iyuro_mktest_ThreadManager_newThread(JNIEnv *env, jobject type, jint id) {
+JNIEXPORT jobject JNICALL
+Java_com_example_iyuro_mktest_ThreadManager_newThread(JNIEnv *env, jobject instance, jint id) {
+    pthread_t tid;
+    pthread_attr_t attr;
 
-//    JavaVM *javaVM;
-//    env->GetJavaVM(&javaVM);
-//    JavaVM *javaVM = main::getJVM();
+    pthread_attr_init(&attr);
+    struct targs args;
+    args.type = instance;
+    args.id = id;
+    args.obj = nullptr;
+    checkPendingExceptions(env, "0");
+    pthread_create(&tid, NULL, createNewTestDataPThread, (void*)&args);
+    pthread_join(tid, NULL);
 
-    jstring str = env->NewStringUTF("THREAD");
-    std::thread thrd(MyThread::createNewTestData, env, type, id, str);
-    thrd.join();
+    return args.obj;
 }

@@ -9,18 +9,18 @@
 
 class jclassReference {
     jclass jclazz;
-    jmethodID jconstructorID;
+    jmethodID jmID;
 
 public:
-    jclassReference(jclass jclazz, jmethodID jconstructorID);
+    jclassReference(jclass jclazz, jmethodID jmID);
 
     jclass getJclazz() const;
 
 //    void setJclazz(const _jclass *jclazz);
 
-    jmethodID getJconstructorID() const;
+    jmethodID getJmID() const;
 
-//    void setJconstructorID(const _jmethodID *jconstructorID);
+//    void setJconstructorID(const _jmethodID *jmID);
 };
 
 

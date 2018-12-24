@@ -12,7 +12,6 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     static {
-//        System.loadLibrary("native-lib");
         System.loadLibrary("hello-jni");
     }
 
@@ -20,11 +19,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-//        tv.setText(stringFromJNI());
-//        tv.setText(helloJNI());
 
         final MyLog myLog = new MyLog();
 
@@ -63,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "1 + 2 = " + String.valueOf(myLog.btn3(1, 2)), Toast.LENGTH_SHORT).show();
                 myLog.log("btn4");
                 callJavaMethod("it works!");
             }
@@ -73,36 +66,19 @@ public class MainActivity extends AppCompatActivity {
         btn5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "1 + 2 = " + String.valueOf(myLog.btn3(1, 2)), Toast.LENGTH_SHORT).show();
                 myLog.log("btn5");
 
-                ThreadManager threadManager = new ThreadManager(getApplicationContext());
-                threadManager.createThreads(1);
+                ThreadManager threadManager = new ThreadManager();
+                threadManager.createThreads(5);
             }
         });
-
-//        ThreadManager threadManager = new ThreadManager(getApplicationContext());
-//        threadManager.createThreads(1);
     }
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-//    public native String stringFromJNI();
-    public native String helloJNI();
     public native void callJavaMethod(String str);
     public static native TestData getNewTestData(int x);
 
-
-    public void showToast(String text){
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+    public void showToast(String s){
+        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
-
-    public void logg(String text){
-        Log.i("MyLog", text);
-    }
-
-    // Used to load the 'native-lib' library on application startup.
 
 }

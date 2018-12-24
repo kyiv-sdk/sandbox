@@ -14,19 +14,13 @@
 
 class main {
 public:
+    main();
     static std::map<std::string, jclassReference> jclassesGlobalReferences;
     static jclassReference getJclassReferenceByName(std::string jclassName);
 
     JNIEnv *getEnv();
     JNIEnv *attachEnv();
-
     void detachMyThread();
-
-    static jclass findClass(const char* name);
-
-
-    static jclass getMainActivityClassObject();
-    static jmethodID getShowToastmid();
     static JavaVM* getJVM();
 private:
     JNIEnv *env;

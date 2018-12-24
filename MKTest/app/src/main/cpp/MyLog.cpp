@@ -55,7 +55,6 @@ Java_com_example_iyuro_mktest_MyLog_btn2(JNIEnv *env, jobject instance, jintArra
     int len = (int) env->GetArrayLength(array);
     MyLog myLog;
 
-//    jint result = 0;
     jint* body = env->GetIntArrayElements(array, 0);
     int* a = (int *) malloc(sizeof(int) * len);
     for (int i = 0; i < len; i++){
@@ -92,18 +91,8 @@ Java_com_example_iyuro_mktest_MainActivity_callJavaMethod(JNIEnv *env, jobject i
                                                           jstring msgToShow) {
     jclass cls = env->GetObjectClass(instance);
     jmethodID mid = env->GetMethodID(cls, "showToast", "(Ljava/lang/String;)V");
-
-//    jclass cls = main::getMainActivityClassObject();
-//    jmethodID mid = main::getShowToastmid();
     if (mid == 0) {
         return;
     }
     env->CallVoidMethod(instance, mid, msgToShow);
 }
-
-void MyLog::showToast(std::string text) {
-//    log(text);
-//    JNIEnv *env = main::getEnv();
-//    Java_com_example_iyuro_mktest_MainActivity_callJavaMethod(env, NULL, env->NewStringUTF(text.c_str()));
-}
-

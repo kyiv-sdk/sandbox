@@ -1,5 +1,7 @@
 package com.example.iyuro.mktest;
 
+import android.widget.Toast;
+
 public class TestData {
     int x;
     public TestData(int x) {

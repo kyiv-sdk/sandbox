@@ -10,6 +10,6 @@ LOCAL_SRC_FILES := ../cpp/main.cpp \
     ../cpp/MyThread.cpp \
     ../cpp/jclassReference.cpp
 
-LOCAL_CPPFLAGS += -std=c++11 -fexceptions
+LOCAL_CPPFLAGS += -std=c++11 -fexceptions -pthread
 
 include $(BUILD_SHARED_LIBRARY)

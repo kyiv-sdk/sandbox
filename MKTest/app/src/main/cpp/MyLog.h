@@ -16,7 +16,6 @@ public:
     const char* btn1(const char* logThis);
     int btn2(int array[], int length);
     int btn3(int x, int y);
-    static void showToast(std::string text);
 };
 
 
