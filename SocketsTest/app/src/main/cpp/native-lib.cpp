@@ -6,6 +6,8 @@
 #include <zconf.h>
 #include <sstream>
 #include <android/log.h>
+#include <android/looper.h>
+#include <unistd.h>
 
 int sock;
 struct sockaddr_in client;
@@ -66,7 +68,7 @@ void* makeRequest(void *params)
         resultStr += cur;
     }
 
-    args->out = resultStr;
+    args->out = std::string(resultStr);
 
 //    sleep(5);
 
@@ -80,8 +82,6 @@ extern "C"
 JNIEXPORT jstring JNICALL
 Java_com_example_iyuro_socketstest_MainActivity_makeRequest(JNIEnv *env, jobject instance, jstring s) {
     pthread_t tid;
-//    pthread_attr_t attr;
-//    pthread_attr_init(&attr);
 
     const char* chostname = env->GetStringUTFChars(s, 0);
 
@@ -94,6 +94,8 @@ Java_com_example_iyuro_socketstest_MainActivity_makeRequest(JNIEnv *env, jobject
 
     pthread_create(&tid, NULL, makeRequest, (void *)args);
     pthread_join(tid, NULL);
+
+    __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", args->out.c_str());
 
     jstring result = (jstring)env->NewGlobalRef(env->NewStringUTF(args->out.c_str()));
 
