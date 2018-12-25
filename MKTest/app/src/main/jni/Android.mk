@@ -8,7 +8,8 @@ LOCAL_SRC_FILES := ../cpp/main.cpp \
     ../cpp/MyLog.cpp \
     ../cpp/TestData.cpp \
     ../cpp/MyThread.cpp \
-    ../cpp/jclassReference.cpp
+    ../cpp/jclassReference.cpp \
+    ../cpp/WebLoader.cpp
 
 LOCAL_CPPFLAGS += -std=c++11 -fexceptions -pthread
 

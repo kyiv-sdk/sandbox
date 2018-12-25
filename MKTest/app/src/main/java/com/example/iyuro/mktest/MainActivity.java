@@ -58,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 myLog.log("btn4");
-                callJavaMethod("it works!");
+//                callJavaMethod("it works!");
+                testNetwork();
             }
         });
 
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     public native void callJavaMethod(String str);
     public static native TestData getNewTestData(int x);
+    public native void testNetwork();
 
     public void showToast(String s){
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();

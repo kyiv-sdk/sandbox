@@ -51,7 +51,6 @@ Java_com_example_iyuro_mktest_ThreadManager_newThread(JNIEnv *env, jobject insta
     args.obj = nullptr;
     checkPendingExceptions(env, "0");
     pthread_create(&tid, NULL, createNewTestDataPThread, (void*)&args);
-    pthread_join(tid, NULL);
 
     return args.obj;
 }
