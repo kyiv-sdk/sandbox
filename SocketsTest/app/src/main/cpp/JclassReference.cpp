@@ -2,7 +2,7 @@
 // Created by Ivan Yurovych on 12/19/18.
 //
 
-#include "jclassReference.h"
+#include "JclassReference.h"
 
 jclassReference::jclassReference(jclass jclz, jmethodID njmID) {
     jclazz = jclz;

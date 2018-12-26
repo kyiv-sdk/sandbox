@@ -1,24 +1,8 @@
-#include <jni.h>
-#include <string>
-#include <netdb.h>
-#include <linux/in.h>
-#include <endian.h>
-#include <zconf.h>
-#include <sstream>
-#include <android/log.h>
-#include <android/looper.h>
-#include <unistd.h>
-#include "main.h"
+//
+// Created by Ivan Yurovych on 12/26/18.
+//
 
-int sock;
-struct sockaddr_in client;
-int PORT = 80;
-
-struct targs{
-    std::string hostname;
-    std::string out;
-    jobject instance;
-};
+#include "Networker.h"
 
 void checkPendingExceptions(JNIEnv *env, std::string s){
     jboolean flag = env->ExceptionCheck();
@@ -89,7 +73,7 @@ void* makeRequest(void *params)
     checkPendingExceptions(new_env, "1");
 
     jmethodID mjmethodID = nullptr;
-    jclassReference jclassR = main::getJclassReferenceByName("com/example/iyuro/mktest/MainActivity/showText");
+    jclassReference jclassR = main::getJclassReferenceByName("com/example/iyuro/mktest/NetworkSingleton/onSuccessDownload");
     mjmethodID = jclassR.getJmID();
     jclass objectMainActivity = (jclass) args->instance;
 
@@ -101,10 +85,10 @@ void* makeRequest(void *params)
     pthread_exit(NULL);
 }
 
-
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_MainActivity_makeRequest(JNIEnv *env, jobject instance, jstring s) {
+Java_com_example_iyuro_socketstest_NetworkSingleton_makeRequest(JNIEnv *env, jobject instance,
+                                                                jstring s) {
     pthread_t tid;
 
     const char* chostname = env->GetStringUTFChars(s, 0);

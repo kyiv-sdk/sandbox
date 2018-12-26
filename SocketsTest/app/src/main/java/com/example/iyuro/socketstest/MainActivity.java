@@ -1,6 +1,8 @@
 package com.example.iyuro.socketstest;
 
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -9,9 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
-
-    // Used to load the 'native-lib' library on application startup.
+public class MainActivity extends AppCompatActivity implements NetworkDataListener {
     static {
         System.loadLibrary("native-lib");
     }
@@ -29,22 +29,16 @@ public class MainActivity extends AppCompatActivity {
         btn = findViewById(R.id.btn);
         textView = findViewById(R.id.textView);
 
+        NetworkSingleton.getInstance().setNetworkDataListener(this);
+
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeRequest(editText.getText().toString());
+                NetworkSingleton.getInstance().download(editText.getText().toString());
             }
         });
     }
 
-    // TODO:: Handler
-
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-
-    public native void makeRequest(String request);
 
     public void showText(final String s){
         runOnUiThread(new Runnable() {
@@ -55,4 +49,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void OnDataReceive(String data) {
+        textView.setText(data);
+    }
 }

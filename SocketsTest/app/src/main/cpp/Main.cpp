@@ -3,7 +3,7 @@
 //
 
 #include <android/log.h>
-#include "main.h"
+#include "Main.h"
 
 std::map<std::string, jclassReference> main::jclassesGlobalReferences;
 static JavaVM* gJvm = nullptr;
@@ -53,21 +53,21 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved) {
         return -1;
     }
 
-    jclass mainActivity = env->FindClass("com/example/iyuro/socketstest/MainActivity");
+    jclass mainActivity = env->FindClass("com/example/iyuro/socketstest/NetworkSingleton");
     jclass globalMainActivity = nullptr;
     jmethodID globalMethodIdMainActivity = nullptr;
     if (mainActivity != nullptr){
         globalMainActivity = (jclass) env->NewGlobalRef(mainActivity);
-        globalMethodIdMainActivity = env->GetMethodID(mainActivity, "showText", "(Ljava/lang/String;)V");
+        globalMethodIdMainActivity = env->GetMethodID(mainActivity, "onSuccessDownload", "(Ljava/lang/String;)V");
     } else {
-        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Failed to find MainActivity class");
+        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Failed to find NetworkSingleton class");
     }
 
     if (globalMethodIdMainActivity == nullptr){
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Failed to get method id");
     }
 
-    main::jclassesGlobalReferences.insert(std::pair<std::string, jclassReference>("com/example/iyuro/mktest/MainActivity/showText", jclassReference(globalMainActivity, globalMethodIdMainActivity)));
+    main::jclassesGlobalReferences.insert(std::pair<std::string, jclassReference>("com/example/iyuro/mktest/NetworkSingleton/onSuccessDownload", jclassReference(globalMainActivity, globalMethodIdMainActivity)));
 
     return JNI_VERSION_1_4;
 }
