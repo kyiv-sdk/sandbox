@@ -1,11 +1,7 @@
 package com.example.iyuro.socketstest;
 
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -52,5 +48,11 @@ public class MainActivity extends AppCompatActivity implements NetworkDataListen
     @Override
     public void OnDataReceive(String data) {
         textView.setText(data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NetworkSingleton.getInstance().setNetworkDataListener(null);
     }
 }

@@ -15,8 +15,7 @@
 class main {
 public:
     main();
-    static std::map<std::string, jclassReference> jclassesGlobalReferences;
-    static jclassReference getJclassReferenceByName(std::string jclassName);
+    static jmethodID NetworkSingletonOnSuccessMethodId;
 
     JNIEnv *getEnv();
     JNIEnv *attachEnv();

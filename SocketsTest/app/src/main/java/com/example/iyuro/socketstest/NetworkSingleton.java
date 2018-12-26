@@ -43,7 +43,7 @@ public class NetworkSingleton {
         public void handleMessage(Message msg) {
             Bundle bundle = msg.getData();
             String data = bundle.getString("DATA");
-            networkDataListener.OnDataReceive(data);
+            if (networkDataListener != null) networkDataListener.OnDataReceive(data);
         }
     }
 }
