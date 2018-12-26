@@ -2,9 +2,6 @@ package com.example.iyuro.socketstest;
 
 import android.os.Bundle;
 import android.os.Message;
-import android.widget.TextView;
-
-import java.util.logging.Handler;
 
 public class NetworkSingleton {
     public native void makeRequest(String request);

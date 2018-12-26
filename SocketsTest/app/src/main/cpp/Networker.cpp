@@ -2,6 +2,7 @@
 // Created by Ivan Yurovych on 12/26/18.
 //
 
+#include <thread>
 #include "Networker.h"
 
 void checkPendingExceptions(JNIEnv *env, std::string s){
@@ -11,13 +12,8 @@ void checkPendingExceptions(JNIEnv *env, std::string s){
     }
 }
 
-void* makeRequest(void *params)
+void makeRequest(std::string hostname, jobject instance)
 {
-    struct targs *args;
-    args = (struct targs*)params;
-
-    std::string hostname = args->hostname;
-
     struct hostent *host = gethostbyname(hostname.c_str());
 
     if ( (host == NULL) || (host->h_addr == NULL) ) {
@@ -61,8 +57,6 @@ void* makeRequest(void *params)
         resultStr += cur;
     }
 
-    args->out = std::string(resultStr);
-
     sleep(5);
 
     __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", resultStr.c_str());
@@ -75,9 +69,9 @@ void* makeRequest(void *params)
     jmethodID mjmethodID = nullptr;
     jclassReference jclassR = main::getJclassReferenceByName("com/example/iyuro/mktest/NetworkSingleton/onSuccessDownload");
     mjmethodID = jclassR.getJmID();
-    jclass objectMainActivity = (jclass) args->instance;
+    jclass objectMainActivity = (jclass) instance;
 
-    jstring result = (jstring)new_env->NewGlobalRef(new_env->NewStringUTF(args->out.c_str()));
+    jstring result = (jstring)new_env->NewGlobalRef(new_env->NewStringUTF(resultStr.c_str()));
     new_env->CallVoidMethod(objectMainActivity, mjmethodID, result);
 
     m.detachMyThread();
@@ -89,23 +83,9 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_iyuro_socketstest_NetworkSingleton_makeRequest(JNIEnv *env, jobject instance,
                                                                 jstring s) {
-    pthread_t tid;
-
     const char* chostname = env->GetStringUTFChars(s, 0);
 
-    std::string hostname(chostname);
-    env->ReleaseStringUTFChars(s, chostname);
-    std::string out;
-    struct targs* args =(targs *)malloc(sizeof(struct targs));
-    args->hostname = hostname;
-    args->out = out;
-    args->instance = env->NewGlobalRef(instance);
-
-    pthread_create(&tid, NULL, makeRequest, (void *)args);
-//    pthread_join(tid, NULL);
-
-    if (args == nullptr || args->out.c_str() == nullptr){
-        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "YEAH IT'S NULL!!!!!!!");
-    }
-    __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", args->out.c_str());
+    jobject gInstance = env->NewGlobalRef(instance);
+    std::thread thrd(makeRequest, std::string(chostname), gInstance);
+    thrd.join();
 }
