@@ -8,6 +8,7 @@
 #include <android/log.h>
 #include <android/looper.h>
 #include <unistd.h>
+#include "main.h"
 
 int sock;
 struct sockaddr_in client;
@@ -16,7 +17,15 @@ int PORT = 80;
 struct targs{
     std::string hostname;
     std::string out;
+    jobject instance;
 };
+
+void checkPendingExceptions(JNIEnv *env, std::string s){
+    jboolean flag = env->ExceptionCheck();
+    if (flag) {
+        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", s.c_str());
+    }
+}
 
 void* makeRequest(void *params)
 {
@@ -70,16 +79,31 @@ void* makeRequest(void *params)
 
     args->out = std::string(resultStr);
 
-//    sleep(5);
+    sleep(5);
 
     __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", resultStr.c_str());
+
+    main m;
+    m.attachEnv();
+    JNIEnv *new_env = m.getEnv();
+    checkPendingExceptions(new_env, "1");
+
+    jmethodID mjmethodID = nullptr;
+    jclassReference jclassR = main::getJclassReferenceByName("com/example/iyuro/mktest/MainActivity/showText");
+    mjmethodID = jclassR.getJmID();
+    jclass objectMainActivity = (jclass) args->instance;
+
+    jstring result = (jstring)new_env->NewGlobalRef(new_env->NewStringUTF(args->out.c_str()));
+    new_env->CallVoidMethod(objectMainActivity, mjmethodID, result);
+
+    m.detachMyThread();
 
     pthread_exit(NULL);
 }
 
 
 extern "C"
-JNIEXPORT jstring JNICALL
+JNIEXPORT void JNICALL
 Java_com_example_iyuro_socketstest_MainActivity_makeRequest(JNIEnv *env, jobject instance, jstring s) {
     pthread_t tid;
 
@@ -91,13 +115,13 @@ Java_com_example_iyuro_socketstest_MainActivity_makeRequest(JNIEnv *env, jobject
     struct targs* args =(targs *)malloc(sizeof(struct targs));
     args->hostname = hostname;
     args->out = out;
+    args->instance = env->NewGlobalRef(instance);
 
     pthread_create(&tid, NULL, makeRequest, (void *)args);
-    pthread_join(tid, NULL);
+//    pthread_join(tid, NULL);
 
+    if (args == nullptr || args->out.c_str() == nullptr){
+        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "YEAH IT'S NULL!!!!!!!");
+    }
     __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", args->out.c_str());
-
-    jstring result = (jstring)env->NewGlobalRef(env->NewStringUTF(args->out.c_str()));
-
-    return result;
 }

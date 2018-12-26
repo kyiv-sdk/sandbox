@@ -32,31 +32,27 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DownloadSomeStuff().execute(editText.getText().toString());
+                makeRequest(editText.getText().toString());
             }
         });
     }
+
+    // TODO:: Handler
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
 
-    public native String makeRequest(String request);
+    public native void makeRequest(String request);
 
-    private class DownloadSomeStuff extends AsyncTask<String, Void, String> {
-        /** The system calls this to perform work in a worker thread and
-         * delivers it the parameters given to AsyncTask.execute() */
-        protected String doInBackground(String... urls) {
-//        return loadImageFromNetwork(urls[0]);
-            return makeRequest(urls[0]);
-        }
-
-        /** The system calls this to perform work in the UI thread and delivers
-         * the result from doInBackground() */
-        protected void onPostExecute(String result){
-            textView.setText(result);
-        }
+    public void showText(final String s){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText(s);
+            }
+        });
     }
 
 }
