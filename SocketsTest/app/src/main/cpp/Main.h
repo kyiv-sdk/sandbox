@@ -10,7 +10,6 @@
 #include <map>
 #include <string>
 #include <utility>
-#include "JclassReference.h"
 
 class main {
 public:

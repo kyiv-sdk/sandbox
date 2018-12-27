@@ -47,7 +47,28 @@ std::string NetworkExecutor::loadData(std::string hostname)
         resultStr += cur;
     }
 
-    sleep(1);
-
     return resultStr;
+}
+
+void NetworkExecutor::run(std::string url, NetworkExecutorAdapter *networkExecutorAdapter) {
+    std::string resultData = loadData(url);
+    networkExecutorAdapter->runCallback(resultData);
+}
+
+void NetworkExecutor::start(std::string url, NetworkExecutorAdapter *networkExecutorAdapter) {
+    myThread = std::thread(&NetworkExecutor::run, this, url, networkExecutorAdapter);
+}
+
+NetworkExecutor::~NetworkExecutor() {
+    try
+    {
+        if (myThread.joinable())
+        {
+            myThread.join();
+        }
+    }
+    catch (const std::exception& e)
+    {
+        printf("%s", e.what());
+    }
 }
