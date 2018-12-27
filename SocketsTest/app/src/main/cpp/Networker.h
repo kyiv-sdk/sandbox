@@ -11,6 +11,7 @@ class Networker {
 public:
     static void makeRequest(std::string hostname, jobject instance);
     std::thread myThread;
+    ~Networker();
 };
 
 

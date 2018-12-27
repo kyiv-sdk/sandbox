@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements NetworkDataListen
     @Override
     public void OnDataReceive(String data) {
         textView.setText(data);
+        NetworkSingleton.getInstance().endDownloading();
     }
 
     @Override

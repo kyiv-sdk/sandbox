@@ -36,14 +36,36 @@ void Networker::makeRequest(std::string hostname, jobject instance){
     pthread_exit(NULL);
 }
 
+Networker::~Networker() {
+    try
+    {
+        if (myThread.joinable())
+        {
+            myThread.join();
+        }
+    }
+    catch (const std::exception& e)
+    {
+        printf("%s", e.what());
+    }
+}
+
 extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_NetworkSingleton_makeRequest(JNIEnv *env, jobject instance,
+JNIEXPORT jlong JNICALL
+Java_com_example_iyuro_socketstest_NetworkSingleton_startDownload(JNIEnv *env, jobject instance,
                                                                 jstring s) {
     const char* chostname = env->GetStringUTFChars(s, 0);
 
     jobject gInstance = env->NewGlobalRef(instance);
-    Networker networker;
-    networker.myThread = std::thread(Networker::makeRequest, std::string(chostname), gInstance);
-    networker.myThread.join();
+    Networker* networker = new Networker;
+    networker->myThread = std::thread(Networker::makeRequest, std::string(chostname), gInstance);
+
+    return (jlong)networker;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_iyuro_socketstest_NetworkSingleton_endDownload(JNIEnv *env, jobject instance, jlong obj) {
+    Networker* networker = (Networker*) obj;
+    delete networker;
 }

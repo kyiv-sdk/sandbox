@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.os.Message;
 
 public class NetworkSingleton {
-    public native void makeRequest(String request);
-
     private static final NetworkSingleton ourInstance = new NetworkSingleton();
     private MyHandler myHandler;
+    public native long startDownload(String request);
+    public native void endDownload(long obj);
+
+    private long cppNetworker = 0;
 
     public void setNetworkDataListener(NetworkDataListener networkDataListener) {
         myHandler = new MyHandler(networkDataListener);
@@ -21,7 +23,11 @@ public class NetworkSingleton {
     }
 
     public void download(String url){
-        makeRequest(url);
+        cppNetworker = startDownload(url);
+    }
+
+    public void endDownloading(){
+        endDownload(cppNetworker);
     }
 
     public void onSuccessDownload(String data){
