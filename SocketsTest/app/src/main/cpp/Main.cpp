@@ -13,7 +13,8 @@ main::main()
     env = nullptr;
 }
 
-JNIEnv* main::attachEnv() {
+JNIEnv* main::attachEnv()
+{
     int status = gJvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
     if(status < 0) {
         status = gJvm->AttachCurrentThread(&env, NULL);
@@ -24,19 +25,23 @@ JNIEnv* main::attachEnv() {
     return env;
 }
 
-JNIEnv* main::getEnv() {
+JNIEnv* main::getEnv()
+{
     return env;
 }
 
-JavaVM *main::getJVM() {
+JavaVM *main::getJVM()
+{
     return gJvm;
 }
 
-void main::detachMyThread() {
+void main::detachMyThread()
+{
     gJvm->DetachCurrentThread();
 }
 
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved) {
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
+{
     gJvm = pjvm;
     JNIEnv *env = nullptr;
 

@@ -31,8 +31,6 @@ std::string NetworkExecutor::loadData(std::string hostname)
         exit(1);
     }
 
-    std::string api_key = "7c381e56b95c83b75aeab1b1628d4363";
-
     std::stringstream ss;
 
     ss << "GET / HTTP/1.1\r\nHost: "<< hostname.c_str() << "\r\nConnection: close\r\n\r\n";

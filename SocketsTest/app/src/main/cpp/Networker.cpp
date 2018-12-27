@@ -6,14 +6,16 @@
 #include "Networker.h"
 #include "NetworkExecutor.h"
 
-void checkPendingExceptions(JNIEnv *env, std::string s){
+void checkPendingExceptions(JNIEnv *env, std::string s)
+{
     jboolean flag = env->ExceptionCheck();
     if (flag) {
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", s.c_str());
     }
 }
 
-void Networker::makeRequest(std::string hostname, jobject instance){
+void Networker::makeRequest(std::string hostname, jobject instance)
+{
 
     NetworkExecutor networkExecutor;
     std::string resultData = networkExecutor.loadData(hostname);
@@ -36,7 +38,8 @@ void Networker::makeRequest(std::string hostname, jobject instance){
     pthread_exit(NULL);
 }
 
-Networker::~Networker() {
+Networker::~Networker()
+{
     try
     {
         if (myThread.joinable())
@@ -53,7 +56,8 @@ Networker::~Networker() {
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_com_example_iyuro_socketstest_NetworkSingleton_startDownload(JNIEnv *env, jobject instance,
-                                                                jstring s) {
+                                                                jstring s)
+{
     const char* chostname = env->GetStringUTFChars(s, 0);
 
     jobject gInstance = env->NewGlobalRef(instance);
@@ -65,7 +69,8 @@ Java_com_example_iyuro_socketstest_NetworkSingleton_startDownload(JNIEnv *env, j
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_NetworkSingleton_endDownload(JNIEnv *env, jobject instance, jlong obj) {
+Java_com_example_iyuro_socketstest_NetworkSingleton_endDownload(JNIEnv *env, jobject instance, jlong obj)
+{
     Networker* networker = (Networker*) obj;
     delete networker;
 }
