@@ -1,5 +1,5 @@
 package com.example.iyuro.socketstest;
 
 public interface NetworkDataListener {
-    void OnDataReceive(String data);
+    void onDataReceive(final int id, final String data);
 }

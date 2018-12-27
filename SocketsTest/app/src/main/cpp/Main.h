@@ -15,7 +15,7 @@
 class main {
 public:
     main();
-    static jmethodID NetworkSingletonOnSuccessMethodId;
+    static jmethodID NetworkExecutorOnSuccessMethodId;
 
     JNIEnv *getEnv();
     JNIEnv *attachEnv();

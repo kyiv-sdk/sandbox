@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements NetworkDataListener {
     static {
@@ -25,12 +26,12 @@ public class MainActivity extends AppCompatActivity implements NetworkDataListen
         btn = findViewById(R.id.btn);
         textView = findViewById(R.id.textView);
 
-        NetworkSingleton.getInstance().setNetworkDataListener(this);
+        NetworkManager.getInstance().setNetworkDataListener(this);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkSingleton.getInstance().download(editText.getText().toString());
+                NetworkManager.getInstance().download(editText.getText().toString());
             }
         });
     }
@@ -46,14 +47,14 @@ public class MainActivity extends AppCompatActivity implements NetworkDataListen
     }
 
     @Override
-    public void OnDataReceive(String data) {
+    public void onDataReceive(int id, String data) {
         textView.setText(data);
-        NetworkSingleton.getInstance().endDownloading();
+        Toast.makeText(getApplicationContext(), String.valueOf(id), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NetworkSingleton.getInstance().setNetworkDataListener(null);
+        NetworkManager.getInstance().setNetworkDataListener(null);
     }
 }
