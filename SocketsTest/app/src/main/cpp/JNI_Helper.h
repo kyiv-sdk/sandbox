@@ -7,8 +7,6 @@
 
 #include <jni.h>
 
-// TODO: rename main
-
 class main {
 public:
     main();

@@ -11,8 +11,6 @@
 
 jobject globalInstance;
 
-//TODO: rewrite callback
-
 class NetworkExecutorImplementation: public NetworkExecutorAdapter{
 private:
     void (*JNIcallback)(jobject, std::string *);
