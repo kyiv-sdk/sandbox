@@ -5,13 +5,11 @@
 #ifndef SOCKETSTEST_NETWORKEXECUTORADAPTER_H
 #define SOCKETSTEST_NETWORKEXECUTORADAPTER_H
 
-
-#include <jni.h>
 #include <string>
 
 class NetworkExecutorAdapter {
 public:
-    virtual void runCallback(std::string) = 0;
+    virtual void runCallback(std::string* ) = 0;
 };
 
 

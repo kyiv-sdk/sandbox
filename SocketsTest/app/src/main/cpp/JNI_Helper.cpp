@@ -2,8 +2,9 @@
 // Created by Ivan Yurovych on 12/19/18.
 //
 
+#include "JNI_Helper.h"
+
 #include <android/log.h>
-#include "Main.h"
 
 static JavaVM* gJvm = nullptr;
 jmethodID main::NetworkExecutorOnSuccessMethodId;

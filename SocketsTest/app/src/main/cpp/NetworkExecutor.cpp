@@ -4,9 +4,49 @@
 
 #include "NetworkExecutor.h"
 
-std::string NetworkExecutor::loadData(std::string hostname)
+#include <netdb.h>
+#include <endian.h>
+#include <sstream>
+#include <android/log.h>
+#include <unistd.h>
+#include <jni.h>
+
+NetworkExecutor::NetworkExecutor(NetworkExecutorAdapter *new_networkExecutorAdapter)
 {
-    struct hostent *host = gethostbyname(hostname.c_str());
+    networkExecutorAdapter = new_networkExecutorAdapter;
+}
+
+NetworkExecutor::~NetworkExecutor()
+{
+    try
+    {
+        if (myThread.joinable())
+        {
+            myThread.join();
+        }
+    }
+    catch (const std::exception& e)
+    {
+        printf("%s", e.what());
+    }
+}
+
+void NetworkExecutor::run(const char* hostname)
+{
+    std::string resultStr;
+    loadData(resultStr, hostname);
+    networkExecutorAdapter->runCallback(&resultStr);
+    delete hostname;
+}
+
+void NetworkExecutor::start(const char* hostname)
+{
+    myThread = std::thread(&NetworkExecutor::run, this, hostname);
+}
+
+void NetworkExecutor::loadData(std::string& resultStr, const char* hostname)
+{
+    struct hostent *host = gethostbyname(hostname);
 
     if ( (host == NULL) || (host->h_addr == NULL) ) {
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Error retrieving DNS information.");
@@ -33,7 +73,7 @@ std::string NetworkExecutor::loadData(std::string hostname)
 
     std::stringstream ss;
 
-    ss << "GET / HTTP/1.1\r\nHost: "<< hostname.c_str() << "\r\nConnection: close\r\n\r\n";
+    ss << "GET / HTTP/1.1\r\nHost: "<< hostname << "\r\nConnection: close\r\n\r\n";
     std::string request = ss.str();
 
     if (send(sock, request.c_str(), request.length(), 0) != (int)request.length()) {
@@ -41,34 +81,8 @@ std::string NetworkExecutor::loadData(std::string hostname)
         exit(1);
     }
 
-    std::string resultStr;
     char cur;
     while ( read(sock, &cur, 1) > 0 ) {
         resultStr += cur;
-    }
-
-    return resultStr;
-}
-
-void NetworkExecutor::run(std::string url, NetworkExecutorAdapter *networkExecutorAdapter) {
-    std::string resultData = loadData(url);
-    networkExecutorAdapter->runCallback(resultData);
-}
-
-void NetworkExecutor::start(std::string url, NetworkExecutorAdapter *networkExecutorAdapter) {
-    myThread = std::thread(&NetworkExecutor::run, this, url, networkExecutorAdapter);
-}
-
-NetworkExecutor::~NetworkExecutor() {
-    try
-    {
-        if (myThread.joinable())
-        {
-            myThread.join();
-        }
-    }
-    catch (const std::exception& e)
-    {
-        printf("%s", e.what());
     }
 }

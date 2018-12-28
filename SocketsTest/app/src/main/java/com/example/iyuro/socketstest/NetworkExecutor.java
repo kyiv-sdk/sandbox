@@ -1,19 +1,13 @@
 package com.example.iyuro.socketstest;
 
-import android.os.Handler;
-
 public class NetworkExecutor {
-    int id;
+    private int id;
     private NetworkExecutorListener networkExecutorListener;
-    public native long cppStartDownloading(String request);
-    public native void cppCloseDownloading(long obj);
     private long cppNetworkManager = 0;
-    Handler handler;
 
     public NetworkExecutor(int id, NetworkExecutorListener networkExecutorListener) {
         this.id = id;
         this.networkExecutorListener = networkExecutorListener;
-        handler = new Handler();
     }
 
     public int getId() {
@@ -21,13 +15,7 @@ public class NetworkExecutor {
     }
 
     public void onSuccessDownload(final String data) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                networkExecutorListener.onDataReceive(id, data);
-                closeDownloading();
-            }
-        });
+        networkExecutorListener.onDataReceive(id, data);
     }
 
     public void startDownloading(String url){
@@ -37,4 +25,7 @@ public class NetworkExecutor {
     public void closeDownloading(){
         cppCloseDownloading(cppNetworkManager);
     }
+
+    public native long cppStartDownloading(String request);
+    public native void cppCloseDownloading(long obj);
 }

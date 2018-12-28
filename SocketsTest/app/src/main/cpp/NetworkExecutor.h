@@ -6,16 +6,9 @@
 #define SOCKETSTEST_NETWORKEXECUTOR_H
 
 #include <string>
-#include <netdb.h>
 #include <linux/in.h>
-#include <endian.h>
-#include <zconf.h>
-#include <sstream>
-#include <android/log.h>
-#include <android/looper.h>
-#include <unistd.h>
 #include <thread>
-#include "Main.h"
+
 #include "NetworkExecutorAdapter.h"
 
 class NetworkExecutor {
@@ -24,10 +17,13 @@ class NetworkExecutor {
     int PORT = 80;
 
     std::thread myThread;
+    NetworkExecutorAdapter *networkExecutorAdapter;
+
+    void run(const char* hostname);
+    void loadData(std::string& result, const char* hostname);
 public:
-    void run(std::string url, NetworkExecutorAdapter *networkExecutorAdapter);
-    std::string loadData(std::string url);
-    void start(std::string url, NetworkExecutorAdapter *networkExecutorAdapter);
+    NetworkExecutor(NetworkExecutorAdapter *networkExecutorAdapter);
+    void start(const char* hostname);
     ~NetworkExecutor();
 };
 

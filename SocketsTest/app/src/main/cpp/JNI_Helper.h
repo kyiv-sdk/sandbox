@@ -6,10 +6,8 @@
 #define MKTEST_MAIN_H
 
 #include <jni.h>
-#include <vector>
-#include <map>
-#include <string>
-#include <utility>
+
+// TODO: rename main
 
 class main {
 public:

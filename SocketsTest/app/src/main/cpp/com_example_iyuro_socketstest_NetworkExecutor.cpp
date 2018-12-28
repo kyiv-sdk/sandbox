@@ -2,28 +2,35 @@
 // Created by Ivan Yurovych on 12/26/18.
 //
 
+#include "JNI_Helper.h"
+#include <jni.h>
 #include <thread>
+#include <android/log.h>
+
 #include "NetworkExecutor.h"
 
 jobject globalInstance;
 
+//TODO: rewrite callback
+
 class NetworkExecutorImplementation: public NetworkExecutorAdapter{
 private:
-    void (*JNIcallback)(jobject, std::string);
+    void (*JNIcallback)(jobject, std::string *);
     jobject instance;
 public:
-    virtual void runCallback(std::string);
+    void runCallback(std::string *) override;
     NetworkExecutorImplementation(jobject ninstance,
-                                  void (*ncallback)(jobject, std::string));
+                                  void (*ncallback)(jobject, std::string *));
 };
 
-void NetworkExecutorImplementation::runCallback(std::string resultData) {
+void NetworkExecutorImplementation::runCallback(std::string *resultData)
+{
     JNIcallback(instance, resultData);
 }
 
 NetworkExecutorImplementation::NetworkExecutorImplementation(jobject ninstance,
                                                              void (*ncallback)(jobject,
-                                                                               std::string))
+                                                                               std::string*))
 {
     JNIcallback = ncallback;
     instance = ninstance;
@@ -37,7 +44,8 @@ void checkPendingExceptions(JNIEnv *env, std::string s)
     }
 }
 
-void jni_sendDataToJava(jobject instance, std::string resultData) {
+void jni_sendDataToJava(jobject instance, std::string *resultData)
+{
     main m;
     m.attachEnv();
     JNIEnv *new_env = m.getEnv();
@@ -46,7 +54,7 @@ void jni_sendDataToJava(jobject instance, std::string resultData) {
     jmethodID mjmethodID = main::NetworkExecutorOnSuccessMethodId;
     jclass objectMainActivity = (jclass) instance;
 
-    jstring result = (jstring)new_env->NewGlobalRef(new_env->NewStringUTF(resultData.c_str()));
+    jstring result = (jstring)new_env->NewGlobalRef(new_env->NewStringUTF((*resultData).c_str()));
     new_env->CallVoidMethod(objectMainActivity, mjmethodID, result);
 
     m.detachMyThread();
@@ -57,14 +65,12 @@ JNIEXPORT jlong JNICALL
 Java_com_example_iyuro_socketstest_NetworkExecutor_cppStartDownloading(JNIEnv *env, jobject instance,
                                                                 jstring s)
 {
-    const char* chostname = env->GetStringUTFChars(s, 0);
-
     globalInstance = env->NewGlobalRef(instance);
 
     NetworkExecutorImplementation *networkExecutorImplementation = new NetworkExecutorImplementation(globalInstance, jni_sendDataToJava);
 
-    NetworkExecutor *networkExecutor = new NetworkExecutor();
-    networkExecutor->start(std::string(chostname), networkExecutorImplementation);
+    NetworkExecutor *networkExecutor = new NetworkExecutor(networkExecutorImplementation);
+    networkExecutor->start(env->GetStringUTFChars(s, 0));
 
     return (jlong)networkExecutor;
 }
@@ -75,4 +81,6 @@ Java_com_example_iyuro_socketstest_NetworkExecutor_cppCloseDownloading(JNIEnv *e
 {
     NetworkExecutor* networkExecutor = (NetworkExecutor*) obj;
     delete networkExecutor;
+
+    env->DeleteGlobalRef(globalInstance);
 }
