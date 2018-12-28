@@ -24,6 +24,7 @@ NetworkExecutor::~NetworkExecutor()
         {
             myThread.join();
         }
+        delete networkExecutorAdapter;
     }
     catch (const std::exception& e)
     {

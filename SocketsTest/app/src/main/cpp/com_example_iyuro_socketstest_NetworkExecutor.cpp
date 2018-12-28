@@ -9,16 +9,16 @@
 
 #include "NetworkExecutor.h"
 
-jobject globalInstance;
-
 class NetworkExecutorImplementation: public NetworkExecutorAdapter{
 private:
     void (*JNIcallback)(jobject, std::string *);
     jobject instance;
+    JNIEnv *m_env;
 public:
     void runCallback(std::string *) override;
-    NetworkExecutorImplementation(jobject ninstance,
+    NetworkExecutorImplementation(JNIEnv *env, jobject ninstance,
                                   void (*ncallback)(jobject, std::string *));
+    virtual ~NetworkExecutorImplementation();
 };
 
 void NetworkExecutorImplementation::runCallback(std::string *resultData)
@@ -26,12 +26,17 @@ void NetworkExecutorImplementation::runCallback(std::string *resultData)
     JNIcallback(instance, resultData);
 }
 
-NetworkExecutorImplementation::NetworkExecutorImplementation(jobject ninstance,
+NetworkExecutorImplementation::NetworkExecutorImplementation(JNIEnv *t_env, jobject ninstance,
                                                              void (*ncallback)(jobject,
                                                                                std::string*))
 {
     JNIcallback = ncallback;
     instance = ninstance;
+    m_env = t_env;
+}
+
+NetworkExecutorImplementation::~NetworkExecutorImplementation() {
+    m_env->DeleteGlobalRef(instance);
 }
 
 void checkPendingExceptions(JNIEnv *env, std::string s)
@@ -63,9 +68,9 @@ JNIEXPORT jlong JNICALL
 Java_com_example_iyuro_socketstest_NetworkExecutor_cppStartDownloading(JNIEnv *env, jobject instance,
                                                                 jstring s)
 {
-    globalInstance = env->NewGlobalRef(instance);
+    jobject globalInstance = env->NewGlobalRef(instance);
 
-    NetworkExecutorImplementation *networkExecutorImplementation = new NetworkExecutorImplementation(globalInstance, jni_sendDataToJava);
+    NetworkExecutorImplementation *networkExecutorImplementation = new NetworkExecutorImplementation(env, globalInstance, jni_sendDataToJava);
 
     NetworkExecutor *networkExecutor = new NetworkExecutor(networkExecutorImplementation);
     networkExecutor->start(env->GetStringUTFChars(s, 0));
@@ -79,6 +84,4 @@ Java_com_example_iyuro_socketstest_NetworkExecutor_cppCloseDownloading(JNIEnv *e
 {
     NetworkExecutor* networkExecutor = (NetworkExecutor*) obj;
     delete networkExecutor;
-
-    env->DeleteGlobalRef(globalInstance);
 }
