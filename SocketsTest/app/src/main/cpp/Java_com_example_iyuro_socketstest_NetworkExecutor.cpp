@@ -8,6 +8,9 @@
 jobject globalInstance;
 
 class NetworkExecutorImplementation: public NetworkExecutorAdapter{
+private:
+    void (*JNIcallback)(jobject, std::string);
+    jobject instance;
 public:
     virtual void runCallback(std::string);
     NetworkExecutorImplementation(jobject ninstance,
@@ -21,7 +24,9 @@ void NetworkExecutorImplementation::runCallback(std::string resultData) {
 NetworkExecutorImplementation::NetworkExecutorImplementation(jobject ninstance,
                                                              void (*ncallback)(jobject,
                                                                                std::string))
-        : NetworkExecutorAdapter(ninstance, ncallback) {
+{
+    JNIcallback = ncallback;
+    instance = ninstance;
 }
 
 void checkPendingExceptions(JNIEnv *env, std::string s)
