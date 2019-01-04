@@ -14,18 +14,18 @@ public class NetworkExecutor {
         return id;
     }
 
-    public void onSuccessDownload(final String data) {
-        networkExecutorListener.onDataReceive(id, data);
+    public void onSuccessDownload(final byte[] bytesData) {
+        networkExecutorListener.onDataReceive(id, bytesData);
     }
 
-    public void startDownloading(String url){
-        cppNetworkManager = cppStartDownloading(url);
+    public void startDownloading(String protocol, String host, int port){
+        cppNetworkManager = cppStartDownloading(protocol, host, port);
     }
 
     public void closeDownloading(){
         cppCloseDownloading(cppNetworkManager);
     }
 
-    public native long cppStartDownloading(String request);
+    public native long cppStartDownloading(String protocol, String host, int port);
     public native void cppCloseDownloading(long obj);
 }

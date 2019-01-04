@@ -53,7 +53,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
     jclass networkSingleton = env->FindClass("com/example/iyuro/socketstest/NetworkExecutor");
     jmethodID globalMethodIdNetworkSingleton = nullptr;
     if (networkSingleton != nullptr){
-        globalMethodIdNetworkSingleton = env->GetMethodID(networkSingleton, "onSuccessDownload", "(Ljava/lang/String;)V");
+        globalMethodIdNetworkSingleton = env->GetMethodID(networkSingleton, "onSuccessDownload", "([B)V");
     } else {
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Failed to find NetworkManager class");
     }

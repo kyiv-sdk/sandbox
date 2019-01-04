@@ -2,11 +2,11 @@
 // Created by Ivan Yurovych on 12/26/18.
 //
 
-#include "JNI_Helper.h"
 #include <jni.h>
-#include <thread>
 #include <android/log.h>
 
+#include "JNI_Helper.h"
+#include "NetworkExecutorAdapter.h"
 #include "NetworkExecutor.h"
 
 class NetworkExecutorImplementation: public NetworkExecutorAdapter{
@@ -57,8 +57,14 @@ void jni_sendDataToJava(jobject instance, std::string *resultData)
     jmethodID mjmethodID = main::NetworkExecutorOnSuccessMethodId;
     jclass objectMainActivity = (jclass) instance;
 
-    jstring result = (jstring)new_env->NewGlobalRef(new_env->NewStringUTF((*resultData).c_str()));
+    int size = (*resultData).size();
+    jbyteArray result = new_env->NewByteArray(size);
+    new_env->SetByteArrayRegion(result, 0, (*resultData).size(), (const jbyte*)(*resultData).c_str());
+
+
     new_env->CallVoidMethod(objectMainActivity, mjmethodID, result);
+
+    new_env->DeleteLocalRef(result);
 
     m.detachMyThread();
 }
@@ -66,14 +72,17 @@ void jni_sendDataToJava(jobject instance, std::string *resultData)
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_com_example_iyuro_socketstest_NetworkExecutor_cppStartDownloading(JNIEnv *env, jobject instance,
-                                                                jstring s)
+                                                                jstring t_protocol, jstring t_host, jint t_port)
 {
     jobject globalInstance = env->NewGlobalRef(instance);
 
     NetworkExecutorImplementation *networkExecutorImplementation = new NetworkExecutorImplementation(env, globalInstance, jni_sendDataToJava);
 
     NetworkExecutor *networkExecutor = new NetworkExecutor(networkExecutorImplementation);
-    networkExecutor->start(env->GetStringUTFChars(s, 0));
+    const char* m_protocol = env->GetStringUTFChars(t_protocol, 0);
+    const char* m_host = env->GetStringUTFChars(t_host, 0);
+
+    networkExecutor->download(m_protocol, m_host, (int)t_port);
 
     return (jlong)networkExecutor;
 }

@@ -18,8 +18,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="8"
-            android:hint="google.com"
-            android:text="google.com"/>
+            android:hint="http://www.example.com:80"
+            android:text="https://www.example.com:443"
+            android:inputType=""/>
 
         <Button
             android:text="go"
@@ -30,17 +31,10 @@
 
     </LinearLayout>
 
-
-    <ScrollView
+    <WebView
+        android:id="@+id/webview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="200dp"
-            android:layout_marginTop="20dp"/>
-
-    </ScrollView>
 </LinearLayout>

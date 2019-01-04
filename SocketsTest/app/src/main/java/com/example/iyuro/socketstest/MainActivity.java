@@ -2,11 +2,12 @@ package com.example.iyuro.socketstest;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements NetworkDataListener {
     static {
@@ -15,7 +16,7 @@ public class MainActivity extends AppCompatActivity implements NetworkDataListen
 
     EditText editText;
     Button btn;
-    TextView textView;
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,32 +25,38 @@ public class MainActivity extends AppCompatActivity implements NetworkDataListen
 
         editText = findViewById(R.id.editText);
         btn = findViewById(R.id.btn);
-        textView = findViewById(R.id.textView);
+        webView = findViewById(R.id.webview);
 
         NetworkManager.getInstance().setNetworkDataListener(this);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkManager.getInstance().download(editText.getText().toString());
-            }
-        });
-    }
-
-
-    public void showText(final String s){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText(s);
+                String request = editText.getText().toString();
+                NetworkManager.getInstance().download(request);
             }
         });
     }
 
     @Override
-    public void onDataReceive(int id, String data) {
-        textView.setText(data);
-        Toast.makeText(getApplicationContext(), String.valueOf(id), Toast.LENGTH_SHORT).show();
+    public void onDataReceive(int id, String unencodedHtml) {
+        Log.i("---MY_URL---", unencodedHtml);
+
+        int nInd = unencodedHtml.indexOf('\n');
+        if ((nInd > 0) && (nInd < unencodedHtml.length())) {
+            String responseCode = unencodedHtml.substring(0, nInd);
+            Log.i("---MY_URL---", "response code=" + responseCode);
+        }
+
+        int startIndex = unencodedHtml.indexOf("<!");
+        if ((startIndex > 0) && (startIndex < unencodedHtml.length())) {
+            String clearHTML = unencodedHtml.substring(startIndex);
+            String encodedHtml = Base64.encodeToString(clearHTML.getBytes(),
+                    Base64.NO_PADDING);
+            webView.loadData(encodedHtml, "text/html", "base64");
+        } else {
+            webView.loadData(unencodedHtml, "text/html", "base64");
+        }
     }
 
     @Override
