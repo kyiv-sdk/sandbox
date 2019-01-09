@@ -38,7 +38,12 @@ public class NetworkManager implements NetworkExecutorListener{
 
         RequestParser requestParser = new RequestParser();
         requestParser.parse(request);
-        networkExecutor.startDownloading(requestParser.getProtocol(), requestParser.getHost(), requestParser.getPort());
+        if (requestParser.isValidRequest) {
+            networkExecutor.startDownloading(requestParser.getProtocol(), requestParser.getHost(), requestParser.getPort());
+        } else {
+            String response = "Wrong request";
+            networkDataListener.onDataReceive(networkExecutor.getId(), response);
+        }
         networkExecutorsList.add(networkExecutor);
     }
 

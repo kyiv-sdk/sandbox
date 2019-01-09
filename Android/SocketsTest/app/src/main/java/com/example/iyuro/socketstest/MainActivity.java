@@ -7,7 +7,9 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -29,21 +31,23 @@ public class MainActivity extends AppCompatActivity implements NetworkDataListen
         btn = findViewById(R.id.btn);
         webView = findViewById(R.id.webview);
 
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                makeRequest(request.getUrl().toString());
+                return false;
+            }
+        });
+
+//        webView.getSettings().setJavaScriptEnabled(true);
+//        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+
         NetworkManager.getInstance().setNetworkDataListener(this);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String request = editText.getText().toString();
-                NetworkManager.getInstance().download(request);
-
-                InputMethodManager inputMethodManager =
-                        (InputMethodManager) getSystemService(
-                                Activity.INPUT_METHOD_SERVICE);
-                if (getCurrentFocus() != null) {
-                    inputMethodManager.hideSoftInputFromWindow(
-                            getCurrentFocus().getWindowToken(), 0);
-                }
+                makeRequest(editText.getText().toString());
             }
         });
     }
@@ -67,5 +71,17 @@ public class MainActivity extends AppCompatActivity implements NetworkDataListen
     protected void onDestroy() {
         super.onDestroy();
         NetworkManager.getInstance().setNetworkDataListener(null);
+    }
+
+    private void makeRequest(String request){
+        NetworkManager.getInstance().download(request);
+
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(
+                    getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

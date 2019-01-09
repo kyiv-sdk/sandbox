@@ -21,7 +21,9 @@ LOCAL_SRC_FILES := ../cpp/JNI_Helper.cpp \
     ../cpp/com_example_iyuro_socketstest_NetworkExecutor.cpp \
     ../cpp/NetworkExecutorAdapter.cpp \
     ../cpp/HTTP_Client.cpp \
-    ../cpp/HTTPS_Client.cpp
+    ../cpp/HTTPS_Client.cpp \
+    ../cpp/Basic_Connection.cpp \
+    ../cpp/SSL_Connection.cpp
 
 LOCAL_C_INCLUDES = ../include
 

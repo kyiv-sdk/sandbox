@@ -10,9 +10,6 @@
 #include "NetworkExecutorAdapter.h"
 
 class HTTP_Client {
-    int sock;
-protected:
-    int OpenConnection(const char *hostname, int port);
 public:
     virtual void loadData(std::string &result, const char *hostname, int port);
 };
