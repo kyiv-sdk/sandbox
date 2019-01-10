@@ -2,10 +2,11 @@ package com.example.iyuro.socketstest.Messenger;
 
 import android.os.Handler;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class MessageHandler implements MessageListener{
+    static {
+        System.loadLibrary("native-lib");
+    }
+
     private static final MessageHandler ourInstance = new MessageHandler();
     private MessageListener messageListener;
     private Handler handler;
@@ -24,15 +25,7 @@ public class MessageHandler implements MessageListener{
     }
 
     public void send(String message){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("sourceID", 0);
-            jsonObject.put("message", message);
-
-            cppSendMessage(cppMessageHandler, message);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        cppSendMessage(cppMessageHandler, message);
     }
 
     public void openConnection(){

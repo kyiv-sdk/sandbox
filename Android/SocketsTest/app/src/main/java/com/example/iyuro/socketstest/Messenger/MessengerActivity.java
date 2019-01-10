@@ -12,6 +12,9 @@ import android.widget.EditText;
 
 import com.example.iyuro.socketstest.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -22,10 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class MessengerActivity extends AppCompatActivity implements MessageListener {
-    static {
-        System.loadLibrary("native-lib");
-    }
-
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
 
@@ -33,11 +32,15 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
 
     private EditText editText;
     private Button btn;
+    private String dstId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_socket_test);
+
+        Bundle bundle = getIntent().getExtras();
+        dstId = bundle.getString("dstId");
 
         editText = findViewById(R.id.edittext_chatbox);
         btn = findViewById(R.id.button_chatbox_send);
@@ -48,7 +51,8 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
         mMessageRecycler.setAdapter(mMessageAdapter);
 
-        MessageHandler.getInstance().openConnection();
+        // TODO: twice open connection
+//        MessageHandler.getInstance().openConnection();
         MessageHandler.getInstance().setMessageListener(this);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +62,17 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
                 messageList.add(new UserMessage(msg, 1));
                 mMessageAdapter.notifyDataSetChanged();
 
-                MessageHandler.getInstance().send(msg);
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    if (dstId != null) {
+                        jsonObject.put("dstID", dstId);
+                        jsonObject.put("message", msg);
+                    }
+
+                    MessageHandler.getInstance().send(jsonObject.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
