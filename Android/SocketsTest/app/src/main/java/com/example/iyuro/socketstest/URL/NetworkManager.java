@@ -1,19 +1,9 @@
-package com.example.iyuro.socketstest;
+package com.example.iyuro.socketstest.URL;
 import android.os.Handler;
-import android.util.Log;
-import android.webkit.WebResourceResponse;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class NetworkManager implements NetworkExecutorListener{
+public class NetworkManager implements NetworkExecutorListener {
     private static final NetworkManager ourInstance = new NetworkManager();
     private NetworkDataListener networkDataListener;
     private Handler handler;
@@ -38,7 +28,7 @@ public class NetworkManager implements NetworkExecutorListener{
 
         RequestParser requestParser = new RequestParser();
         requestParser.parse(request);
-        if (requestParser.isValidRequest) {
+        if (requestParser.isValidRequest()) {
             networkExecutor.startDownloading(requestParser.getProtocol(), requestParser.getHost(), requestParser.getPort());
         } else {
             String response = "Wrong request";

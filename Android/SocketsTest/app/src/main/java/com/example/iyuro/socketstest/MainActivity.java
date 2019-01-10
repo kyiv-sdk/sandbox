@@ -1,87 +1,37 @@
 package com.example.iyuro.socketstest;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.EditText;
 
-public class MainActivity extends AppCompatActivity implements NetworkDataListener {
-    static {
-        System.loadLibrary("native-lib");
-    }
+import com.example.iyuro.socketstest.Messenger.MessengerActivity;
+import com.example.iyuro.socketstest.URL.URL_DownloadActivity;
 
-    EditText editText;
-    Button btn;
-    WebView webView;
+public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editText = findViewById(R.id.editText);
-        btn = findViewById(R.id.btn);
-        webView = findViewById(R.id.webview);
-
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                makeRequest(request.getUrl().toString());
-                return false;
-            }
-        });
-
-//        webView.getSettings().setJavaScriptEnabled(true);
-//        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-
-        NetworkManager.getInstance().setNetworkDataListener(this);
-
-        btn.setOnClickListener(new View.OnClickListener() {
+        Button buttonUrlDownload = findViewById(R.id.url_download);
+        buttonUrlDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeRequest(editText.getText().toString());
+                Intent intent = new Intent(getApplicationContext(), URL_DownloadActivity.class);
+                startActivity(intent);
             }
         });
-    }
 
-    @Override
-    public void onDataReceive(int id, String unencodedHtml) {
-        Log.i("---MY_URL---", unencodedHtml);
-
-        int startIndex = unencodedHtml.indexOf("<!");
-        if ((startIndex > 0) && (startIndex < unencodedHtml.length())) {
-            String clearHTML = unencodedHtml.substring(startIndex);
-            String encodedHtml = Base64.encodeToString(clearHTML.getBytes(),
-                    Base64.NO_PADDING);
-            webView.loadData(encodedHtml, "text/html", "base64");
-        } else {
-            webView.loadData(unencodedHtml, "text/html", "base64");
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        NetworkManager.getInstance().setNetworkDataListener(null);
-    }
-
-    private void makeRequest(String request){
-        NetworkManager.getInstance().download(request);
-
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) getSystemService(
-                        Activity.INPUT_METHOD_SERVICE);
-        if (getCurrentFocus() != null) {
-            inputMethodManager.hideSoftInputFromWindow(
-                    getCurrentFocus().getWindowToken(), 0);
-        }
+        Button buttonSocketTest = findViewById(R.id.socket_test);
+        buttonSocketTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MessengerActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

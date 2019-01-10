@@ -7,14 +7,15 @@
 #include <android/log.h>
 
 static JavaVM* gJvm = nullptr;
-jmethodID main::NetworkExecutorOnSuccessMethodId;
+jmethodID JNI_Helper::NetworkExecutorOnSuccessMethodId;
+jmethodID JNI_Helper::MessageHandlerOnSuccessMethodId;
 
-main::main()
+JNI_Helper::JNI_Helper()
 {
     env = nullptr;
 }
 
-JNIEnv* main::attachEnv()
+JNIEnv* JNI_Helper::attachEnv()
 {
     int status = gJvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
     if(status < 0) {
@@ -26,17 +27,17 @@ JNIEnv* main::attachEnv()
     return env;
 }
 
-JNIEnv* main::getEnv()
+JNIEnv* JNI_Helper::getEnv()
 {
     return env;
 }
 
-JavaVM *main::getJVM()
+JavaVM *JNI_Helper::getJVM()
 {
     return gJvm;
 }
 
-void main::detachMyThread()
+void JNI_Helper::detachMyThread()
 {
     gJvm->DetachCurrentThread();
 }
@@ -50,7 +51,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
         return -1;
     }
 
-    jclass networkSingleton = env->FindClass("com/example/iyuro/socketstest/NetworkExecutor");
+    jclass networkSingleton = env->FindClass("com/example/iyuro/socketstest/URL/NetworkExecutor");
     jmethodID globalMethodIdNetworkSingleton = nullptr;
     if (networkSingleton != nullptr){
         globalMethodIdNetworkSingleton = env->GetMethodID(networkSingleton, "onSuccessDownload", "([B)V");
@@ -62,7 +63,30 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Failed to get method id");
     }
 
-    main::NetworkExecutorOnSuccessMethodId = globalMethodIdNetworkSingleton;
+    JNI_Helper::NetworkExecutorOnSuccessMethodId = globalMethodIdNetworkSingleton;
+
+
+    jclass messageHandlerSingleton = env->FindClass("com/example/iyuro/socketstest/Messenger/MessageHandler");
+    jmethodID globalMethodIdMessageHandler = nullptr;
+    if (messageHandlerSingleton != nullptr){
+        globalMethodIdMessageHandler = env->GetMethodID(messageHandlerSingleton, "onMessageReceive", "([B)V");
+    } else {
+        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Failed to find NetworkManager class");
+    }
+
+    if (globalMethodIdMessageHandler == nullptr){
+        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Failed to get method id");
+    }
+
+    JNI_Helper::MessageHandlerOnSuccessMethodId = globalMethodIdMessageHandler;
 
     return JNI_VERSION_1_4;
+}
+
+void JNI_Helper::checkPendingExceptions(JNIEnv *env, std::string s)
+{
+    jboolean flag = env->ExceptionCheck();
+    if (flag) {
+        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", s.c_str());
+    }
 }

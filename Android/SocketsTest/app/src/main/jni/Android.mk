@@ -18,12 +18,15 @@ LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
 LOCAL_MODULE    := native-lib
 LOCAL_SRC_FILES := ../cpp/JNI_Helper.cpp \
     ../cpp/NetworkExecutor.cpp \
-    ../cpp/com_example_iyuro_socketstest_NetworkExecutor.cpp \
+    ../cpp/com_example_iyuro_socketstest_URL_NetworkExecutor.cpp \
     ../cpp/NetworkExecutorAdapter.cpp \
     ../cpp/HTTP_Client.cpp \
     ../cpp/HTTPS_Client.cpp \
     ../cpp/Basic_Connection.cpp \
-    ../cpp/SSL_Connection.cpp
+    ../cpp/SSL_Connection.cpp \
+    ../cpp/com_example_iyuro_socketstest_Messenger_MessageHandler.cpp \
+    ../cpp/MessageHandlerAdapter.cpp \
+    ../cpp/MessageHandler.cpp
 
 LOCAL_C_INCLUDES = ../include
 

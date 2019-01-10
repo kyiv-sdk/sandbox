@@ -7,34 +7,16 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-
-    <LinearLayout
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:text="URL download"
+        android:id="@+id/url_download"/>
 
-        <EditText
-            android:id="@+id/editText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="8"
-            android:hint="http://www.example.com:80"
-            android:text="https://www.example.com:443"
-            android:inputType=""/>
-
-        <Button
-            android:text="go"
-            android:id="@+id/btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"/>
-
-    </LinearLayout>
-
-    <WebView
-        android:id="@+id/webview"
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="wrap_content"
+        android:text="Socket test"
+        android:id="@+id/socket_test"/>
 
 </LinearLayout>

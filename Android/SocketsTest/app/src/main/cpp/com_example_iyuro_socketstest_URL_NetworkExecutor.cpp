@@ -39,22 +39,14 @@ NetworkExecutorImplementation::~NetworkExecutorImplementation() {
     m_env->DeleteGlobalRef(instance);
 }
 
-void checkPendingExceptions(JNIEnv *env, std::string s)
-{
-    jboolean flag = env->ExceptionCheck();
-    if (flag) {
-        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", s.c_str());
-    }
-}
-
 void jni_sendDataToJava(jobject instance, std::string *resultData)
 {
-    main m;
-    m.attachEnv();
-    JNIEnv *new_env = m.getEnv();
-    checkPendingExceptions(new_env, "1");
+    JNI_Helper jniHelper;
+    jniHelper.attachEnv();
+    JNIEnv *new_env = jniHelper.getEnv();
+    jniHelper.checkPendingExceptions(new_env, "1");
 
-    jmethodID mjmethodID = main::NetworkExecutorOnSuccessMethodId;
+    jmethodID mjmethodID = JNI_Helper::NetworkExecutorOnSuccessMethodId;
     jclass objectMainActivity = (jclass) instance;
 
     int size = (*resultData).size();
@@ -66,12 +58,12 @@ void jni_sendDataToJava(jobject instance, std::string *resultData)
 
     new_env->DeleteLocalRef(result);
 
-    m.detachMyThread();
+    jniHelper.detachMyThread();
 }
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_example_iyuro_socketstest_NetworkExecutor_cppStartDownloading(JNIEnv *env, jobject instance,
+Java_com_example_iyuro_socketstest_URL_NetworkExecutor_cppStartDownloading(JNIEnv *env, jobject instance,
                                                                 jstring t_protocol, jstring t_host, jint t_port)
 {
     jobject globalInstance = env->NewGlobalRef(instance);
@@ -89,7 +81,7 @@ Java_com_example_iyuro_socketstest_NetworkExecutor_cppStartDownloading(JNIEnv *e
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_NetworkExecutor_cppCloseDownloading(JNIEnv *env, jobject instance, jlong obj)
+Java_com_example_iyuro_socketstest_URL_NetworkExecutor_cppCloseDownloading(JNIEnv *env, jobject instance, jlong obj)
 {
     NetworkExecutor* networkExecutor = (NetworkExecutor*) obj;
     delete networkExecutor;

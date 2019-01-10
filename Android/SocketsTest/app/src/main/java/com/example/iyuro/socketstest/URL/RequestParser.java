@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest;
+package com.example.iyuro.socketstest.URL;
 
 import java.net.URL;
 
@@ -50,5 +50,9 @@ public class RequestParser {
 
     public int getPort() {
         return port;
+    }
+
+    public boolean isValidRequest() {
+        return isValidRequest;
     }
 }

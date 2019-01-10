@@ -43,14 +43,20 @@ void Basic_Connection::close_connection() {
 void Basic_Connection::load(std::string& resultStr)
 {
     char cur;
-    while (read(sock, &cur, 1) > 0) {
+    while (read(sock, &cur, 1) > 0)
+    {
+        if (cur == '\n'){
+            break;
+        }
+
         resultStr += cur;
     }
 }
 
 void Basic_Connection::write(std::string request) {
+    request += "\n";
     if (send(sock, request.c_str(), request.length(), 0) != (int)request.length()) {
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Error sending request.");
-        exit(1);
+//        exit(1);
     }
 }

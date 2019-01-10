@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest;
+package com.example.iyuro.socketstest.URL;
 
 public class NetworkExecutor {
     private int id;
