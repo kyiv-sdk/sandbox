@@ -2,11 +2,14 @@ package com.example.iyuro.socketstest.Messenger;
 
 import android.os.Handler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MessageHandler implements MessageListener{
     private static final MessageHandler ourInstance = new MessageHandler();
     private MessageListener messageListener;
     private Handler handler;
-    private long connection;
+    private long cppMessageHandler;
 
     public MessageHandler() {
         this.handler = new Handler();
@@ -21,15 +24,23 @@ public class MessageHandler implements MessageListener{
     }
 
     public void send(String message){
-        cppSendMessage(connection, message);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("sourceID", 0);
+            jsonObject.put("message", message);
+
+            cppSendMessage(cppMessageHandler, message);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void openConnection(){
-        this.connection = cppOpenConnection("10.129.171.8", 4444);
+        this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", 4444);
     }
 
     public void closeConnection(){
-        cppCloseConnection(connection);
+        cppDeleteMessageHandler(cppMessageHandler);
     }
 
     @Override
@@ -42,7 +53,7 @@ public class MessageHandler implements MessageListener{
         });
     }
 
-    private native long cppOpenConnection(String host, int port);
+    private native long cppCreateMessageHandler(String host, int port);
     private native void cppSendMessage(long connection, String message);
-    private native void cppCloseConnection(long obj);
+    private native void cppDeleteMessageHandler(long obj);
 }

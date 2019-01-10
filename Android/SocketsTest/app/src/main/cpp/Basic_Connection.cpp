@@ -42,6 +42,7 @@ void Basic_Connection::close_connection() {
 
 void Basic_Connection::load(std::string& resultStr)
 {
+    resultStr = "";
     char cur;
     while (read(sock, &cur, 1) > 0)
     {

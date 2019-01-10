@@ -63,38 +63,38 @@ void jni_sendMessageToJava(jobject instance, std::string *resultData)
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppOpenConnection(
+Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppCreateMessageHandler(
         JNIEnv *env, jobject instance, jstring t_host, jint t_port)
 {
     const char* m_host = env->GetStringUTFChars(t_host, 0);
-    Basic_Connection *connection = new Basic_Connection();
-    connection->open_connection(m_host, (int) t_port);
+    jobject globalInstance = env->NewGlobalRef(instance);
+    MessageAdapterImplementation *messageAdapterImplementation = new MessageAdapterImplementation(env, globalInstance, jni_sendMessageToJava);
+    MessageHandler *messageHandler = new MessageHandler(m_host, (int)t_port, messageAdapterImplementation);
 
-    return (jlong)connection;
+    return (jlong)messageHandler;
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppSendMessage(
-        JNIEnv *env, jobject instance, jlong t_connection, jstring t_message)
+        JNIEnv *env, jobject instance, jlong t_messageHandler, jstring t_message)
 {
-    jobject globalInstance = env->NewGlobalRef(instance);
-
-    MessageAdapterImplementation *messageAdapterImplementation = new MessageAdapterImplementation(env, globalInstance, jni_sendMessageToJava);
-
-    Basic_Connection* connection = (Basic_Connection*) t_connection;
-    MessageHandler messageHandler(connection, messageAdapterImplementation);
+//    jobject globalInstance = env->NewGlobalRef(instance);
+//
+//    MessageAdapterImplementation *messageAdapterImplementation = new MessageAdapterImplementation(env, globalInstance, jni_sendMessageToJava);
+//
+    MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
+//    MessageHandler messageHandler(connection, messageAdapterImplementation);
 
     const char* m_message = env->GetStringUTFChars(t_message, 0);
-    messageHandler.send(m_message);
+    messageHandler->send(m_message);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppCloseConnection(
-        JNIEnv *env, jobject instance, jlong t_connection)
+Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppDeleteMessageHandler(
+        JNIEnv *env, jobject instance, jlong t_messageHandler)
 {
-    Basic_Connection* connection = (Basic_Connection*) t_connection;
-    connection->close_connection();
-    delete connection;
+    MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
+    delete messageHandler;
 }

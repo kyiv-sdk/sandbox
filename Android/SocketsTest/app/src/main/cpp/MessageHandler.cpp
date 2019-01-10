@@ -6,20 +6,30 @@
 
 #include <android/log.h>
 
-MessageHandler::MessageHandler(Basic_Connection *t_connection, MessageHandlerAdapter *new_messageHandlerAdapter)
+MessageHandler::MessageHandler(const char *t_hostname, int t_port, MessageHandlerAdapter *new_messageHandlerAdapter)
 {
-    connection = t_connection;
     messageHandlerAdapter = new_messageHandlerAdapter;
+
+    connection = new Basic_Connection();
+    connection->open_connection(t_hostname, t_port);
+
+    readerThread = std::thread(&MessageHandler::readerFn, this);
+    senderThread = std::thread(&MessageHandler::senderFn, this);
 }
 
 MessageHandler::~MessageHandler()
 {
     try
     {
-        if (myThread.joinable())
+        if (senderThread.joinable())
         {
-            myThread.join();
+            senderThread.join();
         }
+        if (readerThread.joinable())
+        {
+            readerThread.join();
+        }
+        connection->close_connection();
         delete messageHandlerAdapter;
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "~MessageHandler() called!");
     }
@@ -30,18 +40,26 @@ MessageHandler::~MessageHandler()
 }
 
 void MessageHandler::send(const char* message) {
-    myThread = std::thread(&MessageHandler::run, this, message);
+    messagesToSend.push(message);
 }
 
-void MessageHandler::run(const char* message)
+void MessageHandler::senderFn()
 {
+    while (true){
+        if (!messagesToSend.empty()){
+            connection->write(messagesToSend.front());
+            messagesToSend.pop();
+        }
+    }
+}
+
+void MessageHandler::readerFn() {
     std::string resultStr;
 
-    connection->write(message);
-
-    connection->load(resultStr);
-
-    messageHandlerAdapter->runCallback(&resultStr);
-
-    delete message;
+    while (true){
+        connection->load(resultStr);
+        if (!resultStr.empty()){
+            messageHandlerAdapter->runCallback(&resultStr);
+        }
+    }
 }

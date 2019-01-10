@@ -44,8 +44,6 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
 
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
         messageList = new ArrayList<>();
-//        messageList.add(new UserMessage("First", 1));
-//        messageList.add(new UserMessage("Second", 2));
         mMessageAdapter = new MessageListAdapter(messageList);
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
         mMessageRecycler.setAdapter(mMessageAdapter);
@@ -96,6 +94,7 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        MessageHandler.getInstance().send("exit");
         MessageHandler.getInstance().closeConnection();
     }
 }

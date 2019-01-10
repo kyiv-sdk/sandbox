@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SocketsTest</string>
+    <string name="simpleJson">{"sourceID":0,"message":"t"}</string>
 </resources>

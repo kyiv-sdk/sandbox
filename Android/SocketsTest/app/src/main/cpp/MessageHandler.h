@@ -7,17 +7,22 @@
 
 
 #include <thread>
+#include <queue>
 #include "MessageHandlerAdapter.h"
 #include "Basic_Connection.h"
 
 class MessageHandler {
-    std::thread myThread;
+    std::thread senderThread, readerThread;
     MessageHandlerAdapter *messageHandlerAdapter;
     Basic_Connection *connection;
 
-    void run(const char* message);
+    void senderFn();
+
+    void readerFn();
+
+    std::queue<const char*> messagesToSend;
 public:
-    MessageHandler(Basic_Connection *connection, MessageHandlerAdapter *new_messageHandlerAdapter);
+    MessageHandler(const char *hostname, int port, MessageHandlerAdapter *new_messageHandlerAdapter);
     void send(const char* message);
     ~MessageHandler();
 };
