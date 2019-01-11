@@ -21,6 +21,8 @@ class MessageHandler {
     void readerFn();
 
     std::queue<const char*> messagesToSend;
+
+    bool needOneMoreLoop;
 public:
     MessageHandler(const char *hostname, int port, MessageHandlerAdapter *new_messageHandlerAdapter);
     void send(const char* message);

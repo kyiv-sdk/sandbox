@@ -13,12 +13,15 @@ MessageHandler::MessageHandler(const char *t_hostname, int t_port, MessageHandle
     connection = new Basic_Connection();
     connection->open_connection(t_hostname, t_port);
 
+    this->needOneMoreLoop = true;
+
     readerThread = std::thread(&MessageHandler::readerFn, this);
     senderThread = std::thread(&MessageHandler::senderFn, this);
 }
 
 MessageHandler::~MessageHandler()
 {
+    needOneMoreLoop = false;
     try
     {
         if (senderThread.joinable())
@@ -45,7 +48,7 @@ void MessageHandler::send(const char* message) {
 
 void MessageHandler::senderFn()
 {
-    while (true){
+    while (needOneMoreLoop){
         if (!messagesToSend.empty()){
             connection->write(messagesToSend.front());
             messagesToSend.pop();
@@ -56,7 +59,7 @@ void MessageHandler::senderFn()
 void MessageHandler::readerFn() {
     std::string resultStr;
 
-    while (true){
+    while (needOneMoreLoop){
         connection->load(resultStr);
         if (!resultStr.empty()){
             messageHandlerAdapter->runCallback(&resultStr);
