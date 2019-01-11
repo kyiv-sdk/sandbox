@@ -1,5 +1,12 @@
 package com.example.iyuro.socketstest.Messenger;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +16,7 @@ import android.view.View;
 import android.webkit.WebResourceResponse;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.iyuro.socketstest.R;
 
@@ -24,15 +32,16 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class MessengerActivity extends AppCompatActivity implements MessageListener {
+public class MessengerActivity extends AppCompatActivity implements MessageListener, MessageProtocolInterface {
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
 
-    private ArrayList<UserMessage> messageList;
+    private static ArrayList<UserMessage> messageList;
 
     private EditText editText;
     private Button btn;
     private String dstId;
+    MessageProtocol messageProtocol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +52,7 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
         dstId = bundle.getString("dstId");
 
         editText = findViewById(R.id.edittext_chatbox);
+
         btn = findViewById(R.id.button_chatbox_send);
 
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
@@ -51,7 +61,6 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
         mMessageRecycler.setAdapter(mMessageAdapter);
 
-        // TODO: twice open connection
 //        MessageHandler.getInstance().openConnection();
         MessageHandler.getInstance().setMessageListener(this);
 
@@ -59,15 +68,16 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
             @Override
             public void onClick(View v) {
                 String msg = editText.getText().toString();
-                messageList.add(new UserMessage(msg, 1));
+                messageList.add(new UserMessage(msg, "1"));
                 mMessageAdapter.notifyDataSetChanged();
 
                 JSONObject jsonObject = new JSONObject();
-                try {
-                    if (dstId != null) {
-                        jsonObject.put("dstID", dstId);
-                        jsonObject.put("message", msg);
-                    }
+                    try {
+                        if (dstId != null) {
+                            jsonObject.put("keyAction", "msg");
+                            jsonObject.put("dstID", dstId);
+                            jsonObject.put("message", msg);
+                        }
 
                     MessageHandler.getInstance().send(jsonObject.toString());
                 } catch (JSONException e) {
@@ -75,6 +85,8 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
                 }
             }
         });
+
+        messageProtocol = new MessageProtocol(this);
     }
 
     @Override
@@ -98,17 +110,42 @@ public class MessengerActivity extends AppCompatActivity implements MessageListe
                 data = textBuilder.toString();
             }
             Log.i("Message received:", data);
-            messageList.add(new UserMessage(data, 2));
-            mMessageAdapter.notifyDataSetChanged();
+
+            messageProtocol.processReceivedMessage(data);
+
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        MessageHandler.getInstance().send("exit");
-        MessageHandler.getInstance().closeConnection();
+    protected void onResume() {
+        super.onResume();
+        MessageHandler.getInstance().setMessageListener(this);
+    }
+
+    @Override
+    public String getCurrentUsername() {
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String currentUsernameDefault = getResources().getString(R.string.current_username_default_key);
+        return sharedPref.getString(getString(R.string.current_username_key), currentUsernameDefault);
+    }
+
+    @Override
+    public String getCurrentDestionationUsername() {
+        return dstId;
+    }
+
+    @Override
+    public void onCurrentChatNewMessage(String message) {
+        messageList.add(new UserMessage(message, "2"));
+        mMessageAdapter.notifyDataSetChanged();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
+    }
+
+    @Override
+    public void onAnotherChatNewMessage(String srcID, String message) {
+        Toast.makeText(this, "From " + srcID + " : " + message, Toast.LENGTH_SHORT).show();
     }
 }

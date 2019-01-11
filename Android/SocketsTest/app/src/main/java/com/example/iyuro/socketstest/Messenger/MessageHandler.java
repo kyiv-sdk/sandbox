@@ -1,6 +1,7 @@
 package com.example.iyuro.socketstest.Messenger;
 
 import android.os.Handler;
+import android.provider.Settings;
 
 public class MessageHandler implements MessageListener{
     static {

@@ -2,9 +2,9 @@ package com.example.iyuro.socketstest.Messenger;
 
 public class UserMessage {
     String message;
-    int sender; // if 1 -> current, if 2 -> server
+    String sender; // if 1 -> current, if 2 -> server
 
-    public UserMessage(String message, int sender) {
+    public UserMessage(String message, String sender) {
         this.message = message;
         this.sender = sender;
     }
@@ -17,11 +17,11 @@ public class UserMessage {
         this.message = message;
     }
 
-    public int getSender() {
+    public String getSender() {
         return sender;
     }
 
-    public void setSender(int sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 }
