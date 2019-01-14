@@ -27,7 +27,7 @@ public class ServerMessageProtocol {
             switch (keyAction){
                 case "login":
                     String username = requestJsonObject.getString("username");
-                    serverInterface.getLoggedUsersRequest();
+//                    serverInterface.getLoggedUsers();
                     if (userHandlerInterface.isUsernameValid(username)){
                         responseJsonObject.put("message", "ok");
                         userHandlerInterface.onLoginSuccess(responseJsonObject.toString(), username);
@@ -37,7 +37,7 @@ public class ServerMessageProtocol {
                     }
                     break;
                 case "loggedUsersList":
-                    ArrayList<String> loggedUsers = serverInterface.getLoggedUsersRequest();
+                    ArrayList<String> loggedUsers = serverInterface.getLoggedUsers();
                     responseJsonObject.put("loggedUsers", loggedUsers);
                     destinationID = userHandlerInterface.getUserName();
 

@@ -9,16 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.iyuro.socketstest.Messenger.ChatUser;
 import com.example.iyuro.socketstest.Messenger.MessengerActivity;
 import com.example.iyuro.socketstest.R;
 
 import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private ArrayList<String> allUsernames;
+    private ArrayList<ChatUser> allUsernames;
     private Context context;
 
-    public MyAdapter(ArrayList<String> allUsernames, Context context) {
+    public MyAdapter(ArrayList<ChatUser> allUsernames, Context context) {
         this.allUsernames = allUsernames;
         this.context = context;
     }
@@ -35,14 +36,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-        viewHolder.txtViewTitle.setText(allUsernames.get(position));
+        String text = allUsernames.get(position).getUserID() + " : " + allUsernames.get(position).getUnreadMessagesCounter();
+        viewHolder.txtViewTitle.setText(text);
 
         viewHolder.txtViewTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int pos = viewHolder.getAdapterPosition();
                 Intent intent = new Intent(context, MessengerActivity.class);
-                intent.putExtra("dstId", allUsernames.get(pos));
+                intent.putExtra("dstId", allUsernames.get(pos).getUserID());
                 context.startActivity(intent);
             }
         });

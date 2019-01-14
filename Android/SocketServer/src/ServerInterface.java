@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 public interface ServerInterface {
-    ArrayList<String> getLoggedUsersRequest();
+    ArrayList<String> getLoggedUsers();
     int getLoggedUserHandlerPosition(String userUniqueId);
+    void notifyAllUsersAboutNewcomer();
 }

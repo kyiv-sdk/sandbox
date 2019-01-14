@@ -6,8 +6,8 @@
 #include <android/log.h>
 
 #include "JNI_Helper.h"
-#include "MessageHandlerAdapter.h"
-#include "MessageHandler.h"
+#include "../Chat/MessageHandlerAdapter.h"
+#include "../Chat/MessageHandler.h"
 
 class MessageAdapterImplementation: public MessageHandlerAdapter{
 private:
@@ -63,7 +63,7 @@ void jni_sendMessageToJava(jobject instance, std::string *resultData)
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppCreateMessageHandler(
+Java_com_example_iyuro_socketstest_Messenger_NetworkManager_cppCreateMessageHandler(
         JNIEnv *env, jobject instance, jstring t_host, jint t_port)
 {
     const char* m_host = env->GetStringUTFChars(t_host, 0);
@@ -76,7 +76,7 @@ Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppCreateMessageHand
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppSendMessage(
+Java_com_example_iyuro_socketstest_Messenger_NetworkManager_cppSendMessage(
         JNIEnv *env, jobject instance, jlong t_messageHandler, jstring t_message)
 {
 //    jobject globalInstance = env->NewGlobalRef(instance);
@@ -84,7 +84,7 @@ Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppSendMessage(
 //    MessageAdapterImplementation *messageAdapterImplementation = new MessageAdapterImplementation(env, globalInstance, jni_sendMessageToJava);
 //
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
-//    MessageHandler messageHandler(connection, messageAdapterImplementation);
+//    NetworkManager messageHandler(connection, messageAdapterImplementation);
 
     const char* m_message = env->GetStringUTFChars(t_message, 0);
     messageHandler->send(m_message);
@@ -92,7 +92,7 @@ Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppSendMessage(
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_Messenger_MessageHandler_cppDeleteMessageHandler(
+Java_com_example_iyuro_socketstest_Messenger_NetworkManager_cppDeleteMessageHandler(
         JNIEnv *env, jobject instance, jlong t_messageHandler)
 {
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;

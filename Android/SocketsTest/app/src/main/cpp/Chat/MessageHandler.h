@@ -9,7 +9,7 @@
 #include <thread>
 #include <queue>
 #include "MessageHandlerAdapter.h"
-#include "Basic_Connection.h"
+#include "../Connection/Basic_Connection.h"
 
 class MessageHandler {
     std::thread senderThread, readerThread;

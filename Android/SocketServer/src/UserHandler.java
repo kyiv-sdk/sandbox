@@ -2,8 +2,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class UserHandler implements Runnable, UserHandlerInterface {
+public class UserHandler implements UserHandlerInterface {
     private String userName;
     private String uniqueUserId;
     private final PrintWriter out;
@@ -12,6 +15,13 @@ public class UserHandler implements Runnable, UserHandlerInterface {
     boolean isLoggedIn;
     boolean loopFlag;
     ServerMessageProtocol serverMessageProtocol;
+
+    Reader reader;
+    Writer writer;
+
+    ServerInterface serverInterface;
+
+    private final List<UserMessage> messages;
 
     public UserHandler(ServerInterface serverInterface, Socket socket, String uniqueID, PrintWriter out, BufferedReader in) {
         this.socket = socket;
@@ -22,32 +32,21 @@ public class UserHandler implements Runnable, UserHandlerInterface {
         this.loopFlag = true;
         this.uniqueUserId = uniqueID;
 
+        this.serverInterface = serverInterface;
+
         serverMessageProtocol = new ServerMessageProtocol(serverInterface, this);
 
         System.out.println("Created user handler for: " + uniqueUserId);
-    }
 
-    @Override
-    public void run() {
-        String inputLine;
-        while (loopFlag){
-            try {
-                inputLine = in.readLine();
-                System.out.println("Received: " + inputLine + " from " + this.userName);
+        messages = Collections.synchronizedList(new ArrayList<>());
+//        messages.add(new UserMessage("test message"));
+        reader = new Reader(in, messages);
+        Thread threadReader = new Thread(reader);
+        threadReader.start();
 
-                serverMessageProtocol.processNewMessage(inputLine);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        try {
-            this.in.close();
-            this.out.close();
-        } catch(IOException e){
-            e.printStackTrace();
-        }
+        writer = new Writer(out, messages, serverMessageProtocol);
+        Thread threadWriter = new Thread(writer);
+        threadWriter.start();
     }
 
     @Override
@@ -84,7 +83,7 @@ public class UserHandler implements Runnable, UserHandlerInterface {
 
     public void writeMessage(String msg){
         this.out.println(msg);
-        System.out.println("Send:" + msg);
+        System.out.println("Sent: " + msg + " to " + this.userName);
     }
 
     @Override
@@ -92,6 +91,7 @@ public class UserHandler implements Runnable, UserHandlerInterface {
         System.out.println("Username " + this.userName + " changed to " + userName);
         this.userName = userName;
         writeMessage(response);
+        serverInterface.notifyAllUsersAboutNewcomer();
     }
 
     @Override
@@ -115,6 +115,8 @@ public class UserHandler implements Runnable, UserHandlerInterface {
         System.out.println("exited");
         this.isLoggedIn=false;
         loopFlag = false;
+        reader.setLoopFlag(false);
+        writer.setLoopFlag(false);
         try {
             this.socket.close();
             Server.userHandlers.remove(this);
@@ -123,5 +125,8 @@ public class UserHandler implements Runnable, UserHandlerInterface {
         }
     }
 
+    public void addMessage(String msg){
+        messages.add(new UserMessage(msg));
+    }
 
 }

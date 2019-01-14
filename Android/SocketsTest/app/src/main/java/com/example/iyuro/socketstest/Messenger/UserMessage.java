@@ -1,10 +1,10 @@
 package com.example.iyuro.socketstest.Messenger;
 
 public class UserMessage {
-    String message;
-    String sender; // if 1 -> current, if 2 -> server
+    private String message;
+    private boolean sender; // if 0 -> current, if 1 -> server
 
-    public UserMessage(String message, String sender) {
+    public UserMessage(String message, Boolean sender) {
         this.message = message;
         this.sender = sender;
     }
@@ -17,11 +17,11 @@ public class UserMessage {
         this.message = message;
     }
 
-    public String getSender() {
+    public boolean getSender() {
         return sender;
     }
 
-    public void setSender(String sender) {
+    public void setSender(boolean sender) {
         this.sender = sender;
     }
 }

@@ -6,8 +6,8 @@
 #include <android/log.h>
 
 #include "JNI_Helper.h"
-#include "NetworkExecutorAdapter.h"
-#include "NetworkExecutor.h"
+#include "../URL/NetworkExecutorAdapter.h"
+#include "../URL/NetworkExecutor.h"
 
 class NetworkExecutorImplementation: public NetworkExecutorAdapter{
 private:

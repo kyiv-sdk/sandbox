@@ -34,7 +34,7 @@ MessageHandler::~MessageHandler()
         }
         connection->close_connection();
         delete messageHandlerAdapter;
-        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "~MessageHandler() called!");
+        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "~NetworkManager() called!");
     }
     catch (const std::exception& e)
     {

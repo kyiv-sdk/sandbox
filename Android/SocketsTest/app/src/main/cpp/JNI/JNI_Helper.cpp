@@ -66,7 +66,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
     JNI_Helper::NetworkExecutorOnSuccessMethodId = globalMethodIdNetworkSingleton;
 
 
-    jclass messageHandlerSingleton = env->FindClass("com/example/iyuro/socketstest/Messenger/MessageHandler");
+    jclass messageHandlerSingleton = env->FindClass("com/example/iyuro/socketstest/Messenger/NetworkManager");
     jmethodID globalMethodIdMessageHandler = nullptr;
     if (messageHandlerSingleton != nullptr){
         globalMethodIdMessageHandler = env->GetMethodID(messageHandlerSingleton, "onMessageReceive", "([B)V");

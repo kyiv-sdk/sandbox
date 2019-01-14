@@ -1,3 +1,5 @@
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -7,7 +9,6 @@ import java.util.ArrayList;
 
 public class Server implements ServerInterface{
     static ArrayList<UserHandler> userHandlers = new ArrayList<>();
-//    static int nextUserID = 0;
 
     public void startServer(int portNumber){
 
@@ -35,14 +36,12 @@ public class Server implements ServerInterface{
                         int userHandlerPosition = getLoggedUserHandlerPosition(userUniqueId);
                         if (userHandlerPosition < 0) {
                             UserHandler newUserHandler = new UserHandler(this, clientSocket, userUniqueId, out, in);
+
                             userHandlers.add(newUserHandler);
 
-                            Thread thread = new Thread(newUserHandler);
-                            thread.start();
                         } else {
                             // TODO: bind with already created handler
                         }
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -56,10 +55,24 @@ public class Server implements ServerInterface{
     }
 
     @Override
-    public ArrayList<String> getLoggedUsersRequest() {
+    public void notifyAllUsersAboutNewcomer(){
+        for (int i = 0; i < userHandlers.size(); i++){
+            UserHandler userHandler = userHandlers.get(i);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("keyAction", "loggedUsersList");
+
+            userHandler.addMessage(jsonObject.toString());
+        }
+    }
+
+    @Override
+    public ArrayList<String> getLoggedUsers() {
         ArrayList<String> result = new ArrayList<>();
         for (UserHandler userHandler : userHandlers){
-            result.add(userHandler.getUserName());
+            if (!userHandler.getUserName().equals("default")) {
+                result.add(userHandler.getUserName());
+            }
         }
         return result;
     }

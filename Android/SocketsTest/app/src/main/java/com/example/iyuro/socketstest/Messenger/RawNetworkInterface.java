@@ -1,5 +1,5 @@
 package com.example.iyuro.socketstest.Messenger;
 
-public interface MessageListener {
+public interface RawNetworkInterface {
     void onMessageReceive(final byte[] bytesData);
 }

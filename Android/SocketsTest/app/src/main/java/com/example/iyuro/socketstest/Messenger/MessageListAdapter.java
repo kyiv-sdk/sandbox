@@ -30,7 +30,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         UserMessage message = mMessageList.get(position);
 
-        if (message.getSender().equals("1")) {
+        if (!message.getSender()) {
             return VIEW_TYPE_MESSAGE_SENT;
         } else {
             return VIEW_TYPE_MESSAGE_RECEIVED;
@@ -68,33 +68,29 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     }
 
     private class SentMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText;
+        TextView messageText;
 
         SentMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
-            timeText = itemView.findViewById(R.id.text_message_time);
         }
 
         void bind(UserMessage message) {
             messageText.setText(message.getMessage());
-            timeText.setText("8:00");
         }
     }
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText;
+        TextView messageText;
         ReceivedMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
-            timeText = itemView.findViewById(R.id.text_message_time);
         }
 
         void bind(UserMessage message) {
             messageText.setText(message.getMessage());
-            timeText.setText("9:00");
         }
     }
 }

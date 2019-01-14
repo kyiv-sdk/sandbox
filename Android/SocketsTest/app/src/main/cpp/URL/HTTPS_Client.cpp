@@ -1,16 +1,15 @@
 //
-// Created by Ivan Yurovych on 1/4/19.
+// Created by Ivan Yurovych on 1/3/19.
 //
 
-#include "HTTP_Client.h"
+#include "HTTPS_Client.h"
 
 #include <sstream>
 
-#include "Basic_Connection.h"
+#include "../Connection/SSL_Connection.h"
 
-void HTTP_Client::loadData(std::string& resultStr, const char* hostname, int port)
-{
-    Basic_Connection connection;
+void HTTPS_Client::loadData(std::string &resultStr, const char *hostname, int port) {
+    SSL_Connection connection;
     connection.open_connection(hostname, port);
 
     std::stringstream ss;

@@ -5,33 +5,23 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.webkit.WebResourceResponse;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.iyuro.socketstest.Messenger.MessageHandler;
-import com.example.iyuro.socketstest.Messenger.MessageListener;
+import com.example.iyuro.socketstest.Messenger.NetworkManager;
+import com.example.iyuro.socketstest.Messenger.NetworkInterface;
 import com.example.iyuro.socketstest.R;
 import com.example.iyuro.socketstest.UsersList.UsersListActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements MessageListener {
+public class LoginActivity extends AppCompatActivity implements NetworkInterface {
 
     EditText usernameEditText;
     Button loginButton;
@@ -45,12 +35,11 @@ public class LoginActivity extends AppCompatActivity implements MessageListener 
         usernameEditText = findViewById(R.id.username);
         loginButton = findViewById(R.id.sign_in_button);
 
-        MessageHandler.getInstance().openConnection();
-//        MessageHandler.getInstance().setMessageListener(this);
+        NetworkManager.getInstance().openConnection();
 
         String android_id = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        MessageHandler.getInstance().send(android_id);
+        NetworkManager.getInstance().send(android_id);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +52,7 @@ public class LoginActivity extends AppCompatActivity implements MessageListener 
     @Override
     protected void onResume() {
         super.onResume();
-        MessageHandler.getInstance().setMessageListener(this);
+        NetworkManager.getInstance().setNetworkInterface(this);
     }
 
     private void logIn(){
@@ -73,36 +62,15 @@ public class LoginActivity extends AppCompatActivity implements MessageListener 
             jsonObject.put("keyAction", "login");
             jsonObject.put("username", usernameEditText.getText().toString());
 
-//            String msg = "{\"username\":\"" + usernameEditText.getText().toString() + "\",\"message\":\"login\"}";
-            MessageHandler.getInstance().send(jsonObject.toString());
+            NetworkManager.getInstance().send(jsonObject.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void onMessageReceive(final byte[] bytesData) {
+    public void onMessageReceive(String data) {
         try {
-            String data ="";
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytesData);
-
-            WebResourceResponse webResourceResponse = new WebResourceResponse("text/html", "utf-8", byteArrayInputStream);
-
-            InputStream inputStream = webResourceResponse.getData();
-
-            StringBuilder textBuilder = new StringBuilder();
-            try (Reader reader = new BufferedReader(new InputStreamReader
-                    (inputStream, Charset.forName(StandardCharsets.UTF_8.name())))) {
-                int c = 0;
-                while ((c = reader.read()) != -1) {
-                    textBuilder.append((char) c);
-                }
-
-                data = textBuilder.toString();
-            }
-            Log.i("Message received:", data);
-
-            // TODO: parse answer
             JSONObject jsonObject = new JSONObject(data);
             try {
                 String keyAction = jsonObject.getString("keyAction");
@@ -137,8 +105,8 @@ public class LoginActivity extends AppCompatActivity implements MessageListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MessageHandler.getInstance().send("exit");
-        MessageHandler.getInstance().closeConnection();
+        NetworkManager.getInstance().send("exit");
+        NetworkManager.getInstance().closeConnection();
     }
 }
 

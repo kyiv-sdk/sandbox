@@ -3,27 +3,20 @@ import org.json.JSONObject;
 public class UserMessage {
     String keyAction;
     String dstUserName, message;
+    String rawMessage;
 
     public UserMessage(String inMessage) {
-        JSONObject jsonObject = new JSONObject(inMessage);
-        keyAction = jsonObject.getString("keyAction");
-        message = jsonObject.getString("message");
-        dstUserName = jsonObject.getString("dstID");
+        rawMessage = inMessage;
     }
 
-    public String getDstUserName() {
-        return dstUserName;
+    public String getRawMessage() {
+        return rawMessage;
     }
 
-    public void setDstUserName(String dstUserName) {
-        this.dstUserName = dstUserName;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    @Override
+    public String toString() {
+        return "UserMessage{" +
+                "rawMessage='" + rawMessage + '\'' +
+                '}';
     }
 }
