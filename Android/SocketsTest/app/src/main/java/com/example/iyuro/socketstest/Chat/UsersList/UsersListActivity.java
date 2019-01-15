@@ -3,6 +3,7 @@ package com.example.iyuro.socketstest.Chat.UsersList;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
@@ -15,6 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
+import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
+
 public class UsersListActivity extends AppCompatActivity implements UI_Interface {
 
     private RecyclerView.Adapter mAdapter;
@@ -26,6 +29,8 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
         setContentView(R.layout.activity_users_list);
 
         RecyclerView mRecyclerView = findViewById(R.id.usersListRecyclerView);
+        DividerItemDecoration itemDecor = new DividerItemDecoration(this, HORIZONTAL);
+        mRecyclerView.addItemDecoration(itemDecor);
 
         mRecyclerView.setHasFixedSize(true);
 
