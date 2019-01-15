@@ -27,7 +27,7 @@ public class Server implements ServerInterface{
                 try {
                     String userUniqueId;
                     String inputLine = in.readLine();
-                    System.out.println("Received: " + inputLine);
+                    System.out.println("Received on server: " + inputLine);
 
                     if (inputLine != null) {
 

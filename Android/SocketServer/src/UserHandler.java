@@ -36,13 +36,15 @@ public class UserHandler implements UserHandlerInterface {
         System.out.println("Created user handler for: " + uniqueUserId);
 
         messages = Collections.synchronizedList(new ArrayList<>());
-        reader = new Reader(in, messages);
-        Thread threadReader = new Thread(reader);
-        threadReader.start();
 
         messageManager = new MessageManager(messages, serverMessageProtocol);
         Thread threadWriter = new Thread(messageManager);
         threadWriter.start();
+
+        reader = new Reader(in, messages);
+        Thread threadReader = new Thread(reader);
+        threadReader.start();
+
     }
 
     @Override

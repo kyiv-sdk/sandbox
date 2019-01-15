@@ -34,7 +34,7 @@ public class LoginManager implements NetworkInterface {
                 if (keyAction.equals("login")){
                     String response = jsonObject.getString("message");
                     if (response.equals("ok")){
-                        loginInterface.onLoginSucces();
+                        loginInterface.onLoginSuccess();
                     } else {
                         loginInterface.onLoginFailed();
                     }

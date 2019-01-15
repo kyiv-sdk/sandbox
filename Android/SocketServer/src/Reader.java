@@ -24,9 +24,15 @@ public class Reader implements Runnable{
                 synchronized(userMessages) {
                     userMessages.add(new UserMessage(inputLine));
                     userMessages.notifyAll();
+                    System.out.println("Received : " + inputLine);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                System.out.println("Caught error, closing connection");
+                synchronized(userMessages) {
+                    userMessages.add(new UserMessage("exit"));
+                    userMessages.notifyAll();
+                }
             }
         }
         System.out.println("Reader closed");

@@ -1,6 +1,7 @@
 package com.example.iyuro.socketstest.Chat.Messenger;
 
 import android.os.Handler;
+import android.util.Log;
 import android.webkit.WebResourceResponse;
 
 import java.io.BufferedReader;
@@ -38,10 +39,16 @@ public class NetworkManager implements RawNetworkInterface {
         cppSendMessage(cppMessageHandler, message);
     }
 
-    public void openConnection(){
+    public void openConnection(String uniqueID){
         if (cppMessageHandler == -1) {
             this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", 4444);
+            Log.i("--------MY_LOG--------", uniqueID);
+            this.send(uniqueID);
         }
+    }
+
+    public boolean isConnectionClosed(){
+        return cppMessageHandler == -1;
     }
 
     public void closeConnection(){

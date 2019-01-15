@@ -32,11 +32,9 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         usernameEditText = findViewById(R.id.username);
         loginButton = findViewById(R.id.sign_in_button);
 
-        NetworkManager.getInstance().openConnection();
-
         String android_id = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        NetworkManager.getInstance().send(android_id);
+        NetworkManager.getInstance().openConnection(android_id);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,10 +64,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
     @Override
     protected void onDestroy() {
-        Toast.makeText(this, "On destroy login activity", Toast.LENGTH_SHORT).show();
         super.onDestroy();
-        NetworkManager.getInstance().send("exit");
-        NetworkManager.getInstance().closeConnection();
     }
 
     @Override
