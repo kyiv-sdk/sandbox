@@ -1,12 +1,6 @@
 package com.example.iyuro.socketstest.Chat.RegisterActivity;
-
-import android.content.Intent;
-import android.widget.Toast;
-
 import com.example.iyuro.socketstest.Chat.Messenger.NetworkInterface;
 import com.example.iyuro.socketstest.Chat.Messenger.NetworkManager;
-import com.example.iyuro.socketstest.Chat.UsersList.UsersListActivity;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
