@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.Messenger;
+package com.example.iyuro.socketstest.Chat.Messenger;
 
 public interface UI_Interface {
     void onUsersListRefresh();

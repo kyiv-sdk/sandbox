@@ -24,7 +24,7 @@ LOCAL_SRC_FILES := ../cpp/JNI/JNI_Helper.cpp \
     ../cpp/URL/HTTPS_Client.cpp \
     ../cpp/Connection/Basic_Connection.cpp \
     ../cpp/Connection/SSL_Connection.cpp \
-    ../cpp/JNI/com_example_iyuro_socketstest_Messenger_MessageHandler.cpp \
+    ../cpp/JNI/com_example_iyuro_socketstest_Chat_Messenger_MessageHandler.cpp \
     ../cpp/Chat/MessageHandlerAdapter.cpp \
     ../cpp/Chat/MessageHandler.cpp
 

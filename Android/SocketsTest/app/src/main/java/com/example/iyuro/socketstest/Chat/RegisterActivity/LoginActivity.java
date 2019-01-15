@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.RegisterActivity;
+package com.example.iyuro.socketstest.Chat.RegisterActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,10 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.iyuro.socketstest.Messenger.NetworkManager;
-import com.example.iyuro.socketstest.Messenger.NetworkInterface;
+import com.example.iyuro.socketstest.Chat.Messenger.NetworkManager;
+import com.example.iyuro.socketstest.Chat.Messenger.NetworkInterface;
 import com.example.iyuro.socketstest.R;
-import com.example.iyuro.socketstest.UsersList.UsersListActivity;
+import com.example.iyuro.socketstest.Chat.UsersList.UsersListActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

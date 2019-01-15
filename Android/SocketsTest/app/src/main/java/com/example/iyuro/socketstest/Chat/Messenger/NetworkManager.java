@@ -1,7 +1,6 @@
-package com.example.iyuro.socketstest.Messenger;
+package com.example.iyuro.socketstest.Chat.Messenger;
 
 import android.os.Handler;
-import android.util.Log;
 import android.webkit.WebResourceResponse;
 
 import java.io.BufferedReader;

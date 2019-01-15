@@ -24,11 +24,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".URL.URL_DownloadActivity" />
-        <activity android:name=".Messenger.MessengerActivity" />
+        <activity android:name=".Chat.Messenger.MessengerActivity" />
         <activity
-            android:name=".RegisterActivity.LoginActivity"
+            android:name=".Chat.RegisterActivity.LoginActivity"
             android:label="@string/title_activity_login" />
-        <activity android:name=".UsersList.UsersListActivity"></activity>
+        <activity android:name=".Chat.UsersList.UsersListActivity"></activity>
     </application>
 
 </manifest>
