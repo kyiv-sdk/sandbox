@@ -130,4 +130,13 @@ public class UserHandler implements UserHandlerInterface {
         }
     }
 
+    @Override
+    public String toString() {
+        return "UserHandler{" +
+                "userName='" + userName + '\'' +
+                ", uniqueUserId='" + uniqueUserId + '\'' +
+                ", out=" + out +
+                ", in=" + in +
+                '}';
+    }
 }
