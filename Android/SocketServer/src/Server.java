@@ -66,6 +66,7 @@ public class Server implements ServerInterface{
             if (userHandler.getUserUniqueID().equals(uniqueID)){
                 userHandlers.remove(userHandler);
                 System.out.println("removed");
+                System.out.println("All users list: " + userHandlers.toString());
                 return;
             }
         }
