@@ -11,12 +11,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.iyuro.socketstest.Chat.Messenger.NetworkManager;
-import com.example.iyuro.socketstest.Chat.Messenger.NetworkInterface;
 import com.example.iyuro.socketstest.R;
 import com.example.iyuro.socketstest.Chat.UsersList.UsersListActivity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * A login screen that offers login via email/password.
@@ -42,14 +38,18 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                 Settings.Secure.ANDROID_ID);
         NetworkManager.getInstance().send(android_id);
 
-        loginManager = new LoginManager(this);
-
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 logIn();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loginManager = new LoginManager(this);
     }
 
     private void logIn(){
