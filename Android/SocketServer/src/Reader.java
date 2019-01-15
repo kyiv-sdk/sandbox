@@ -16,17 +16,21 @@ public class Reader implements Runnable{
     @Override
     public void run() {
         String inputLine;
+        System.out.println("Reader started");
         while (loopFlag){
             try {
                 inputLine = in.readLine();
+                System.out.println("Received: " + inputLine);
                 synchronized(userMessages) {
                     userMessages.add(new UserMessage(inputLine));
+                    userMessages.notifyAll();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         try {
+            System.out.println("Reader closed");
             this.in.close();
         } catch(IOException e){
             e.printStackTrace();

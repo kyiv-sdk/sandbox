@@ -18,16 +18,27 @@ public class Writer implements Runnable{
 
     @Override
     public void run() {
+        System.out.println("Writer started");
         while (loopFlag){
-            synchronized(userMessages) {
-                if (userMessages.size() > 0) {
-                    String msg = userMessages.get(0).rawMessage;
-                    serverMessageProtocol.processNewMessage(msg);
-                    userMessages.remove(0);
+            try {
+                synchronized (userMessages) {
+                    try {
+                        userMessages.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    while (userMessages.size() > 0) {
+                        String msg = userMessages.get(0).rawMessage;
+                        serverMessageProtocol.processNewMessage(msg);
+                        userMessages.remove(0);
+                    }
                 }
+            } catch (Exception e){
+                e.printStackTrace();
             }
         }
         try {
+            System.out.println("Writer closed");
             this.out.close();
         } catch(Exception e){
             e.printStackTrace();

@@ -39,7 +39,6 @@ public class UserHandler implements UserHandlerInterface {
         System.out.println("Created user handler for: " + uniqueUserId);
 
         messages = Collections.synchronizedList(new ArrayList<>());
-//        messages.add(new UserMessage("test message"));
         reader = new Reader(in, messages);
         Thread threadReader = new Thread(reader);
         threadReader.start();
@@ -127,7 +126,15 @@ public class UserHandler implements UserHandlerInterface {
     }
 
     public void addMessage(String msg){
-        messages.add(new UserMessage(msg));
+        synchronized(messages) {
+//            try {
+//                messages.wait();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            messages.add(new UserMessage(msg));
+            messages.notifyAll();
+        }
     }
 
 }
