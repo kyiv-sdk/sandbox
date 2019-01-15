@@ -3,22 +3,20 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Writer implements Runnable{
+public class MessageManager implements Runnable{
     final List<UserMessage> userMessages;
     boolean loopFlag;
-    private final PrintWriter out;
     ServerMessageProtocol serverMessageProtocol;
 
-    public Writer(PrintWriter out, List<UserMessage> userMessages, ServerMessageProtocol serverMessageProtocol) {
+    public MessageManager(List<UserMessage> userMessages, ServerMessageProtocol serverMessageProtocol) {
         this.userMessages = userMessages;
         this.loopFlag = true;
-        this.out = out;
         this.serverMessageProtocol = serverMessageProtocol;
     }
 
     @Override
     public void run() {
-        System.out.println("Writer started");
+        System.out.println("MessageManager started");
         while (loopFlag){
             try {
                 synchronized (userMessages) {
@@ -38,8 +36,7 @@ public class Writer implements Runnable{
             }
         }
         try {
-            System.out.println("Writer closed");
-            this.out.close();
+            System.out.println("MessageManager closed");
         } catch(Exception e){
             e.printStackTrace();
         }
