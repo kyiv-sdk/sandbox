@@ -66,13 +66,14 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
     @Override
     protected void onDestroy() {
+        Toast.makeText(this, "On destroy login activity", Toast.LENGTH_SHORT).show();
         super.onDestroy();
         NetworkManager.getInstance().send("exit");
         NetworkManager.getInstance().closeConnection();
     }
 
     @Override
-    public void onLoginSucces() {
+    public void onLoginSuccess() {
         saveUsername(username);
         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getApplicationContext(), UsersListActivity.class);
