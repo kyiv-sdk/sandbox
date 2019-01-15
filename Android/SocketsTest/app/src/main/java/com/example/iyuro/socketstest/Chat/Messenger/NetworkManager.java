@@ -46,6 +46,7 @@ public class NetworkManager implements RawNetworkInterface {
 
     public void closeConnection(){
         cppDeleteMessageHandler(cppMessageHandler);
+        cppMessageHandler = -1;
     }
 
     @Override

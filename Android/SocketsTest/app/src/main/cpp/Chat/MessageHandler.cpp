@@ -8,6 +8,7 @@
 
 MessageHandler::MessageHandler(const char *t_hostname, int t_port, MessageHandlerAdapter *new_messageHandlerAdapter)
 {
+    __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "NetworkHandler() called!");
     messageHandlerAdapter = new_messageHandlerAdapter;
 
     connection = new Basic_Connection();
@@ -34,7 +35,7 @@ MessageHandler::~MessageHandler()
         }
         connection->close_connection();
         delete messageHandlerAdapter;
-        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "~NetworkManager() called!");
+        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "~NetworkHandler() called!");
     }
     catch (const std::exception& e)
     {
