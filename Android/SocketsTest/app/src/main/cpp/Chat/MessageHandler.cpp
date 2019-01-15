@@ -22,18 +22,21 @@ MessageHandler::MessageHandler(const char *t_hostname, int t_port, MessageHandle
 
 MessageHandler::~MessageHandler()
 {
+    connection->close_connection();
     needOneMoreLoop = false;
+    cv.notify_all();
     try
     {
         if (senderThread.joinable())
         {
             senderThread.join();
+            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "senderThread.join();");
         }
         if (readerThread.joinable())
         {
             readerThread.join();
+            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "readerThread.join();");
         }
-        connection->close_connection();
         delete messageHandlerAdapter;
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "~NetworkHandler() called!");
     }
@@ -44,7 +47,7 @@ MessageHandler::~MessageHandler()
 }
 
 void MessageHandler::send(const char* message) {
-//    std::unique_lock<std::mutex> lck(mtx);
+    std::unique_lock<std::mutex> lck(mtx);
     messagesToSend.push(message);
     cv.notify_all();
 }
