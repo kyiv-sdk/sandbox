@@ -21,11 +21,12 @@ import org.json.JSONObject;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements NetworkInterface {
+public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
     EditText usernameEditText;
     Button loginButton;
     public String username = "default";
+    LoginManager loginManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,8 @@ public class LoginActivity extends AppCompatActivity implements NetworkInterface
                 Settings.Secure.ANDROID_ID);
         NetworkManager.getInstance().send(android_id);
 
+        loginManager = new LoginManager(this);
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,50 +52,9 @@ public class LoginActivity extends AppCompatActivity implements NetworkInterface
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        NetworkManager.getInstance().setNetworkInterface(this);
-    }
-
     private void logIn(){
         username = usernameEditText.getText().toString();
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("keyAction", "login");
-            jsonObject.put("username", usernameEditText.getText().toString());
-
-            NetworkManager.getInstance().send(jsonObject.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onMessageReceive(String data) {
-        try {
-            JSONObject jsonObject = new JSONObject(data);
-            try {
-                String keyAction = jsonObject.getString("keyAction");
-                if (keyAction.equals("login")){
-                    String response = jsonObject.getString("message");
-                    if (response.equals("ok")){
-
-                        saveUsername(username);
-
-                        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(), UsersListActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(this, "Wrong log in", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        loginManager.logIn(username);
     }
 
     private void saveUsername(String username){
@@ -107,6 +69,19 @@ public class LoginActivity extends AppCompatActivity implements NetworkInterface
         super.onDestroy();
         NetworkManager.getInstance().send("exit");
         NetworkManager.getInstance().closeConnection();
+    }
+
+    @Override
+    public void onLoginSucces() {
+        saveUsername(username);
+        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), UsersListActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onLoginFailed() {
+        Toast.makeText(this, "Wrong log in", Toast.LENGTH_SHORT).show();
     }
 }
 
