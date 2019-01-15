@@ -23,6 +23,9 @@ class MessageHandler {
     std::queue<const char*> messagesToSend;
 
     bool needOneMoreLoop;
+
+    std::mutex mtx;
+    std::condition_variable cv;
 public:
     MessageHandler(const char *hostname, int port, MessageHandlerAdapter *new_messageHandlerAdapter);
     void send(const char* message);
