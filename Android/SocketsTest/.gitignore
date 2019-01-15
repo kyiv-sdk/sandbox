@@ -7,3 +7,5 @@
 .externalNativeBuild
 /app/build
 .idea/
+jni/*/
+include/
