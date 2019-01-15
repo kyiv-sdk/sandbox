@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class ChatManager implements NetworkInterface, ChatInterface{
     private static final ChatManager ourInstance = new ChatManager();
     private static ArrayList<ChatUser> chatUserArrayList = new ArrayList<>();
-    MessageProtocol messageProtocol;
-    UI_Interface UIInterface;
+    private MessageProtocol messageProtocol;
+    private UI_Interface UIInterface;
 
     public static ChatManager getInstance() {
         return ourInstance;
