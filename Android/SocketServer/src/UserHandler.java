@@ -91,7 +91,7 @@ public class UserHandler implements UserHandlerInterface {
         System.out.println("Username " + this.userName + " changed to " + userName);
         this.userName = userName;
         writeMessage(response);
-        serverInterface.notifyAllUsersAboutNewcomer();
+        serverInterface.notifyAllUsersChanges();
     }
 
     @Override
@@ -112,14 +112,15 @@ public class UserHandler implements UserHandlerInterface {
 
     @Override
     public void onConnectionClose() {
+        reader.setLoopFlag(false);
+        writer.setLoopFlag(false);
         System.out.println("exited");
         this.isLoggedIn=false;
         loopFlag = false;
-        reader.setLoopFlag(false);
-        writer.setLoopFlag(false);
         try {
             this.socket.close();
             Server.userHandlers.remove(this);
+            serverInterface.notifyAllUsersChanges();
         } catch (IOException e) {
             e.printStackTrace();
         }

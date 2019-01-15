@@ -2,28 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="53f520b5-92d3-4b12-b70c-25cdbd1c6687" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Reader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Writer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SocketServer/KnockKnockProtocol.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SocketServer/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/SocketServer/Server.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/SocketServer/UserHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/SocketServer/UserHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ServerInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerMessageProtocol.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerMessageProtocol.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UserHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UserHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/UserMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UserMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/cpp/JNI_Helper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../SocketsTest/app/src/main/cpp/JNI_Helper.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/cpp/MessageHandler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../SocketsTest/app/src/main/cpp/MessageHandler.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/cpp/com_example_iyuro_socketstest_Messenger_MessageHandler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../SocketsTest/app/src/main/cpp/com_example_iyuro_socketstest_Messenger_MessageHandler.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/Messenger/MessageHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/Messenger/MessageListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/Messenger/MessageListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/Messenger/MessageProtocol.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/Messenger/MessageProtocol.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/Messenger/MessageProtocolInterface.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/Messenger/MessengerActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/Messenger/MessengerActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/RegisterActivity/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/RegisterActivity/LoginActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/UsersList/MyAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/UsersList/MyAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/UsersList/UsersListActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SocketsTest/app/src/main/java/com/example/iyuro/socketstest/UsersList/UsersListActivity.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -43,11 +24,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Server.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="74" column="13" lean-forward="true" selection-start-line="74" selection-start-column="13" selection-end-line="74" selection-end-column="13" />
+            <state relative-caret-position="609">
+              <caret line="57" column="37" selection-start-line="57" selection-start-column="16" selection-end-line="57" selection-end-column="37" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Reader.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="510">
+              <caret line="34" column="5" selection-start-line="34" selection-start-column="5" selection-end-line="34" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -58,17 +51,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ServerInterface.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="36" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
+            <state relative-caret-position="75">
+              <caret line="5" column="30" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/UserHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="603">
-              <caret line="66" column="15" lean-forward="true" selection-start-line="66" selection-start-column="15" selection-end-line="66" selection-end-column="15" />
+            <state relative-caret-position="446">
+              <caret line="122" column="52" selection-start-line="122" selection-start-column="52" selection-end-line="122" selection-end-column="52" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -111,12 +104,12 @@
         <option value="$PROJECT_DIR$/src/ServerInterfaces.java" />
         <option value="$PROJECT_DIR$/src/UserHandlerInterface.java" />
         <option value="$PROJECT_DIR$/src/Writer.java" />
-        <option value="$PROJECT_DIR$/src/Reader.java" />
-        <option value="$PROJECT_DIR$/src/UserHandler.java" />
         <option value="$PROJECT_DIR$/src/UserMessage.java" />
-        <option value="$PROJECT_DIR$/src/ServerInterface.java" />
         <option value="$PROJECT_DIR$/src/ServerMessageProtocol.java" />
+        <option value="$PROJECT_DIR$/src/Reader.java" />
         <option value="$PROJECT_DIR$/src/Server.java" />
+        <option value="$PROJECT_DIR$/src/ServerInterface.java" />
+        <option value="$PROJECT_DIR$/src/UserHandler.java" />
       </list>
     </option>
   </component>
@@ -152,7 +145,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1547486943492" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1547542205208" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
@@ -260,18 +253,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Reader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="21" selection-start-line="13" selection-start-column="21" selection-end-line="13" selection-end-column="21" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1083#1084#0" expanded="true" />
-            <element signature="e#1123#1124#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/UserMessage.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -304,23 +285,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/UserHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="603">
-          <caret line="66" column="15" lean-forward="true" selection-start-line="66" selection-start-column="15" selection-end-line="66" selection-end-column="15" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ServerInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="36" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ServerMessageProtocol.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="450">
@@ -333,8 +297,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Server.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="74" column="13" lean-forward="true" selection-start-line="74" selection-start-column="13" selection-end-line="74" selection-end-column="13" />
+        <state relative-caret-position="609">
+          <caret line="57" column="37" selection-start-line="57" selection-start-column="16" selection-end-line="57" selection-end-column="37" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Reader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="34" column="5" selection-start-line="34" selection-start-column="5" selection-end-line="34" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ServerInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="30" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/UserHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="446">
+          <caret line="122" column="52" selection-start-line="122" selection-start-column="52" selection-end-line="122" selection-end-column="52" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

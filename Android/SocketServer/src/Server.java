@@ -55,7 +55,7 @@ public class Server implements ServerInterface{
     }
 
     @Override
-    public void notifyAllUsersAboutNewcomer(){
+    public void notifyAllUsersChanges(){
         for (int i = 0; i < userHandlers.size(); i++){
             UserHandler userHandler = userHandlers.get(i);
 
