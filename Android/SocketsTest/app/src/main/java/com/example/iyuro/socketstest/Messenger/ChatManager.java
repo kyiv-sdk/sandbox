@@ -48,7 +48,8 @@ public class ChatManager implements NetworkInterface, ChatInterface{
 
     @Override
     public void onUsersListRefresh(ArrayList<ChatUser> newUsers) {
-        for(ChatUser oldUser : chatUserArrayList){
+        ArrayList<ChatUser> oldUsers = new ArrayList<>(chatUserArrayList);
+        for(ChatUser oldUser : oldUsers){
             if (!newUsers.contains(oldUser)){
                 chatUserArrayList.remove(oldUser);
             }
