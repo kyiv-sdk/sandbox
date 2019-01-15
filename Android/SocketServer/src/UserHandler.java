@@ -11,15 +11,13 @@ public class UserHandler implements UserHandlerInterface {
     private String uniqueUserId;
     private final PrintWriter out;
     private final BufferedReader in;
-    Socket socket;
-    boolean isLoggedIn;
-    boolean loopFlag;
-    ServerMessageProtocol serverMessageProtocol;
+    private Socket socket;
+    private boolean isLoggedIn;
 
-    Reader reader;
-    Writer writer;
+    private Reader reader;
+    private MessageManager messageManager;
 
-    ServerInterface serverInterface;
+    private ServerInterface serverInterface;
 
     private final List<UserMessage> messages;
 
@@ -29,12 +27,11 @@ public class UserHandler implements UserHandlerInterface {
         this.out = out;
         this.in = in;
         this.isLoggedIn = true;
-        this.loopFlag = true;
         this.uniqueUserId = uniqueID;
 
         this.serverInterface = serverInterface;
 
-        serverMessageProtocol = new ServerMessageProtocol(serverInterface, this);
+        ServerMessageProtocol serverMessageProtocol = new ServerMessageProtocol(serverInterface, this);
 
         System.out.println("Created user handler for: " + uniqueUserId);
 
@@ -43,8 +40,8 @@ public class UserHandler implements UserHandlerInterface {
         Thread threadReader = new Thread(reader);
         threadReader.start();
 
-        writer = new Writer(out, messages, serverMessageProtocol);
-        Thread threadWriter = new Thread(writer);
+        messageManager = new MessageManager(messages, serverMessageProtocol);
+        Thread threadWriter = new Thread(messageManager);
         threadWriter.start();
     }
 
@@ -80,7 +77,7 @@ public class UserHandler implements UserHandlerInterface {
         return isLoggedIn;
     }
 
-    public void writeMessage(String msg){
+    public synchronized void writeMessage(String msg){
         this.out.println(msg);
         System.out.println("Sent: " + msg + " to " + this.userName);
     }
@@ -94,12 +91,6 @@ public class UserHandler implements UserHandlerInterface {
     }
 
     @Override
-    public void onLoginFailed(String response, String userName) {
-        System.out.println("Username " + this.userName + " (old) " + userName + " (new) " + "loginFailed");
-        writeMessage(response);
-    }
-
-    @Override
     public void onResponse(String dstId, String msg) {
         for (UserHandler handler : Server.userHandlers) {
             if ((handler.isLoggedIn()) && (dstId.equals(handler.getUserName()))) {
@@ -110,16 +101,23 @@ public class UserHandler implements UserHandlerInterface {
     }
 
     @Override
+    public void onLoginFailed(String response, String userName) {
+        System.out.println("Username " + this.userName + " (old) " + userName + " (new) " + "loginFailed");
+        writeMessage(response);
+    }
+
+    @Override
     public void onConnectionClose() {
         reader.setLoopFlag(false);
-        writer.setLoopFlag(false);
+        messageManager.setLoopFlag(false);
         System.out.println("exited");
         this.isLoggedIn=false;
-        loopFlag = false;
         try {
+            this.in.close();
+            this.out.close();
             this.socket.close();
-            Server.userHandlers.remove(this);
             serverInterface.notifyAllUsersChanges();
+            serverInterface.onUserHandlerClose(this.uniqueUserId);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,11 +125,6 @@ public class UserHandler implements UserHandlerInterface {
 
     public void addMessage(String msg){
         synchronized(messages) {
-//            try {
-//                messages.wait();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
             messages.add(new UserMessage(msg));
             messages.notifyAll();
         }

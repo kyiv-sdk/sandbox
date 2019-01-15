@@ -33,15 +33,9 @@ public class Server implements ServerInterface{
 
                         userUniqueId = inputLine;
 
-                        int userHandlerPosition = getLoggedUserHandlerPosition(userUniqueId);
-                        if (userHandlerPosition < 0) {
-                            UserHandler newUserHandler = new UserHandler(this, clientSocket, userUniqueId, out, in);
+                        UserHandler newUserHandler = new UserHandler(this, clientSocket, userUniqueId, out, in);
 
-                            userHandlers.add(newUserHandler);
-
-                        } else {
-                            // TODO: bind with already created handler
-                        }
+                        userHandlers.add(newUserHandler);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -63,6 +57,17 @@ public class Server implements ServerInterface{
             jsonObject.put("keyAction", "loggedUsersList");
 
             userHandler.addMessage(jsonObject.toString());
+        }
+    }
+
+    @Override
+    public void onUserHandlerClose(String uniqueID) {
+        for (UserHandler userHandler : userHandlers){
+            if (userHandler.getUserUniqueID().equals(uniqueID)){
+                userHandlers.remove(userHandler);
+                System.out.println("removed");
+                return;
+            }
         }
     }
 

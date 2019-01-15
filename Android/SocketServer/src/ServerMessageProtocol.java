@@ -27,7 +27,6 @@ public class ServerMessageProtocol {
             switch (keyAction){
                 case "login":
                     String username = requestJsonObject.getString("username");
-//                    serverInterface.getLoggedUsers();
                     if (userHandlerInterface.isUsernameValid(username)){
                         responseJsonObject.put("message", "ok");
                         userHandlerInterface.onLoginSuccess(responseJsonObject.toString(), username);

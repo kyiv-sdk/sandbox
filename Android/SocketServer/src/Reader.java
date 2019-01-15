@@ -29,12 +29,8 @@ public class Reader implements Runnable{
                 e.printStackTrace();
             }
         }
-        try {
-            System.out.println("Reader closed");
-            this.in.close();
-        } catch(IOException e){
-            e.printStackTrace();
-        }
+        System.out.println("Reader closed");
+
     }
 
     public void setLoopFlag(boolean loopFlag) {
