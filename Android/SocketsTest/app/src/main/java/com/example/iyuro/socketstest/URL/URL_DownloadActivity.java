@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.URL;
+package com.example.iyuro.socketstest.url;
 
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;

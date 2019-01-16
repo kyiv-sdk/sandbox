@@ -8,11 +8,12 @@
 #include <jni.h>
 #include <string>
 
-class JNI_Helper {
+class JNI_Helper
+{
 public:
     JNI_Helper();
-    static jmethodID NetworkExecutorOnSuccessMethodId;
-    static jmethodID MessageHandlerOnSuccessMethodId;
+    static jmethodID mNetworkExecutorOnSuccessMethodId;
+    static jmethodID mMessageHandlerOnSuccessMethodId;
 
     JNIEnv *getEnv();
     JNIEnv *attachEnv();
@@ -20,7 +21,7 @@ public:
     static JavaVM* getJVM();
     void checkPendingExceptions(JNIEnv *env, std::string s);
 private:
-    JNIEnv *env;
+    JNIEnv *mEnv;
 };
 
 

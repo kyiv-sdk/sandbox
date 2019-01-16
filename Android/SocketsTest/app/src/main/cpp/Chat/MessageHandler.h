@@ -8,24 +8,26 @@
 
 #include <thread>
 #include <queue>
-#include "MessageHandlerAdapter.h"
-#include "../Connection/Basic_Connection.h"
 
-class MessageHandler {
-    std::thread senderThread, readerThread;
-    MessageHandlerAdapter *messageHandlerAdapter;
-    Basic_Connection *connection;
+#include "MessageHandlerAdapter.h"
+#include "Basic_Connection.h"
+
+class MessageHandler
+{
+    std::thread mSenderThread, mReaderThread;
+    MessageHandlerAdapter *mMessageHandlerAdapter;
+    Basic_Connection *mConnection;
 
     void senderFn();
 
     void readerFn();
 
-    std::queue<std::string *> messagesToSend;
+    std::queue<std::string> mMessagesToSend;
 
-    bool needOneMoreLoop;
+    bool mNeedOneMoreLoop;
 
-    std::mutex mtx;
-    std::condition_variable cv;
+    std::mutex mMtx;
+    std::condition_variable mCv;
 public:
     MessageHandler(const char *hostname, int port, MessageHandlerAdapter *new_messageHandlerAdapter);
     void send(const char* message);

@@ -6,4 +6,5 @@
 
 NetworkExecutorAdapter::~NetworkExecutorAdapter()
 {
+
 }

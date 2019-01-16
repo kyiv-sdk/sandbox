@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.URL;
+package com.example.iyuro.socketstest.url;
 
 import android.util.Log;
 import android.webkit.WebResourceResponse;

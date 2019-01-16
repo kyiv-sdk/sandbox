@@ -23,12 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".URL.URL_DownloadActivity" />
-        <activity android:name=".Chat.Messenger.MessengerActivity" />
+        <activity android:name=".url.URL_DownloadActivity" />
+        <activity android:name=".chat.messenger.MessengerActivity" />
         <activity
-            android:name=".Chat.RegisterActivity.LoginActivity"
+            android:name=".chat.register.LoginActivity"
             android:label="@string/title_activity_login" />
-        <activity android:name=".Chat.UsersList.UsersListActivity"></activity>
+        <activity android:name=".chat.user_list.UsersListActivity"></activity>
     </application>
 
 </manifest>

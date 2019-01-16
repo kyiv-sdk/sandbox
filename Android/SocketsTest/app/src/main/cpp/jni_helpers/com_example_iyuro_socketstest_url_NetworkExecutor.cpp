@@ -3,13 +3,13 @@
 //
 
 #include <jni.h>
-#include <android/log.h>
 
 #include "JNI_Helper.h"
-#include "../URL/NetworkExecutorAdapter.h"
-#include "../URL/NetworkExecutor.h"
+#include "NetworkExecutorAdapter.h"
+#include "NetworkExecutor.h"
 
-class NetworkExecutorImplementation: public NetworkExecutorAdapter{
+class NetworkExecutorImplementation: public NetworkExecutorAdapter
+{
 private:
     void (*JNIcallback)(jobject, std::string *);
     jobject instance;
@@ -35,7 +35,8 @@ NetworkExecutorImplementation::NetworkExecutorImplementation(JNIEnv *t_env, jobj
     m_env = t_env;
 }
 
-NetworkExecutorImplementation::~NetworkExecutorImplementation() {
+NetworkExecutorImplementation::~NetworkExecutorImplementation()
+{
     m_env->DeleteGlobalRef(instance);
 }
 
@@ -46,7 +47,7 @@ void jni_sendDataToJava(jobject instance, std::string *resultData)
     JNIEnv *new_env = jniHelper.getEnv();
     jniHelper.checkPendingExceptions(new_env, "1");
 
-    jmethodID mjmethodID = JNI_Helper::NetworkExecutorOnSuccessMethodId;
+    jmethodID mjmethodID = JNI_Helper::mNetworkExecutorOnSuccessMethodId;
     jclass objectMainActivity = (jclass) instance;
 
     int size = (*resultData).size();
@@ -63,7 +64,7 @@ void jni_sendDataToJava(jobject instance, std::string *resultData)
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_example_iyuro_socketstest_URL_NetworkExecutor_cppStartDownloading(JNIEnv *env, jobject instance,
+Java_com_example_iyuro_socketstest_url_NetworkExecutor_cppStartDownloading(JNIEnv *env, jobject instance,
                                                                 jstring t_protocol, jstring t_host, jint t_port)
 {
     jobject globalInstance = env->NewGlobalRef(instance);

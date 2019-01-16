@@ -7,7 +7,8 @@
 
 #include <string>
 
-class NetworkExecutorAdapter {
+class NetworkExecutorAdapter
+{
 public:
     virtual void runCallback(std::string* ) = 0;
     virtual ~NetworkExecutorAdapter();

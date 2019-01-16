@@ -6,9 +6,10 @@
 
 #include <sstream>
 
-#include "../Connection/SSL_Connection.h"
+#include "SSL_Connection.h"
 
-void HTTPS_Client::loadData(std::string &resultStr, const char *hostname, int port) {
+void HTTPS_Client::loadData(std::string &resultStr, const char *hostname, int port)
+{
     SSL_Connection connection;
     connection.open_connection(hostname, port);
 

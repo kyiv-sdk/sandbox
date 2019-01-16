@@ -1,6 +1,6 @@
-package com.example.iyuro.socketstest.Chat.RegisterActivity;
-import com.example.iyuro.socketstest.Chat.Messenger.NetworkInterface;
-import com.example.iyuro.socketstest.Chat.Messenger.NetworkManager;
+package com.example.iyuro.socketstest.chat.register;
+import com.example.iyuro.socketstest.chat.messenger.NetworkInterface;
+import com.example.iyuro.socketstest.chat.messenger.NetworkManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 

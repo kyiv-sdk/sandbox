@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.Chat.RegisterActivity;
+package com.example.iyuro.socketstest.chat.register;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,9 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.iyuro.socketstest.Chat.Messenger.NetworkManager;
+import com.example.iyuro.socketstest.chat.messenger.NetworkManager;
 import com.example.iyuro.socketstest.R;
-import com.example.iyuro.socketstest.Chat.UsersList.UsersListActivity;
+import com.example.iyuro.socketstest.chat.user_list.UsersListActivity;
 
 /**
  * A login screen that offers login via email/password.

@@ -3,11 +3,10 @@
 //
 
 #include <jni.h>
-#include <android/log.h>
 
 #include "JNI_Helper.h"
-#include "../Chat/MessageHandlerAdapter.h"
-#include "../Chat/MessageHandler.h"
+#include "MessageHandlerAdapter.h"
+#include "MessageHandler.h"
 
 class MessageAdapterImplementation: public MessageHandlerAdapter{
 private:
@@ -46,7 +45,7 @@ void jni_sendMessageToJava(jobject instance, std::string *resultData)
     JNIEnv *new_env = jniHelper.getEnv();
     jniHelper.checkPendingExceptions(new_env, "2");
 
-    jmethodID mjmethodID = JNI_Helper::MessageHandlerOnSuccessMethodId;
+    jmethodID mjmethodID = JNI_Helper::mMessageHandlerOnSuccessMethodId;
     jclass objectMainActivity = (jclass) instance;
 
     int size = (*resultData).size();
@@ -63,7 +62,7 @@ void jni_sendMessageToJava(jobject instance, std::string *resultData)
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_example_iyuro_socketstest_Chat_Messenger_NetworkManager_cppCreateMessageHandler(
+Java_com_example_iyuro_socketstest_chat_messenger_NetworkManager_cppCreateMessageHandler(
         JNIEnv *env, jobject instance, jstring t_host, jint t_port)
 {
     const char* m_host = env->GetStringUTFChars(t_host, 0);
@@ -76,7 +75,7 @@ Java_com_example_iyuro_socketstest_Chat_Messenger_NetworkManager_cppCreateMessag
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_Chat_Messenger_NetworkManager_cppSendMessage(
+Java_com_example_iyuro_socketstest_chat_messenger_NetworkManager_cppSendMessage(
         JNIEnv *env, jobject instance, jlong t_messageHandler, jstring t_message)
 {
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
@@ -87,7 +86,7 @@ Java_com_example_iyuro_socketstest_Chat_Messenger_NetworkManager_cppSendMessage(
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_Chat_Messenger_NetworkManager_cppDeleteMessageHandler(
+Java_com_example_iyuro_socketstest_chat_messenger_NetworkManager_cppDeleteMessageHandler(
         JNIEnv *env, jobject instance, jlong t_messageHandler)
 {
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;

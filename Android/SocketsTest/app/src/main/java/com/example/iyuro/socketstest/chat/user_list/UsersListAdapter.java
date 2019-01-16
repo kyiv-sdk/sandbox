@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.Chat.UsersList;
+package com.example.iyuro.socketstest.chat.user_list;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.iyuro.socketstest.Chat.Messenger.ChatUser;
-import com.example.iyuro.socketstest.Chat.Messenger.MessengerActivity;
+import com.example.iyuro.socketstest.chat.messenger.ChatUser;
+import com.example.iyuro.socketstest.chat.messenger.MessengerActivity;
 import com.example.iyuro.socketstest.R;
 
 import java.util.ArrayList;

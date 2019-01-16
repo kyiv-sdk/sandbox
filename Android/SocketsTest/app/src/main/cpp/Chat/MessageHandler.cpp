@@ -4,41 +4,41 @@
 
 #include "MessageHandler.h"
 
-#include <android/log.h>
+#include <Logger.h>
 
 MessageHandler::MessageHandler(const char *t_hostname, int t_port, MessageHandlerAdapter *new_messageHandlerAdapter)
 {
-    __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "NetworkHandler() called!");
-    messageHandlerAdapter = new_messageHandlerAdapter;
+    Logger::log("NetworkHandler() called!");
+    mMessageHandlerAdapter = new_messageHandlerAdapter;
 
-    connection = new Basic_Connection();
-    connection->open_connection(t_hostname, t_port);
+    mConnection = new Basic_Connection();
+    mConnection->open_connection(t_hostname, t_port);
 
-    this->needOneMoreLoop = true;
+    this->mNeedOneMoreLoop = true;
 
-    readerThread = std::thread(&MessageHandler::readerFn, this);
-    senderThread = std::thread(&MessageHandler::senderFn, this);
+    mReaderThread = std::thread(&MessageHandler::readerFn, this);
+    mSenderThread = std::thread(&MessageHandler::senderFn, this);
 }
 
 MessageHandler::~MessageHandler()
 {
-    connection->close_connection();
-    needOneMoreLoop = false;
-    cv.notify_all();
+    mConnection->close_connection();
+    mNeedOneMoreLoop = false;
+    mCv.notify_all();
     try
     {
-        if (senderThread.joinable())
+        if (mSenderThread.joinable())
         {
-            senderThread.join();
-            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "senderThread.join();");
+            mSenderThread.join();
+            Logger::log("senderThread.join();");
         }
-        if (readerThread.joinable())
+        if (mReaderThread.joinable())
         {
-            readerThread.join();
-            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "readerThread.join();");
+            mReaderThread.join();
+            Logger::log("readerThread.join();");
         }
-        delete messageHandlerAdapter;
-        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "~NetworkHandler() called!");
+        delete mMessageHandlerAdapter;
+        Logger::log("~NetworkHandler() called!");
     }
     catch (const std::exception& e)
     {
@@ -46,38 +46,46 @@ MessageHandler::~MessageHandler()
     }
 }
 
-void MessageHandler::send(const char* message) {
-//    std::unique_lock<std::mutex> lck(mtx);
-//    messagesToSend.push(message);
-    __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp send", message);
-//    cv.notify_all();
-    connection->write(message);
+void MessageHandler::send(const char* message)
+{
+    Logger::log("cpp send");
+    Logger::log(message);
+    mConnection->write(message);
 }
 
 void MessageHandler::senderFn()
 {
-    while (needOneMoreLoop){
-        std::unique_lock<std::mutex> lck(mtx);
-        cv.wait(lck);
-        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp senderFn", "notified");
-        while (!messagesToSend.empty()){
-            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp senderFn managing with", messagesToSend.front()->c_str());
-            messageHandlerAdapter->runCallback(messagesToSend.front());
-            messagesToSend.pop();
+    while (mNeedOneMoreLoop)
+    {
+        std::unique_lock<std::mutex> lck(mMtx);
+        mCv.wait(lck);
+        Logger::log("cpp senderFn notified");
+
+        while (!mMessagesToSend.empty())
+        {
+            std::string strToProcess = mMessagesToSend.front().c_str();
+            mMessagesToSend.pop();
+            Logger::log("cpp senderFn managing with");
+            Logger::log(strToProcess);
+            mMessageHandlerAdapter->runCallback(&strToProcess);
         }
     }
 }
 
-void MessageHandler::readerFn() {
-    while (needOneMoreLoop){
-        std::string resultStr;
-        connection->load(resultStr);
-        if (!resultStr.empty()){
-            std::unique_lock<std::mutex> lck(mtx);
-            messagesToSend.push(&resultStr);
-            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "readerFn", resultStr.c_str());
-            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp readerFn managing with", messagesToSend.front()->c_str());
-            cv.notify_all();
+void MessageHandler::readerFn()
+{
+    std::string resultStr;
+
+    while (mNeedOneMoreLoop)
+    {
+        mConnection->load(resultStr);
+        if (!resultStr.empty())
+        {
+            std::unique_lock<std::mutex> lck(mMtx);
+            mMessagesToSend.push(resultStr);
+            mCv.notify_all();
+            Logger::log("readerFn");
+            Logger::log(resultStr.c_str());
         }
     }
 }
