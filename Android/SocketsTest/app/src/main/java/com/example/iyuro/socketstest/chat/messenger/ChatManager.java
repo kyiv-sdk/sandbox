@@ -13,7 +13,6 @@ public class ChatManager implements NetworkInterface, ChatInterface{
     }
 
     public ChatManager() {
-//        NetworkManager.getInstance().openConnection();
         NetworkManager.getInstance().setNetworkInterface(this);
         messageProtocol = new MessageProtocol(this);
         UIInterface = null;

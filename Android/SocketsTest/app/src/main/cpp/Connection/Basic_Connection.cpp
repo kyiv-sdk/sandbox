@@ -66,7 +66,7 @@ void Basic_Connection::write(std::string request)
 
 void Basic_Connection::handle_error (const char *msg)
 {
-    Logger::log("error=%s");
+    Logger::log("error");
     Logger::log(msg);
     exit (1);
 }
