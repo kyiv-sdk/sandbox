@@ -47,32 +47,37 @@ MessageHandler::~MessageHandler()
 }
 
 void MessageHandler::send(const char* message) {
-    std::unique_lock<std::mutex> lck(mtx);
-    messagesToSend.push(message);
+//    std::unique_lock<std::mutex> lck(mtx);
+//    messagesToSend.push(message);
     __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp send", message);
-    cv.notify_all();
+//    cv.notify_all();
+    connection->write(message);
 }
 
 void MessageHandler::senderFn()
 {
-    std::unique_lock<std::mutex> lck(mtx);
     while (needOneMoreLoop){
+        std::unique_lock<std::mutex> lck(mtx);
         cv.wait(lck);
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp senderFn", "notified");
         while (!messagesToSend.empty()){
-            connection->write(messagesToSend.front());
+            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp senderFn managing with", messagesToSend.front()->c_str());
+            messageHandlerAdapter->runCallback(messagesToSend.front());
             messagesToSend.pop();
         }
     }
 }
 
 void MessageHandler::readerFn() {
-    std::string resultStr;
-
     while (needOneMoreLoop){
+        std::string resultStr;
         connection->load(resultStr);
         if (!resultStr.empty()){
-            messageHandlerAdapter->runCallback(&resultStr);
+            std::unique_lock<std::mutex> lck(mtx);
+            messagesToSend.push(&resultStr);
+            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "readerFn", resultStr.c_str());
+            __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp readerFn managing with", messagesToSend.front()->c_str());
+            cv.notify_all();
         }
     }
 }

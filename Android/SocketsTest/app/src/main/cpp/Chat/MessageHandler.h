@@ -20,7 +20,7 @@ class MessageHandler {
 
     void readerFn();
 
-    std::queue<const char*> messagesToSend;
+    std::queue<std::string *> messagesToSend;
 
     bool needOneMoreLoop;
 
