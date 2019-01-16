@@ -47,6 +47,7 @@ MessageHandler::~MessageHandler()
 }
 
 void MessageHandler::send(const char* message) {
+    std::unique_lock<std::mutex> lck(mtx);
     messagesToSend.push(message);
     __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp send", message);
     cv.notify_all();
@@ -58,7 +59,7 @@ void MessageHandler::senderFn()
     while (needOneMoreLoop){
         cv.wait(lck);
         __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s : %s", "cpp senderFn", "notified");
-        if (!messagesToSend.empty()){
+        while (!messagesToSend.empty()){
             connection->write(messagesToSend.front());
             messagesToSend.pop();
         }
