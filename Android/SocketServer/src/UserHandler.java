@@ -21,13 +21,13 @@ public class UserHandler implements UserHandlerInterface {
 
     private final List<UserMessage> messages;
 
-    public UserHandler(ServerInterface serverInterface, Socket socket, String uniqueID, PrintWriter out, BufferedReader in) {
+    public UserHandler(ServerInterface serverInterface, Socket socket, PrintWriter out, BufferedReader in) {
         this.socket = socket;
         this.userName = "default";
         this.out = out;
         this.in = in;
         this.isLoggedIn = true;
-        this.uniqueUserId = uniqueID;
+        this.uniqueUserId = null;
 
         this.serverInterface = serverInterface;
 
@@ -65,6 +65,11 @@ public class UserHandler implements UserHandlerInterface {
 //            }
 //        }
         return true;
+    }
+
+    @Override
+    public void setUniqueID(String uniqueID) {
+        this.uniqueUserId = uniqueID;
     }
 
     public PrintWriter getOut() {

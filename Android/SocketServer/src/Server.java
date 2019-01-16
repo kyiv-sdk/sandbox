@@ -24,22 +24,22 @@ public class Server implements ServerInterface{
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(clientSocket.getInputStream()));
 
-                try {
-                    String userUniqueId;
-                    String inputLine = in.readLine();
-                    System.out.println("Received on server: " + inputLine);
+//                try {
+//                    String userUniqueId;
+//                    String inputLine = in.readLine();
+//                    System.out.println("Received on server: " + inputLine);
+//
+//                    if (inputLine != null) {
 
-                    if (inputLine != null) {
+//                        userUniqueId = inputLine;
 
-                        userUniqueId = inputLine;
-
-                        UserHandler newUserHandler = new UserHandler(this, clientSocket, userUniqueId, out, in);
+                        UserHandler newUserHandler = new UserHandler(this, clientSocket, out, in);
 
                         userHandlers.add(newUserHandler);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
             }
 
         } catch (Exception e) {

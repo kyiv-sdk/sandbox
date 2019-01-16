@@ -6,4 +6,5 @@ public interface UserHandlerInterface {
     String getUserName();
     String getUserUniqueID();
     boolean isUsernameValid(String username);
+    void setUniqueID(String uniqueID);
 }
