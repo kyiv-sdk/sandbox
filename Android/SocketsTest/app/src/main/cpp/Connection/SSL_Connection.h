@@ -15,8 +15,6 @@ private:
     SSL *mSSL;
     SSL_CTX *mCtx;
 
-    void handle_error(const char *msg);
-
     SSL_CTX *InitCTX(void);
 
 public:

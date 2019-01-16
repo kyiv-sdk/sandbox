@@ -4,8 +4,7 @@
 
 #include "NetworkExecutor.h"
 
-#include <android/log.h>
-
+#include <Logger.h>
 #include "HTTP_Client.h"
 #include "HTTPS_Client.h"
 
@@ -23,7 +22,7 @@ NetworkExecutor::~NetworkExecutor()
             mThread.join();
         }
         delete mNetworkExecutorAdapter;
-        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", "%s", "~NetworkExecutor() called!");
+        Logger::log("~NetworkExecutor() called!");
     }
     catch (const std::exception& e)
     {

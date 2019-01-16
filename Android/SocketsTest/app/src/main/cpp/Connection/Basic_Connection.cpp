@@ -6,9 +6,9 @@
 
 #include <netdb.h>
 #include <endian.h>
-#include <android/log.h>
 #include <unistd.h>
 #include <linux/in.h>
+#include <Logger.h>
 
 Basic_Connection::Basic_Connection(){}
 
@@ -60,6 +60,13 @@ void Basic_Connection::write(std::string request)
     request += "\n";
     if (send(mSock, request.c_str(), request.length(), 0) != (int)request.length())
     {
-        __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG--------", ":%s", "Error sending request.");
+        handle_error("Error sending request.");
     }
+}
+
+void Basic_Connection::handle_error (const char *msg)
+{
+    Logger::log("error=%s");
+    Logger::log(msg);
+    exit (1);
 }

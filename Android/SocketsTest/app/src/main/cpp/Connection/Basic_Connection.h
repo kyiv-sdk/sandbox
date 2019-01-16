@@ -11,6 +11,7 @@ class Basic_Connection
 {
 protected:
     int mSock;
+    void handle_error(const char *msg);
 public:
     Basic_Connection();
     virtual void open_connection(const char *hostname, int port);

@@ -4,7 +4,6 @@
 
 #include "SSL_Connection.h"
 
-#include <android/log.h>
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 
@@ -40,12 +39,6 @@ void SSL_Connection::close_connection()
 
     SSL_free(mSSL);
     SSL_CTX_free(mCtx);
-}
-
-void SSL_Connection::handle_error (const char *msg)
-{
-    __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG_SSL--------", "resultStr=%s", msg);
-    exit (1);
 }
 
 SSL_CTX* SSL_Connection::InitCTX(void)
@@ -92,6 +85,4 @@ void SSL_Connection::load(std::string &resultStr)
         }
         memset(buf, 0, len);
     }
-
-    __android_log_print(ANDROID_LOG_DEBUG, "--------MY_LOG_SSL--------", "resultStr=%s", resultStr.c_str());
 }
