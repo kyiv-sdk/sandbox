@@ -20,12 +20,12 @@ public class MessageManager implements Runnable{
         while (loopFlag){
             try {
                 synchronized (userMessages) {
-//                    try {
-//                        userMessages.wait();
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    System.out.println("Reader notified");
+                    try {
+                        userMessages.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Reader notified");
                     while (userMessages.size() > 0) {
                         String msg = userMessages.get(0).rawMessage;
                         userMessages.remove(0);
