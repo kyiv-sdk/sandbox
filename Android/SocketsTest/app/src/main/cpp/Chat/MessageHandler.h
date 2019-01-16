@@ -17,12 +17,14 @@ class MessageHandler
     std::thread mSenderThread, mReaderThread;
     MessageHandlerAdapter *mMessageHandlerAdapter;
     Basic_Connection *mConnection;
+    const char *m_hostname;
+    int m_port;
 
     void senderFn();
 
     void readerFn();
 
-    std::queue<std::string> mMessagesToSend;
+    std::queue<std::pair<bool, std::string>> mMessagesToSend; // bool = true if msg from server, else = false
 
     bool mNeedOneMoreLoop;
 

@@ -11,12 +11,10 @@ MessageHandler::MessageHandler(const char *t_hostname, int t_port, MessageHandle
     Logger::log("NetworkHandler() called!");
     mMessageHandlerAdapter = new_messageHandlerAdapter;
 
-    mConnection = new Basic_Connection();
-    mConnection->open_connection(t_hostname, t_port);
-
+    m_hostname = t_hostname;
+    m_port = t_port;
     this->mNeedOneMoreLoop = true;
 
-    mReaderThread = std::thread(&MessageHandler::readerFn, this);
     mSenderThread = std::thread(&MessageHandler::senderFn, this);
 }
 
@@ -50,11 +48,20 @@ void MessageHandler::send(const char* message)
 {
     Logger::log("cpp send");
     Logger::log(message);
-    mConnection->write(message);
+    std::unique_lock<std::mutex> lck(mMtx);
+    mMessagesToSend.push(std::make_pair(false, message));
+    mCv.notify_all();
 }
 
 void MessageHandler::senderFn()
 {
+    mConnection = new Basic_Connection();
+    mConnection->open_connection(m_hostname, m_port);
+
+    Logger::log("Sender created");
+
+    mReaderThread = std::thread(&MessageHandler::readerFn, this);
+
     while (mNeedOneMoreLoop)
     {
         std::unique_lock<std::mutex> lck(mMtx);
@@ -63,17 +70,24 @@ void MessageHandler::senderFn()
 
         while (!mMessagesToSend.empty())
         {
-            std::string strToProcess = mMessagesToSend.front().c_str();
+            bool fromServer = mMessagesToSend.front().first;
+            std::string strToProcess = mMessagesToSend.front().second;
             mMessagesToSend.pop();
-            Logger::log("cpp senderFn managing with");
-            Logger::log(strToProcess);
-            mMessageHandlerAdapter->runCallback(&strToProcess);
+            if (fromServer)
+            {
+                Logger::log("cpp senderFn managing with");
+                Logger::log(strToProcess);
+                mMessageHandlerAdapter->runCallback(&strToProcess);
+            } else {
+                mConnection->write(strToProcess);
+            }
         }
     }
 }
 
 void MessageHandler::readerFn()
 {
+    Logger::log("Reader created");
     std::string resultStr;
 
     while (mNeedOneMoreLoop)
@@ -82,7 +96,7 @@ void MessageHandler::readerFn()
         if (!resultStr.empty())
         {
             std::unique_lock<std::mutex> lck(mMtx);
-            mMessagesToSend.push(resultStr);
+            mMessagesToSend.push(std::make_pair(true, resultStr));
             mCv.notify_all();
             Logger::log("readerFn");
             Logger::log(resultStr.c_str());
