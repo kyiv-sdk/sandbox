@@ -7,6 +7,3 @@
 .externalNativeBuild
 /app/build
 .idea/
-app/src/main/jni/armeabi-v7a/
-app/src/main/jni/x86/
-include/

@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.Chat.UsersList;
+package com.example.iyuro.socketstest.chat.user_list;
 
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -8,9 +8,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
-import com.example.iyuro.socketstest.Chat.Messenger.ChatManager;
-import com.example.iyuro.socketstest.Chat.Messenger.ChatUser;
-import com.example.iyuro.socketstest.Chat.Messenger.UI_Interface;
+import com.example.iyuro.socketstest.chat.messenger.ChatManager;
+import com.example.iyuro.socketstest.chat.messenger.ChatUser;
+import com.example.iyuro.socketstest.chat.messenger.UI_Interface;
 import com.example.iyuro.socketstest.R;
 import org.json.JSONException;
 import org.json.JSONObject;

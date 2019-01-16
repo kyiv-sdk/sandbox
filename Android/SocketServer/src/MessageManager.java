@@ -30,7 +30,6 @@ public class MessageManager implements Runnable{
                         String msg = userMessages.get(0).rawMessage;
                         userMessages.remove(0);
                         serverMessageProtocol.processNewMessage(msg);
-                        System.out.println("Sent : " + msg);
                     }
                 }
             } catch (Exception e){

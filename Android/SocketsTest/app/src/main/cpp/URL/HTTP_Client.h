@@ -9,7 +9,8 @@
 
 #include "NetworkExecutorAdapter.h"
 
-class HTTP_Client {
+class HTTP_Client
+{
 public:
     virtual void loadData(std::string &result, const char *hostname, int port);
 };

@@ -16,22 +16,33 @@ include $(CLEAR_VARS)
 
 LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
 LOCAL_MODULE    := native-lib
-LOCAL_SRC_FILES := ../cpp/JNI/JNI_Helper.cpp \
-    ../cpp/URL/NetworkExecutor.cpp \
-    ../cpp/JNI/com_example_iyuro_socketstest_URL_NetworkExecutor.cpp \
-    ../cpp/URL/NetworkExecutorAdapter.cpp \
-    ../cpp/URL/HTTP_Client.cpp \
-    ../cpp/URL/HTTPS_Client.cpp \
-    ../cpp/Connection/Basic_Connection.cpp \
-    ../cpp/Connection/SSL_Connection.cpp \
-    ../cpp/JNI/com_example_iyuro_socketstest_Chat_Messenger_MessageHandler.cpp \
-    ../cpp/Chat/MessageHandlerAdapter.cpp \
-    ../cpp/Chat/MessageHandler.cpp
+LOCAL_SRC_FILES := ../cpp/jni_helpers/JNI_Helper.cpp \
+                   ../cpp/url/NetworkExecutor.cpp \
+                   ../cpp/url/NetworkExecutorAdapter.cpp \
+                   ../cpp/url/HTTP_Client.cpp \
+                   ../cpp/url/HTTPS_Client.cpp \
+                   ../cpp/connection/Basic_Connection.cpp \
+                   ../cpp/connection/SSL_Connection.cpp \
+                   ../cpp/jni_helpers/com_example_iyuro_socketstest_chat_messenger_MessageHandler.cpp \
+                   ../cpp/chat/MessageHandlerAdapter.cpp \
+                   ../cpp/jni_helpers/com_example_iyuro_socketstest_url_NetworkExecutor.cpp \
+                   ../cpp/chat/MessageHandler.cpp \
+                   ../cpp/logger/Logger.cpp
 
-LOCAL_C_INCLUDES = ../include
+
+
 
 LOCAL_STATIC_LIBRARIES := ssl_prebuilt crypto_prebuilt
 
 LOCAL_CPPFLAGS += -std=c++11 -fexceptions -pthread -lssl -lcrypto
+
+
+INC = -I$(LOCAL_PATH)/../cpp/url
+INC += -I$(LOCAL_PATH)/../cpp/jni_helpers
+INC += -I$(LOCAL_PATH)/../cpp/connection
+INC += -I$(LOCAL_PATH)/../cpp/chat
+INC += -I$(LOCAL_PATH)/../cpp/logger
+LOCAL_CFLAGS := $(INC)
+
 
 include $(BUILD_SHARED_LIBRARY)

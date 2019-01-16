@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.Chat.Messenger;
+package com.example.iyuro.socketstest.chat.messenger;
 
 public class UserMessage {
     private String message;

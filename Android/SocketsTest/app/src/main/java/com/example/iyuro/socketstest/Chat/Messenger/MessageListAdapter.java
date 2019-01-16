@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.Chat.Messenger;
+package com.example.iyuro.socketstest.chat.messenger;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

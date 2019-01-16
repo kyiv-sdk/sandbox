@@ -12,7 +12,8 @@
 
 SSL_Connection::SSL_Connection(){}
 
-void SSL_Connection::open_connection(const char *hostname, int port) {
+void SSL_Connection::open_connection(const char *hostname, int port)
+{
     Basic_Connection::open_connection(hostname, port);
 
     SSL_CTX *ctx;
@@ -22,22 +23,23 @@ void SSL_Connection::open_connection(const char *hostname, int port) {
 
     ctx = InitCTX();
 
-    ssl = SSL_new (ctx);
-    if (!ssl)
+    mSSL = SSL_new (ctx);
+    if (!mSSL)
         handle_error ("Failed allocating SSL structure");
 
-    SSL_set_connect_state (ssl);
+    SSL_set_connect_state (mSSL);
 
-    SSL_set_fd(ssl, sock);
-    if ( SSL_connect(ssl) == FAIL )
+    SSL_set_fd(mSSL, mSock);
+    if ( SSL_connect(mSSL) == FAIL )
         handle_error("Connection failed");
 }
 
-void SSL_Connection::close_connection() {
+void SSL_Connection::close_connection()
+{
     Basic_Connection::close_connection();
 
-    SSL_free(ssl);
-    SSL_CTX_free(ctx);
+    SSL_free(mSSL);
+    SSL_CTX_free(mCtx);
 }
 
 void SSL_Connection::handle_error (const char *msg)
@@ -52,25 +54,27 @@ SSL_CTX* SSL_Connection::InitCTX(void)
 
     OpenSSL_add_all_algorithms();
     method = TLSv1_2_method();
-    ctx = SSL_CTX_new(method);
-    if ( ctx == NULL )
+    mCtx = SSL_CTX_new(method);
+    if ( mCtx == NULL )
     {
         ERR_print_errors_fp(stderr);
         abort();
     }
-    return ctx;
+    return mCtx;
 }
 
-void SSL_Connection::write(std::string request) {
+void SSL_Connection::write(std::string request)
+{
     const char *msg = request.c_str();
 
-    SSL_write(ssl, msg, strlen(msg));
+    SSL_write(mSSL, msg, strlen(msg));
 }
 
-void SSL_Connection::load(std::string &resultStr) {
+void SSL_Connection::load(std::string &resultStr)
+{
     char buf[1024];
     for (;;) {
-        int len = SSL_read(ssl, buf, sizeof (buf));
+        int len = SSL_read(mSSL, buf, sizeof (buf));
 
         if (len == 0)
             break;

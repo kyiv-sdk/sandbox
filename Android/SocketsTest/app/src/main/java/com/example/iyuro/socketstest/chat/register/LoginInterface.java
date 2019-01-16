@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.Chat.RegisterActivity;
+package com.example.iyuro.socketstest.chat.register;
 
 public interface LoginInterface {
     void onLoginSuccess();

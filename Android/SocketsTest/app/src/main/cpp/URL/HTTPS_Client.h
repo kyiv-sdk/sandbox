@@ -7,7 +7,8 @@
 
 #include "HTTP_Client.h"
 
-class HTTPS_Client : public HTTP_Client{
+class HTTPS_Client : public HTTP_Client
+{
 public:
     void loadData(std::string &result, const char *hostname, int port) override;
 };

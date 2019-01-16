@@ -9,9 +9,11 @@
 
 #include "NetworkExecutorAdapter.h"
 
-class NetworkExecutor {
-    std::thread myThread;
-    NetworkExecutorAdapter *networkExecutorAdapter;
+class NetworkExecutor
+{
+private:
+    std::thread mThread;
+    NetworkExecutorAdapter *mNetworkExecutorAdapter;
 
     void run(const char* protocol, const char* hostname, int port);
 public:

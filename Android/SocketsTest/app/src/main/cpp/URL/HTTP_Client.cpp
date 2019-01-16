@@ -6,7 +6,7 @@
 
 #include <sstream>
 
-#include "../Connection/Basic_Connection.h"
+#include "Basic_Connection.h"
 
 void HTTP_Client::loadData(std::string& resultStr, const char* hostname, int port)
 {

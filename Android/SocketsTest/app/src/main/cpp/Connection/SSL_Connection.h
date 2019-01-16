@@ -9,10 +9,11 @@
 
 #include "Basic_Connection.h"
 
-class SSL_Connection : public Basic_Connection{
+class SSL_Connection : public Basic_Connection
+{
 private:
-    SSL *ssl;
-    SSL_CTX *ctx;
+    SSL *mSSL;
+    SSL_CTX *mCtx;
 
     void handle_error(const char *msg);
 

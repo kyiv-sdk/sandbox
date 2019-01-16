@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.iyuro.socketstest.Chat.RegisterActivity.LoginActivity;
-import com.example.iyuro.socketstest.URL.URL_DownloadActivity;
+import com.example.iyuro.socketstest.chat.register.LoginActivity;
+import com.example.iyuro.socketstest.url.URL_DownloadActivity;
 
 public class MainActivity extends AppCompatActivity{
 
