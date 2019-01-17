@@ -54,13 +54,8 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
     }
 
     public void requestUsersList(){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("keyAction", "loggedUsersList");
-            ChatManager.getInstance().sendMessage(jsonObject.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        String request = ChatManager.getInstance().createLoggedUsersListRequest();
+        ChatManager.getInstance().sendMessage(request);
     }
 
     @Override

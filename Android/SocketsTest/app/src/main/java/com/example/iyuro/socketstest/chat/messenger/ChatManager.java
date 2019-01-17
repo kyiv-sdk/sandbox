@@ -1,12 +1,15 @@
 package com.example.iyuro.socketstest.chat.messenger;
 
+import com.example.iyuro.socketstest.chat.common.ChatMessage;
+
 import java.util.ArrayList;
 
 public class ChatManager implements NetworkInterface, ChatInterface{
     private static final ChatManager ourInstance = new ChatManager();
     private static ArrayList<ChatUser> chatUserArrayList = new ArrayList<>();
-    private MessageProtocol messageProtocol;
+//    private MessageProtocol messageProtocol;
     private UI_Interface UIInterface;
+    private String currentUserID;
 
     public static ChatManager getInstance() {
         return ourInstance;
@@ -14,12 +17,21 @@ public class ChatManager implements NetworkInterface, ChatInterface{
 
     public ChatManager() {
         NetworkManager.getInstance().setNetworkInterface(this);
-        messageProtocol = new MessageProtocol(this);
         UIInterface = null;
+        currentUserID = null;
+    }
+
+    public String getCurrentUserID() {
+        return currentUserID;
+    }
+
+    public void setCurrentUserID(String currentUserID) {
+        this.currentUserID = currentUserID;
     }
 
     public void setUIInterface(UI_Interface UIInterface) {
         this.UIInterface = UIInterface;
+        int i = 0;
     }
 
     public ArrayList<ChatUser> getChatUserArrayList() {
@@ -28,7 +40,12 @@ public class ChatManager implements NetworkInterface, ChatInterface{
 
     @Override
     public void onMessageReceive(String data) {
-        messageProtocol.processReceivedMessage(data);
+        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(data);
+        if (chatMessage.getKeyAction().equals("msg")){
+            onNewMessage(chatMessage.getSrcID(), chatMessage.getMessage());
+        } else if (chatMessage.getKeyAction().equals("loggedUsersList")){
+            onUsersListRefresh(chatMessage.getAllLoggedUsersList());
+        }
     }
 
     @Override
@@ -67,8 +84,8 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         NetworkManager.getInstance().send(message);
     }
 
-    public void sendMessage(String userID, String message){
-        String processedMessage = messageProtocol.processSendMessage(userID, message);
+    public void sendMessage(String dstUserID, String message){
+        String processedMessage = MessageProtocol.getInstance().processSendMessage(currentUserID, dstUserID, message);
         if (processedMessage != null) {
             NetworkManager.getInstance().send(processedMessage);
         }
@@ -93,5 +110,9 @@ public class ChatManager implements NetworkInterface, ChatInterface{
                 return;
             }
         }
+    }
+
+    public String createLoggedUsersListRequest(){
+        return MessageProtocol.getInstance().createLoggedUsersListRequest(currentUserID);
     }
 }

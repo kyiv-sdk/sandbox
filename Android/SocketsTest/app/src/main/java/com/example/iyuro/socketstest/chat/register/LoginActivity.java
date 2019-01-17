@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.iyuro.socketstest.chat.messenger.ChatManager;
 import com.example.iyuro.socketstest.chat.messenger.NetworkManager;
 import com.example.iyuro.socketstest.R;
 import com.example.iyuro.socketstest.chat.user_list.UsersListActivity;
@@ -36,18 +37,14 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                 Settings.Secure.ANDROID_ID);
         NetworkManager.getInstance().openConnection(android_id);
 
+        loginManager = new LoginManager(this);
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 logIn();
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loginManager = new LoginManager(this);
     }
 
     private void logIn(){
@@ -60,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(getString(R.string.current_username_key), username);
         editor.apply();
+        ChatManager.getInstance().setCurrentUserID(username);
     }
 
     @Override
@@ -72,6 +70,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         saveUsername(username);
         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getApplicationContext(), UsersListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 

@@ -1,4 +1,5 @@
 package com.example.iyuro.socketstest.chat.register;
+import com.example.iyuro.socketstest.chat.messenger.MessageProtocol;
 import com.example.iyuro.socketstest.chat.messenger.NetworkInterface;
 import com.example.iyuro.socketstest.chat.messenger.NetworkManager;
 import org.json.JSONException;
@@ -14,15 +15,8 @@ public class LoginManager implements NetworkInterface {
     }
 
     public void logIn(String username){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("keyAction", "login");
-            jsonObject.put("username", username);
-
-            NetworkManager.getInstance().send(jsonObject.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        String request = MessageProtocol.getInstance().createLoginRequest(username);
+        NetworkManager.getInstance().send(request);
     }
 
     @Override
