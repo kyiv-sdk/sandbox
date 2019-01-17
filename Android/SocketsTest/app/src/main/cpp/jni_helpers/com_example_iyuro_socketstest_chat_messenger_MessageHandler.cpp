@@ -8,7 +8,8 @@
 #include "MessageHandlerAdapter.h"
 #include "MessageHandler.h"
 
-class MessageAdapterImplementation: public MessageHandlerAdapter{
+class MessageAdapterImplementation: public MessageHandlerAdapter
+{
 private:
     void (*JNIcallback)(jobject, std::string *);
     jobject instance;
