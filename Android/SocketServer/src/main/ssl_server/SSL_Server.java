@@ -6,7 +6,6 @@ import main.basic_server.BasicServer;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import java.io.*;
 import java.net.ServerSocket;
@@ -17,13 +16,7 @@ public class SSL_Server extends BasicServer {
 
     public void startServer(int portNumber){
         try {
-//            ServerSocketFactory ssf = getServerSocketFactory();
-//            ServerSocket serverSocket = ssf.createServerSocket(portNumber);
-//            ((SSLServerSocket)serverSocket).setNeedClientAuth(true);
-
-            System.setProperty("javax.net.ssl.keyStore", "/Users/iyuro/Documents/GitHub/sandbox/Android/SocketServer/src/main/ssl_server/selfsigned.jks");
-            System.setProperty("javax.net.ssl.keyStorePassword", "changeme");
-            SSLServerSocketFactory ssf = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+            ServerSocketFactory ssf = getServerSocketFactory();
             ServerSocket serverSocket = ssf.createServerSocket(portNumber);
 
             System.out.println("SSL_Server started successfully");

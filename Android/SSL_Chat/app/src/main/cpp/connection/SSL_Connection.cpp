@@ -6,10 +6,13 @@
 
 #include <openssl/err.h>
 #include <openssl/ssl.h>
+#include <Logger.h>
 
 #define FAIL    -1
 
 SSL_Connection::SSL_Connection(){}
+
+void log_ssl();
 
 void SSL_Connection::open_connection(const char *hostname, int port)
 {
@@ -24,6 +27,7 @@ void SSL_Connection::open_connection(const char *hostname, int port)
 
     mSSL = SSL_new (ctx);
     if (!mSSL)
+        log_ssl();
         handle_error ("Failed allocating SSL structure");
 
     SSL_set_connect_state (mSSL);
@@ -31,6 +35,9 @@ void SSL_Connection::open_connection(const char *hostname, int port)
     SSL_set_fd(mSSL, mSock);
     if ( SSL_connect(mSSL) == FAIL )
         handle_error("Connection failed");
+
+    Logger::log("ssl cipher");
+    Logger::log(SSL_get_cipher (mSSL));
 }
 
 void SSL_Connection::close_connection()
@@ -87,5 +94,17 @@ void SSL_Connection::load(std::string &resultStr)
         }
         memset(buf, 0, len);
         if (resultStr.back() == '\n') break;
+    }
+}
+
+void log_ssl()
+{
+    int err;
+    while (err = ERR_get_error()) {
+        char *str = ERR_error_string(err, 0);
+        if (!str)
+            return;
+        Logger::log("ssl_err");
+        Logger::log(str);
     }
 }
