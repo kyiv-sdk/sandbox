@@ -1,7 +1,5 @@
 package com.example.iyuro.ssl_chat.messenger;
 
-import com.example.iyuro.ssl_chat.messenger.ChatUser;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
