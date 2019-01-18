@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
 
+import com.example.iyuro.ssl_chat.MainActivity;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -41,7 +43,7 @@ public class NetworkManager implements RawNetworkInterface {
 
     public void openConnection(String uniqueID){
         if (cppMessageHandler == -1) {
-            this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", 4444);
+            this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", 4444, MainActivity.isSSLEnabled);
             Log.i("--------MY_LOG--------", uniqueID);
             this.send(uniqueID);
         }
@@ -94,7 +96,7 @@ public class NetworkManager implements RawNetworkInterface {
         return data;
     }
 
-    private native long cppCreateMessageHandler(String host, int port);
+    private native long cppCreateMessageHandler(String host, int port, boolean isSSLEnabled);
     private native void cppSendMessage(long connection, String message);
     private native void cppDeleteMessageHandler(long obj);
 }

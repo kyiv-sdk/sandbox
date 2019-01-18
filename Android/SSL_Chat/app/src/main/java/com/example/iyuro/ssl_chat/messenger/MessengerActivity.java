@@ -26,6 +26,12 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
         dstId = bundle.getString("dstId");
+        try {
+            getSupportActionBar().setTitle(dstId);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         EditText editText = findViewById(R.id.edittext_chatbox);
         Button btn = findViewById(R.id.button_chatbox_send);
         btn.setOnClickListener(new View.OnClickListener() {

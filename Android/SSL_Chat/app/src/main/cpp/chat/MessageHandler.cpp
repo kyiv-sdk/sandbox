@@ -7,7 +7,7 @@
 #include <Logger.h>
 #include <SSL_Connection.h>
 
-MessageHandler::MessageHandler(const char *t_hostname, int t_port, MessageHandlerAdapter *new_messageHandlerAdapter)
+MessageHandler::MessageHandler(const char *t_hostname, int t_port, bool t_isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter)
 {
     Logger::log("NetworkHandler() called!");
     mMessageHandlerAdapter = new_messageHandlerAdapter;
@@ -15,6 +15,7 @@ MessageHandler::MessageHandler(const char *t_hostname, int t_port, MessageHandle
     m_hostname = t_hostname;
     m_port = t_port;
     this->mNeedOneMoreLoop = true;
+    this->m_isSSLEnabled = t_isSSLEnabled;
 
     mManagerThread = std::thread(&MessageHandler::managerFn, this);
 }
@@ -56,7 +57,12 @@ void MessageHandler::send(const char* message)
 
 void MessageHandler::managerFn()
 {
-    mConnection = new SSL_Connection();
+    if (m_isSSLEnabled){
+        mConnection = new SSL_Connection();
+    } else {
+        mConnection = new Basic_Connection();
+    }
+
     mConnection->open_connection(m_hostname, m_port);
 
     Logger::log("Manager created");

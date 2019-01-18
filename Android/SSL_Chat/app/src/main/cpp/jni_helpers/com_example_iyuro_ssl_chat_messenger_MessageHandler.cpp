@@ -64,12 +64,12 @@ void jni_sendMessageToJava(jobject instance, std::string *resultData)
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_com_example_iyuro_ssl_1chat_messenger_NetworkManager_cppCreateMessageHandler(
-        JNIEnv *env, jobject instance, jstring t_host, jint t_port)
+        JNIEnv *env, jobject instance, jstring t_host, jint t_port, jboolean isSSLEnabled)
 {
     const char* m_host = env->GetStringUTFChars(t_host, 0);
     jobject globalInstance = env->NewGlobalRef(instance);
     MessageAdapterImplementation *messageAdapterImplementation = new MessageAdapterImplementation(env, globalInstance, jni_sendMessageToJava);
-    MessageHandler *messageHandler = new MessageHandler(m_host, (int)t_port, messageAdapterImplementation);
+    MessageHandler *messageHandler = new MessageHandler(m_host, (int)t_port, (bool)isSSLEnabled, messageAdapterImplementation);
 
     return (jlong)messageHandler;
 }

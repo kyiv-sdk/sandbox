@@ -19,6 +19,7 @@ class MessageHandler
     Basic_Connection *mConnection;
     const char *m_hostname;
     int m_port;
+    bool m_isSSLEnabled;
 
     void managerFn();
 
@@ -31,7 +32,7 @@ class MessageHandler
     std::mutex mMtx;
     std::condition_variable mCv;
 public:
-    MessageHandler(const char *hostname, int port, MessageHandlerAdapter *new_messageHandlerAdapter);
+    MessageHandler(const char *t_hostname, int t_port, bool isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter);
     void send(const char* message);
     ~MessageHandler();
 };
