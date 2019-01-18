@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.iyuro.ssl_chat">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +23,8 @@
         </activity>
         <activity android:name=".register.LoginActivity" />
         <activity android:name=".messenger.MessengerActivity" />
-        <activity android:name=".user_list.UsersListActivity"></activity>
+        <activity android:name=".user_list.UsersListActivity" />
+        <activity android:name=".photo.PhotoActivity"></activity>
     </application>
+
 </manifest>
