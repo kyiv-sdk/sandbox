@@ -19,6 +19,9 @@ public class NetworkManager implements RawNetworkInterface {
         System.loadLibrary("native-lib");
     }
 
+    private final int BASIC_POST = 4545;
+    private final int SSL_PORT = 5454;
+
     private static final NetworkManager ourInstance = new NetworkManager();
     private NetworkInterface networkInterface;
     private Handler handler;
@@ -43,7 +46,7 @@ public class NetworkManager implements RawNetworkInterface {
 
     public void openConnection(String uniqueID){
         if (cppMessageHandler == -1) {
-            this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", 4444, MainActivity.isSSLEnabled);
+            this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", MainActivity.isSSLEnabled? SSL_PORT : BASIC_POST, MainActivity.isSSLEnabled);
             Log.i("--------MY_LOG--------", uniqueID);
             this.send(uniqueID);
         }
