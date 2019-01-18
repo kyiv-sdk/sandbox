@@ -42,7 +42,7 @@ public class NetworkManager implements RawNetworkInterface {
     }
 
     public void send(String message){
-        cppSendMessage(cppMessageHandler, message);
+        cppSendMessage(cppMessageHandler, message.getBytes());
     }
 
     public void openConnection(String uniqueID){
@@ -101,6 +101,6 @@ public class NetworkManager implements RawNetworkInterface {
     }
 
     private native long cppCreateMessageHandler(String host, int port, boolean isSSLEnabled);
-    private native void cppSendMessage(long connection, String message);
+    private native void cppSendMessage(long connection, byte[] bytesData);
     private native void cppDeleteMessageHandler(long obj);
 }

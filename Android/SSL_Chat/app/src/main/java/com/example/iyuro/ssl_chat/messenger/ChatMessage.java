@@ -12,6 +12,7 @@ public class ChatMessage {
 
     String message;
     ArrayList<ChatUser> allLoggedUsersList;
+    byte[] file;
 
     public ChatMessage(String keyAction) {
         this.keyAction = keyAction;
@@ -19,6 +20,7 @@ public class ChatMessage {
         this.srcID = null;
         this.message = null;
         this.allLoggedUsersList = null;
+        this.file = null;
     }
 
     public String getKeyAction() {
@@ -61,6 +63,14 @@ public class ChatMessage {
         this.allLoggedUsersList = allLoggedUsersList;
     }
 
+    public byte[] getFile() {
+        return file;
+    }
+
+    public void setFile(byte[] file) {
+        this.file = file;
+    }
+
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -77,6 +87,10 @@ public class ChatMessage {
             if (this.allLoggedUsersList != null && !this.allLoggedUsersList.isEmpty()) {
                 jsonObject.put("loggedUsers", this.allLoggedUsersList);
             }
+            if (this.file != null) {
+                jsonObject.put("file", this.file);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

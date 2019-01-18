@@ -1,9 +1,12 @@
 package com.example.iyuro.ssl_chat.messenger;
 
+import android.graphics.Bitmap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 
@@ -62,6 +65,21 @@ public class MessageProtocol {
         resultChatMessage.setSrcID(srcID);
         resultChatMessage.setMessage(message);
 
+        return resultChatMessage;
+    }
+
+    public ChatMessage processSendPhoto(String srcID, String dstID, Bitmap photo){
+        ChatMessage resultChatMessage = new ChatMessage("msg");
+
+        resultChatMessage.setDstID(dstID);
+        resultChatMessage.setSrcID(srcID);
+
+        //TODO: file size!!!
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        resultChatMessage.setFile(byteArray);
         return resultChatMessage;
     }
 

@@ -53,7 +53,6 @@ void jni_sendMessageToJava(jobject instance, std::string *resultData)
     jbyteArray result = new_env->NewByteArray(size);
     new_env->SetByteArrayRegion(result, 0, (*resultData).size(), (const jbyte*)(*resultData).c_str());
 
-
     new_env->CallVoidMethod(objectMainActivity, mjmethodID, result);
 
     new_env->DeleteLocalRef(result);
@@ -77,12 +76,16 @@ Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppCreateMessageHandler(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppSendMessage(
-        JNIEnv *env, jobject instance, jlong t_messageHandler, jstring t_message)
+        JNIEnv *env, jobject instance, jlong t_messageHandler, jbyteArray jbyteArray)
 {
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
 
-    const char* m_message = env->GetStringUTFChars(t_message, 0);
-    messageHandler->send(m_message);
+
+    int len = env->GetArrayLength (jbyteArray);
+    char* buf = new char[len];
+    env->GetByteArrayRegion (jbyteArray, 0, len, reinterpret_cast<jbyte*>(buf));
+
+    messageHandler->send(buf);
 }
 
 extern "C"
