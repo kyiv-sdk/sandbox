@@ -15,6 +15,7 @@ import java.security.KeyStore;
 public class SSL_Server extends BasicServer {
 
     public void startServer(int portNumber){
+
         try {
             ServerSocketFactory ssf = getServerSocketFactory();
             ServerSocket serverSocket = ssf.createServerSocket(portNumber);
@@ -56,7 +57,7 @@ public class SSL_Server extends BasicServer {
                 kmf = KeyManagerFactory.getInstance("SunX509");
                 ks = KeyStore.getInstance("JKS");
 
-                ks.load(new FileInputStream("/Users/iyuro/Documents/GitHub/sandbox/Android/SocketServer/src/main/ssl_server/selfsigned.jks"), passphrase);
+                ks.load(new FileInputStream("src/main/ssl_server/selfsigned.jks"), passphrase);
                 kmf.init(ks, passphrase);
                 ctx.init(kmf.getKeyManagers(), null, null);
 
