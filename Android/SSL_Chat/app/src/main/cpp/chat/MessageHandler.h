@@ -14,13 +14,13 @@
 
 class MessageHandler
 {
-    std::thread mSenderThread, mReaderThread;
+    std::thread mManagerThread, mReaderThread;
     MessageHandlerAdapter *mMessageHandlerAdapter;
     Basic_Connection *mConnection;
     const char *m_hostname;
     int m_port;
 
-    void senderFn();
+    void managerFn();
 
     void readerFn();
 

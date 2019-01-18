@@ -37,6 +37,7 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        ChatManager.getInstance().refreshNetworkInterface();
         ArrayList<ChatUser> allLoggedUsersList = ChatManager.getInstance().getChatUserArrayList();
 
         mAdapter = new UsersListAdapter(allLoggedUsersList, this);

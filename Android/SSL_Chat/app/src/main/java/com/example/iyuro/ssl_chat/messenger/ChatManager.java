@@ -1,5 +1,7 @@
 package com.example.iyuro.ssl_chat.messenger;
 
+import android.util.Log;
+
 import com.example.iyuro.ssl_chat.common.ChatMessage;
 
 import java.util.ArrayList;
@@ -16,7 +18,8 @@ public class ChatManager implements NetworkInterface, ChatInterface{
     }
 
     public ChatManager() {
-        NetworkManager.getInstance().setNetworkInterface(this);
+        Log.i("--------MY_LOG--------", "chat manager created");
+        refreshNetworkInterface();
         UIInterface = null;
         currentUserID = null;
     }
@@ -38,8 +41,13 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         return chatUserArrayList;
     }
 
+    public void refreshNetworkInterface(){
+        NetworkManager.getInstance().setNetworkInterface(this);
+    }
+
     @Override
     public void onMessageReceive(String data) {
+        Log.i("--------MY_LOG--------", "chat manager onMessageReceive");
         ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(data);
         if (chatMessage.getKeyAction().equals("msg")){
             onNewMessage(chatMessage.getSrcID(), chatMessage.getMessage());

@@ -62,6 +62,7 @@ public class NetworkManager implements RawNetworkInterface {
         handler.post(new Runnable() {
             @Override
             public void run() {
+                Log.i("--------MY_LOG--------", "post runned");
                 networkInterface.onMessageReceive(strData);
             }
         });

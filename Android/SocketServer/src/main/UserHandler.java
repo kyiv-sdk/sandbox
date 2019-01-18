@@ -37,7 +37,7 @@ public class UserHandler implements UserHandlerInterface {
 
         ServerMessageProtocol serverMessageProtocol = new ServerMessageProtocol(serverInterface, this);
 
-        System.out.println("Created user handler for: " + uniqueUserId);
+        System.out.println("Created user handler");
 
         messages = Collections.synchronizedList(new ArrayList<>());
 

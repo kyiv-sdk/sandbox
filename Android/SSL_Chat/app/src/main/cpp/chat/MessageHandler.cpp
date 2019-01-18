@@ -16,7 +16,7 @@ MessageHandler::MessageHandler(const char *t_hostname, int t_port, MessageHandle
     m_port = t_port;
     this->mNeedOneMoreLoop = true;
 
-    mSenderThread = std::thread(&MessageHandler::senderFn, this);
+    mManagerThread = std::thread(&MessageHandler::managerFn, this);
 }
 
 MessageHandler::~MessageHandler()
@@ -26,10 +26,10 @@ MessageHandler::~MessageHandler()
     mCv.notify_all();
     try
     {
-        if (mSenderThread.joinable())
+        if (mManagerThread.joinable())
         {
-            mSenderThread.join();
-            Logger::log("senderThread.join();");
+            mManagerThread.join();
+            Logger::log("mManagerThread.join();");
         }
         if (mReaderThread.joinable())
         {
@@ -54,13 +54,12 @@ void MessageHandler::send(const char* message)
     mCv.notify_all();
 }
 
-void MessageHandler::senderFn()
+void MessageHandler::managerFn()
 {
-//    mConnection = new Basic_Connection();
     mConnection = new SSL_Connection();
     mConnection->open_connection(m_hostname, m_port);
 
-    Logger::log("Sender created");
+    Logger::log("Manager created");
 
     mReaderThread = std::thread(&MessageHandler::readerFn, this);
 
@@ -68,7 +67,7 @@ void MessageHandler::senderFn()
     {
         std::unique_lock<std::mutex> lck(mMtx);
         mCv.wait(lck);
-        Logger::log("cpp senderFn notified");
+        Logger::log("cpp Manager notified");
 
         while (!mMessagesToSend.empty())
         {
@@ -77,7 +76,7 @@ void MessageHandler::senderFn()
             mMessagesToSend.pop();
             if (fromServer)
             {
-                Logger::log("cpp senderFn managing with");
+                Logger::log("cpp Manager managing with");
                 Logger::log(strToProcess);
                 mMessageHandlerAdapter->runCallback(&strToProcess);
             } else {

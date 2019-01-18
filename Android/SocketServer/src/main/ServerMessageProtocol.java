@@ -95,6 +95,13 @@ public class ServerMessageProtocol {
 
                 userHandlerInterface.onResponse(destinationID, responseJsonObject.toString());
                 break;
+            case "login":
+                String username = requestJsonObject.getString("message");
+                if (userHandlerInterface.getUserName().equals(username)) {
+                    responseJsonObject.put("message", "ok");
+                    userHandlerInterface.onLoginSuccess(responseJsonObject.toString(), username);
+                }
+                break;
         }
     }
 }
