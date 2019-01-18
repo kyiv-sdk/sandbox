@@ -8,5 +8,5 @@
 /captures
 .externalNativeBuild
 /app/build
-/.idea
+.idea
 out
