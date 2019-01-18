@@ -42,8 +42,6 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
         NetworkManager.getInstance().openConnection(android_id);
 
-        loginManager = new LoginManager(this);
-
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,11 +69,16 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        loginManager = new LoginManager(this);
+    }
+
+    @Override
     public void onLoginSuccess() {
         saveUsername(username);
         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getApplicationContext(), UsersListActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
