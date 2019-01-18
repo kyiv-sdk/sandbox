@@ -39,7 +39,7 @@ public class SSL_Server extends BasicServer {
             }
 
         } catch (IOException e) {
-            System.out.println("Unable to start ClassServer: " +
+            System.out.println("Unable to start SSL server: " +
                     e.getMessage());
             e.printStackTrace();
         }
