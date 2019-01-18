@@ -7,12 +7,11 @@
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <Logger.h>
+#include <openssl/evp.h>
 
 #define FAIL    -1
 
 SSL_Connection::SSL_Connection(){}
-
-void log_ssl();
 
 void SSL_Connection::open_connection(const char *hostname, int port)
 {
@@ -27,14 +26,17 @@ void SSL_Connection::open_connection(const char *hostname, int port)
 
     mSSL = SSL_new (ctx);
     if (!mSSL)
-        log_ssl();
+    {
         handle_error ("Failed allocating SSL structure");
+    }
 
     SSL_set_connect_state (mSSL);
 
     SSL_set_fd(mSSL, mSock);
     if ( SSL_connect(mSSL) == FAIL )
+    {
         handle_error("Connection failed");
+    }
 
     Logger::log("ssl cipher");
     Logger::log(SSL_get_cipher (mSSL));
@@ -45,6 +47,22 @@ void SSL_Connection::open_connection(const char *hostname, int port)
     server_cert = SSL_get_peer_certificate(mSSL);
     Logger::log("ssl certificate");
     Logger::log(server_cert->name);
+
+    if (server_cert)
+    {
+        X509_free(server_cert);
+    }
+
+    long res = SSL_get_verify_result(mSSL);
+    if(X509_V_OK != res)
+    {
+        handle_error("certificate is not safe");
+    } else {
+        Logger::log("ssl certificate is safe");
+    }
+
+    EVP_PKEY * pubkey;
+    pubkey = X509_get_pubkey (server_cert);
 }
 
 void SSL_Connection::close_connection()
@@ -101,17 +119,5 @@ void SSL_Connection::load(std::string &resultStr)
         }
         memset(buf, 0, len);
         if (resultStr.back() == '\n') break;
-    }
-}
-
-void log_ssl()
-{
-    int err;
-    while (err = ERR_get_error()) {
-        char *str = ERR_error_string(err, 0);
-        if (!str)
-            return;
-        Logger::log("ssl_err");
-        Logger::log(str);
     }
 }
