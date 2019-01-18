@@ -58,42 +58,30 @@ public class MessageProtocol {
         return resultChatMessage;
     }
 
-    public String processSendMessage(String srcID, String dstID, String message){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            if (dstID != null) {
-                jsonObject.put("keyAction", "msg");
-                jsonObject.put("dstID", dstID);
-                jsonObject.put("srcID", srcID);
-                jsonObject.put("message", message);
-            }
-            return jsonObject.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public ChatMessage processSendMessage(String srcID, String dstID, String message){
+        ChatMessage resultChatMessage = new ChatMessage("msg");
+
+        resultChatMessage.setDstID(dstID);
+        resultChatMessage.setSrcID(srcID);
+        resultChatMessage.setMessage(message);
+
+        return resultChatMessage;
     }
 
-    public String createLoginRequest(String username){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("keyAction", "login");
-            jsonObject.put("message", username);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public ChatMessage createLoginRequest(String username){
+        ChatMessage resultChatMessage = new ChatMessage("login");
 
-        return jsonObject.toString();
+        resultChatMessage.setMessage(username);
+
+        return resultChatMessage;
     }
 
-    public String createLoggedUsersListRequest(String srcID){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("keyAction", "loggedUsersList");
-            jsonObject.put("srcID", srcID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject.toString();
+    public ChatMessage createLoggedUsersListRequest(String srcID){
+
+        ChatMessage resultChatMessage = new ChatMessage("loggedUsersList");
+
+        resultChatMessage.setSrcID(srcID);
+
+        return resultChatMessage;
     }
 }

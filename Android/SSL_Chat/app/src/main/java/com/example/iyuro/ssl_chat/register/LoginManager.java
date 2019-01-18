@@ -15,7 +15,7 @@ public class LoginManager implements NetworkInterface {
     }
 
     public void logIn(String username){
-        String request = MessageProtocol.getInstance().createLoginRequest(username);
+        String request = MessageProtocol.getInstance().createLoginRequest(username).toString();
         NetworkManager.getInstance().send(request);
     }
 

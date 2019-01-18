@@ -93,8 +93,8 @@ public class ChatManager implements NetworkInterface, ChatInterface{
     }
 
     public void sendMessage(String dstUserID, String message){
-        String processedMessage = MessageProtocol.getInstance().processSendMessage(currentUserID, dstUserID, message);
-        if (processedMessage != null) {
+        String processedMessage = MessageProtocol.getInstance().processSendMessage(currentUserID, dstUserID, message).toString();
+        if (!processedMessage.equals("")) {
             NetworkManager.getInstance().send(processedMessage);
         }
     }
@@ -121,6 +121,6 @@ public class ChatManager implements NetworkInterface, ChatInterface{
     }
 
     public String createLoggedUsersListRequest(){
-        return MessageProtocol.getInstance().createLoggedUsersListRequest(currentUserID);
+        return MessageProtocol.getInstance().createLoggedUsersListRequest(currentUserID).toString();
     }
 }

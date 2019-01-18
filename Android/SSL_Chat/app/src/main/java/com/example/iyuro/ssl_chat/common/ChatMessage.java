@@ -15,14 +15,6 @@ public class ChatMessage {
     String message;
     ArrayList<ChatUser> allLoggedUsersList;
 
-//    public ChatMessage(){
-//        this.keyAction = null;
-//        this.dstID = null;
-//        this.message = null;
-//        this.allLoggedUsersList = null;
-//    }
-
-
     public ChatMessage(String keyAction) {
         this.keyAction = keyAction;
         this.dstID = null;
