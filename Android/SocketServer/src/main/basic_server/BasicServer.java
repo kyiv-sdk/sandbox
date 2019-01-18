@@ -11,45 +11,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class BasicServer implements ServerInterface {
+public class BasicServer implements ServerInterface, Runnable {
     public static ArrayList<UserHandler> userHandlers = new ArrayList<>();
 
-    public void startServer(int portNumber){
+    protected int portNumber;
 
-        ServerSocket serverSocket = null;
-        try {
-            serverSocket = new ServerSocket(portNumber);
-            System.out.println("main.basic_server.BasicServer started successfully");
-
-            while (true){
-                Socket clientSocket = serverSocket.accept();
-                PrintWriter out =
-                        new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
-
-//                try {
-//                    String userUniqueId;
-//                    String inputLine = in.readLine();
-//                    System.out.println("Received on server: " + inputLine);
-//
-//                    if (inputLine != null) {
-
-//                        userUniqueId = inputLine;
-
-                        UserHandler newUserHandler = new UserHandler(this, clientSocket, out, in);
-
-                        userHandlers.add(newUserHandler);
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-            }
-
-        } catch (Exception e) {
-            System.out.println("main.basic_server.BasicServer started failed");
-            e.printStackTrace();
-        }
+    public BasicServer(int portNumber) {
+        this.portNumber = portNumber;
     }
 
     @Override
@@ -109,5 +77,44 @@ public class BasicServer implements ServerInterface {
             }
         }
         return -1;
+    }
+
+    @Override
+    public void run() {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(portNumber);
+            System.out.println("BasicServer started successfully");
+
+            while (true){
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Basic accepted new connection");
+                PrintWriter out =
+                        new PrintWriter(clientSocket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(clientSocket.getInputStream()));
+
+//                try {
+//                    String userUniqueId;
+//                    String inputLine = in.readLine();
+//                    System.out.println("Received on server: " + inputLine);
+//
+//                    if (inputLine != null) {
+
+//                        userUniqueId = inputLine;
+
+                UserHandler newUserHandler = new UserHandler(this, clientSocket, out, in);
+
+                userHandlers.add(newUserHandler);
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("main.basic_server.BasicServer started failed");
+            e.printStackTrace();
+        }
     }
 }

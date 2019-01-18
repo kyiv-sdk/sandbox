@@ -100,6 +100,9 @@ public class ServerMessageProtocol {
                 if (userHandlerInterface.getUserName().equals(username)) {
                     responseJsonObject.put("message", "ok");
                     userHandlerInterface.onLoginSuccess(responseJsonObject.toString(), username);
+                } else {
+                    responseJsonObject.put("message", "nok");
+                    userHandlerInterface.onLoginFailed(responseJsonObject.toString(), username);
                 }
                 break;
         }
