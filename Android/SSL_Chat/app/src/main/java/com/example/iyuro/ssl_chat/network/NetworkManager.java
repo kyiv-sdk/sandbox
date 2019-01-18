@@ -1,10 +1,11 @@
-package com.example.iyuro.ssl_chat.messenger;
+package com.example.iyuro.ssl_chat.network;
 
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
 
 import com.example.iyuro.ssl_chat.MainActivity;
+import com.example.iyuro.ssl_chat.messenger.RawNetworkInterface;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

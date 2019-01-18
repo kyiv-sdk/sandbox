@@ -1,7 +1,5 @@
 package com.example.iyuro.ssl_chat.messenger;
 
-import com.example.iyuro.ssl_chat.common.ChatMessage;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +9,6 @@ import java.util.ArrayList;
 
 public class MessageProtocol {
     private static final MessageProtocol ourInstance = new MessageProtocol();
-//    private ChatInterface chatInterface;
 
     public MessageProtocol() {
     }

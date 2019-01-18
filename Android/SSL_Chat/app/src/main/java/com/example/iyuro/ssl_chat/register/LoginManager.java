@@ -1,7 +1,7 @@
 package com.example.iyuro.ssl_chat.register;
 import com.example.iyuro.ssl_chat.messenger.MessageProtocol;
-import com.example.iyuro.ssl_chat.messenger.NetworkInterface;
-import com.example.iyuro.ssl_chat.messenger.NetworkManager;
+import com.example.iyuro.ssl_chat.network.NetworkInterface;
+import com.example.iyuro.ssl_chat.network.NetworkManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 

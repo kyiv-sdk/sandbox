@@ -1,4 +1,4 @@
-package com.example.iyuro.ssl_chat.common;
+package com.example.iyuro.ssl_chat.messenger;
 
 import com.example.iyuro.ssl_chat.messenger.ChatUser;
 

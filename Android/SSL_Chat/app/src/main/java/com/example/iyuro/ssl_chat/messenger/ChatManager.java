@@ -2,7 +2,8 @@ package com.example.iyuro.ssl_chat.messenger;
 
 import android.util.Log;
 
-import com.example.iyuro.ssl_chat.common.ChatMessage;
+import com.example.iyuro.ssl_chat.network.NetworkInterface;
+import com.example.iyuro.ssl_chat.network.NetworkManager;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.example.iyuro.ssl_chat.messenger;
+package com.example.iyuro.ssl_chat.network;
 
 public interface NetworkInterface {
     void onMessageReceive(String data);

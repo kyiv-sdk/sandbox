@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
-import android.widget.TextView;
-
 import com.example.iyuro.ssl_chat.register.LoginActivity;
-import com.example.iyuro.ssl_chat.user_list.UsersListActivity;
 
 public class MainActivity extends AppCompatActivity {
 

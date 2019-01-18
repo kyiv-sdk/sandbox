@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.iyuro.ssl_chat.messenger.ChatManager;
-import com.example.iyuro.ssl_chat.messenger.NetworkManager;
+import com.example.iyuro.ssl_chat.network.NetworkManager;
 import com.example.iyuro.ssl_chat.R;
 import com.example.iyuro.ssl_chat.user_list.UsersListActivity;
 
