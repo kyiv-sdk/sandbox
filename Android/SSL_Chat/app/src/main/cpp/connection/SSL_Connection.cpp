@@ -38,6 +38,13 @@ void SSL_Connection::open_connection(const char *hostname, int port)
 
     Logger::log("ssl cipher");
     Logger::log(SSL_get_cipher (mSSL));
+
+
+
+    X509* server_cert;
+    server_cert = SSL_get_peer_certificate(mSSL);
+    Logger::log("ssl certificate");
+    Logger::log(server_cert->name);
 }
 
 void SSL_Connection::close_connection()
