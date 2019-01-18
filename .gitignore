@@ -1,2 +1,12 @@
 .DS_Store
 *.class
+*.iml
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+/app/build
+/.idea
+out
