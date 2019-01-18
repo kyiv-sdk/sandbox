@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.example.iyuro.ssl_chat.MainActivity;
 import com.example.iyuro.ssl_chat.messenger.ChatManager;
 import com.example.iyuro.ssl_chat.messenger.ChatUser;
 import com.example.iyuro.ssl_chat.messenger.UI_Interface;
@@ -27,6 +28,16 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
+
+        try {
+            if (MainActivity.isSSLEnabled) {
+                getSupportActionBar().setTitle("SECURE");
+            } else {
+                getSupportActionBar().setTitle("NOT SECURE");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         RecyclerView mRecyclerView = findViewById(R.id.usersListRecyclerView);
         DividerItemDecoration itemDecor = new DividerItemDecoration(this, HORIZONTAL);
