@@ -20,10 +20,6 @@ import com.example.iyuro.ssl_chat.user_list.UsersListActivity;
  */
 public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
-    static {
-        System.loadLibrary("native-lib");
-    }
-
     EditText usernameEditText;
     Button loginButton;
     public String username = "default";
