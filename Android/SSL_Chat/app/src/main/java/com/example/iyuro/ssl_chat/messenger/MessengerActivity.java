@@ -1,18 +1,17 @@
 package com.example.iyuro.ssl_chat.messenger;
 
-import android.support.annotation.Nullable;
-import android.support.v13.view.inputmethod.EditorInfoCompat;
-import android.support.v13.view.inputmethod.InputConnectionCompat;
-import android.support.v13.view.inputmethod.InputContentInfoCompat;
-import android.support.v4.os.BuildCompat;
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -26,10 +25,13 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     private ArrayList<UserMessage> messageList;
     private String dstId;
 
+    private static final int CAMERA_REQUEST = 1888;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_socket_test);
+        setContentView(R.layout.activity_chat);
 
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
@@ -38,6 +40,13 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             getSupportActionBar().setTitle(dstId);
         } catch (Exception e){
             e.printStackTrace();
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                    MY_CAMERA_PERMISSION_CODE);
         }
 
         EditText editText = findViewById(R.id.edittext_chatbox);
@@ -76,8 +85,8 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
 //            }
 //        };
 
-        Button btn = findViewById(R.id.button_chatbox_send);
-        btn.setOnClickListener(new View.OnClickListener() {
+        Button btnMessage = findViewById(R.id.button_chatbox_send);
+        btnMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String msg = editText.getText().toString();
@@ -87,6 +96,22 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
                     mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
 
                     ChatManager.getInstance().sendMessage(dstId, msg);
+                }
+            }
+        });
+
+        Button btnPhoto = findViewById(R.id.button_photo_send);
+        btnPhoto.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (checkSelfPermission(Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA},
+                            MY_CAMERA_PERMISSION_CODE);
+                } else {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
                 }
             }
         });
@@ -126,6 +151,37 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             ChatManager.getInstance().resetUnreadMessagesByUserID(dstId);
         } else {
             Toast.makeText(this, "From " + srcID + " : " + message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            try {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                Toast.makeText(this, "photo success", Toast.LENGTH_SHORT).show();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case MY_CAMERA_PERMISSION_CODE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                    Intent cameraIntent = new
+                            Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                } else {
+                    Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
         }
     }
 }
