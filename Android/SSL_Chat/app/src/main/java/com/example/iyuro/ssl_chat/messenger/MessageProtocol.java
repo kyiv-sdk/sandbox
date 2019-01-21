@@ -1,17 +1,24 @@
 package com.example.iyuro.ssl_chat.messenger;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 
 
 public class MessageProtocol {
     private static final MessageProtocol ourInstance = new MessageProtocol();
+
+    private final int FILE_SIZE = 1000;
+    private static int nextFileID = 0;
 
     public MessageProtocol() {
     }
@@ -21,13 +28,14 @@ public class MessageProtocol {
     }
 
     public ChatMessage processReceivedMessage(String inMessage){
-        // TODO: rewrite using ChatMessage
         ChatMessage resultChatMessage = null;
         try {
             JSONObject receivedMessageJsonObject = new JSONObject(inMessage);
             String keyAction = receivedMessageJsonObject.getString("keyAction");
 
             resultChatMessage = new ChatMessage(keyAction);
+
+            String srcID, dstID;
 
             switch (keyAction){
                 case "loggedUsersList":
@@ -44,12 +52,42 @@ public class MessageProtocol {
 
                     break;
                 case "msg":
-                    String srcID = receivedMessageJsonObject.getString("srcID");
+                    srcID = receivedMessageJsonObject.getString("srcID");
                     resultChatMessage.setSrcID(srcID);
-                    String dstID = receivedMessageJsonObject.getString("dstID");
+                    dstID = receivedMessageJsonObject.getString("dstID");
                     resultChatMessage.setDstID(dstID);
                     String message = receivedMessageJsonObject.getString("message");
                     resultChatMessage.setMessage(message);
+                    break;
+                case "photo":
+                    srcID = receivedMessageJsonObject.getString("srcID");
+                    resultChatMessage.setSrcID(srcID);
+                    dstID = receivedMessageJsonObject.getString("dstID");
+                    resultChatMessage.setDstID(dstID);
+
+                    int fileID = receivedMessageJsonObject.getInt("fileID");
+                    resultChatMessage.setFileID(fileID);
+                    int fileSliceID = receivedMessageJsonObject.getInt("fileSliceID");
+                    resultChatMessage.setFileSliceID(fileSliceID);
+                    boolean isLast = receivedMessageJsonObject.getBoolean("isLast");
+                    resultChatMessage.setLast(isLast);
+
+
+                    JSONArray jsonArrayFile = receivedMessageJsonObject.getJSONArray("file");
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+                    for (int i = 0; i < jsonArrayFile.length(); i++){
+                        byte b = (byte)jsonArrayFile.getInt(i);
+                        byteArrayOutputStream.write(b);
+                    }
+
+                    byte[] file = byteArrayOutputStream.toByteArray();
+
+                    resultChatMessage.setFile(file);
+                    int width = receivedMessageJsonObject.getInt("width");
+                    resultChatMessage.setWidth(width);
+                    int height = receivedMessageJsonObject.getInt("height");
+                    resultChatMessage.setHeight(height);
                     break;
             }
         } catch (JSONException e) {
@@ -68,19 +106,46 @@ public class MessageProtocol {
         return resultChatMessage;
     }
 
-    public ChatMessage processSendPhoto(String srcID, String dstID, Bitmap photo){
-        ChatMessage resultChatMessage = new ChatMessage("msg");
-
-        resultChatMessage.setDstID(dstID);
-        resultChatMessage.setSrcID(srcID);
-
-        //TODO: file size!!!
+    public ArrayList<ChatMessage> processSendPhoto(String srcID, String dstID, Bitmap photo){
+        ArrayList<ChatMessage> result = new ArrayList<>();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
-        resultChatMessage.setFile(byteArray);
-        return resultChatMessage;
+
+        byte[] bbitmap = byteArray;
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bbitmap , 0, bbitmap.length);
+
+        int arrLength = byteArray.length;
+        int counter = 0;
+
+        while (arrLength > 0){
+            ChatMessage resultChatMessage = new ChatMessage("photo");
+            resultChatMessage.setFileSliceID(counter);
+
+            resultChatMessage.setDstID(dstID);
+            resultChatMessage.setSrcID(srcID);
+
+            resultChatMessage.setWidth(photo.getWidth());
+            resultChatMessage.setHeight(photo.getHeight());
+
+            resultChatMessage.setFileID(nextFileID);
+
+            int sliceFrom = counter * FILE_SIZE;
+            int sliceTo = arrLength > FILE_SIZE ? (counter + 1) * FILE_SIZE : counter * FILE_SIZE + arrLength;
+            arrLength -= sliceTo - sliceFrom;
+            resultChatMessage.setFile(Arrays.copyOfRange(byteArray, sliceFrom, sliceTo));
+            result.add(resultChatMessage);
+
+
+            counter++;
+        }
+
+        nextFileID++;
+
+        result.get(result.size() - 1).setLast(true);
+
+        return result;
     }
 
     public ChatMessage createLoginRequest(String username){

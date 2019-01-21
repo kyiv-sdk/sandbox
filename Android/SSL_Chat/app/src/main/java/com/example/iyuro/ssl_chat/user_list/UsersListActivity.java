@@ -1,5 +1,6 @@
 package com.example.iyuro.ssl_chat.user_list;
 
+import android.graphics.Bitmap;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -85,5 +86,11 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
     public void onNewMessage(String srcID, String message) {
         mAdapter.notifyDataSetChanged();
         Toast.makeText(this, "From " + srcID + " : " + message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNewPhotoMessage(String srcID, Bitmap bitmap) {
+        mAdapter.notifyDataSetChanged();
+        Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
     }
 }

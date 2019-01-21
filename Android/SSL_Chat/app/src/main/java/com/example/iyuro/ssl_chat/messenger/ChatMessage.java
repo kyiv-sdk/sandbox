@@ -1,9 +1,11 @@
 package com.example.iyuro.ssl_chat.messenger;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ChatMessage {
     String keyAction;
@@ -13,6 +15,11 @@ public class ChatMessage {
     String message;
     ArrayList<ChatUser> allLoggedUsersList;
     byte[] file;
+    int fileSliceID;
+    int fileID;
+    boolean isLast;
+
+    int width, height;
 
     public ChatMessage(String keyAction) {
         this.keyAction = keyAction;
@@ -21,6 +28,11 @@ public class ChatMessage {
         this.message = null;
         this.allLoggedUsersList = null;
         this.file = null;
+        this.fileSliceID = -1;
+        this.fileID = -1;
+        this.isLast = false;
+        this.width = -1;
+        this.height = -1;
     }
 
     public String getKeyAction() {
@@ -71,6 +83,46 @@ public class ChatMessage {
         this.file = file;
     }
 
+    public int getFileSliceID() {
+        return fileSliceID;
+    }
+
+    public void setFileSliceID(int fileSliceID) {
+        this.fileSliceID = fileSliceID;
+    }
+
+    public int getFileID() {
+        return fileID;
+    }
+
+    public void setFileID(int fileID) {
+        this.fileID = fileID;
+    }
+
+    public boolean isLast() {
+        return isLast;
+    }
+
+    public void setLast(boolean last) {
+        isLast = last;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -87,8 +139,32 @@ public class ChatMessage {
             if (this.allLoggedUsersList != null && !this.allLoggedUsersList.isEmpty()) {
                 jsonObject.put("loggedUsers", this.allLoggedUsersList);
             }
+
+
             if (this.file != null) {
-                jsonObject.put("file", this.file);
+                if (this.fileSliceID != -1) {
+                    jsonObject.put("fileSliceID", this.fileSliceID);
+                }
+
+                if (this.fileID != -1) {
+                    jsonObject.put("fileID", this.fileID);
+                }
+
+                if (this.width != -1) {
+                    jsonObject.put("width", this.width);
+                }
+
+                if (this.height != -1) {
+                    jsonObject.put("height", this.height);
+                }
+
+                jsonObject.put("isLast", this.isLast);
+
+                JSONArray jsonArray = new JSONArray();
+                for (byte b : this.file){
+                    jsonArray.put(b);
+                }
+                jsonObject.put("file", jsonArray);
             }
 
         } catch (JSONException e) {

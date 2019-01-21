@@ -2,6 +2,7 @@ package com.example.iyuro.ssl_chat.messenger;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -16,6 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.example.iyuro.ssl_chat.R;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class MessengerActivity extends AppCompatActivity implements UI_Interface {
@@ -155,11 +159,27 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     }
 
     @Override
+    public void onNewPhotoMessage(String srcID, Bitmap bitmap) {
+        if (srcID.equals(this.dstId)){
+            mMessageAdapter.notifyDataSetChanged();
+            mMessageRecycler.scrollToPosition(messageList.size() - 1);
+            ChatManager.getInstance().resetUnreadMessagesByUserID(dstId);
+        } else {
+            Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             try {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
                 Toast.makeText(this, "photo success", Toast.LENGTH_SHORT).show();
+
+                messageList.add(new UserMessage(photo, false));
+                mMessageAdapter.notifyDataSetChanged();
+                mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
+                ChatManager.getInstance().sendPhoto(dstId, photo);
             } catch (Exception e){
                 e.printStackTrace();
             }

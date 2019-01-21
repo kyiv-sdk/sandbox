@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.iyuro.ssl_chat.R;
@@ -69,28 +70,51 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     private class SentMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText;
+        ImageView imageView;
 
         SentMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
+            imageView = itemView.findViewById(R.id.imageViewSent);
         }
 
         void bind(UserMessage message) {
-            messageText.setText(message.getMessage());
+            if (message.getMessage() != null) {
+                messageText.setText(message.getMessage());
+                imageView.setVisibility(View.GONE);
+                messageText.setVisibility(View.VISIBLE);
+            }
+            if (message.getImage() != null){
+                imageView.setImageBitmap(message.getImage());
+                imageView.setVisibility(View.VISIBLE);
+                messageText.setVisibility(View.GONE);
+            }
         }
     }
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText;
+        ImageView imageView;
+
         ReceivedMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
+            imageView = itemView.findViewById(R.id.imageViewReceived);
         }
 
         void bind(UserMessage message) {
-            messageText.setText(message.getMessage());
+            if (message.getMessage() != null) {
+                messageText.setText(message.getMessage());
+                imageView.setVisibility(View.GONE);
+                messageText.setVisibility(View.VISIBLE);
+            }
+            if (message.getImage() != null){
+                imageView.setImageBitmap(message.getImage());
+                imageView.setVisibility(View.VISIBLE);
+                messageText.setVisibility(View.GONE);
+            }
         }
     }
 }

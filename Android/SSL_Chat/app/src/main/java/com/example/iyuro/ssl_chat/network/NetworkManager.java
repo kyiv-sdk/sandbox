@@ -1,5 +1,6 @@
 package com.example.iyuro.ssl_chat.network;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
@@ -41,15 +42,39 @@ public class NetworkManager implements RawNetworkInterface {
         this.networkInterface = networkInterface;
     }
 
-    public void send(String message){
-        cppSendMessage(cppMessageHandler, message.getBytes());
+    public void send(final byte[] bytesData){
+
+        try {
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytesData);
+
+            WebResourceResponse webResourceResponse = new WebResourceResponse("text/html", "utf-8", byteArrayInputStream);
+
+            InputStream inputStream = webResourceResponse.getData();
+
+            StringBuilder textBuilder = new StringBuilder();
+
+            Reader reader = new BufferedReader(new InputStreamReader
+                    (inputStream, Charset.forName(StandardCharsets.UTF_8.name())));
+            int c = 0;
+            while ((c = reader.read()) != -1) {
+                textBuilder.append((char) c);
+            }
+
+            String data = textBuilder.toString();
+            Log.i("--------MY_LOG--------", "data to send: " + data);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        cppSendMessage(cppMessageHandler, bytesData);
     }
 
     public void openConnection(String uniqueID){
         if (cppMessageHandler == -1) {
             this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", MainActivity.isSSLEnabled? SSL_PORT : BASIC_POST, MainActivity.isSSLEnabled);
             Log.i("--------MY_LOG--------", uniqueID);
-            this.send(uniqueID);
+            this.send(uniqueID.getBytes());
         }
     }
 

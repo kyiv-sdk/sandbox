@@ -76,16 +76,32 @@ Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppCreateMessageHandler(
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppSendMessage(
-        JNIEnv *env, jobject instance, jlong t_messageHandler, jbyteArray jbyteArray)
+        JNIEnv *env, jobject instance, jlong t_messageHandler, jbyteArray t_jByteArray)
 {
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
 
+    jsize num_bytes = env->GetArrayLength(t_jByteArray);
+    char *buffer = static_cast<char *>(malloc(num_bytes + 1));
 
-    int len = env->GetArrayLength (jbyteArray);
-    char* buf = new char[len];
-    env->GetByteArrayRegion (jbyteArray, 0, len, reinterpret_cast<jbyte*>(buf));
+    if (!buffer)
+    {
+        // handle allocation failure ...
+    }
 
-    messageHandler->send(buf);
+    jbyte* elements = env->GetByteArrayElements(t_jByteArray, NULL);
+
+    if (!elements)
+    {
+        // handle JNI error ...
+    }
+
+    memcpy(buffer, elements, num_bytes);
+    buffer[num_bytes] = 0;
+
+    messageHandler->send(buffer);
+
+    env->ReleaseByteArrayElements(t_jByteArray, elements, JNI_ABORT);
+
 }
 
 extern "C"

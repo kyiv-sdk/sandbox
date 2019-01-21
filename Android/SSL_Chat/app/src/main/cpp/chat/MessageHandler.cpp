@@ -99,10 +99,13 @@ void MessageHandler::readerFn()
 
     while (mNeedOneMoreLoop)
     {
+        Logger::log("reader: waiting for load...");
         mConnection->load(resultStr);
         if (!resultStr.empty())
         {
+            Logger::log("reader: try to lock...");
             std::unique_lock<std::mutex> lck(mMtx);
+            Logger::log("reader: locked!");
             mMessagesToSend.push(std::make_pair(true, resultStr));
             mCv.notify_all();
             Logger::log("readerFn");

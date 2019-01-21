@@ -67,12 +67,10 @@ public class ServerMessageProtocol {
         JSONObject requestJsonObject = new JSONObject(inMessage);
         String keyAction = requestJsonObject.getString("keyAction");
 
-//        String dstID = requestJsonObject.getString("dstID");
-
         JSONObject responseJsonObject = new JSONObject();
         responseJsonObject.put("keyAction", keyAction);
-//        responseJsonObject.put("dstID", dstID);
         String destinationID;
+        String srcID;
 
         switch (keyAction){
             case "loggedUsersList":
@@ -83,17 +81,8 @@ public class ServerMessageProtocol {
                 userHandlerInterface.onResponse(destinationID, responseJsonObject.toString());
                 break;
             case "msg":
-                String srcID = requestJsonObject.getString("srcID");
-                responseJsonObject.put("srcID", srcID);
-
                 destinationID = requestJsonObject.getString("dstID");
-
-                responseJsonObject.put("srcID", userHandlerInterface.getUserName());
-                responseJsonObject.put("dstID", destinationID);
-                String msg = requestJsonObject.getString("message");
-                responseJsonObject.put("message", msg);
-
-                userHandlerInterface.onResponse(destinationID, responseJsonObject.toString());
+                userHandlerInterface.onResponse(destinationID, requestJsonObject.toString());
                 break;
             case "login":
                 String username = requestJsonObject.getString("message");
@@ -104,6 +93,11 @@ public class ServerMessageProtocol {
                     responseJsonObject.put("message", "nok");
                     userHandlerInterface.onLoginFailed(responseJsonObject.toString(), username);
                 }
+                break;
+            case "photo":
+                destinationID = requestJsonObject.getString("dstID");
+
+                userHandlerInterface.onResponse(destinationID, requestJsonObject.toString());
                 break;
         }
     }
