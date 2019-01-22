@@ -20,8 +20,8 @@
 
     <ImageView
         android:id="@+id/imageViewReceived"
-        android:layout_height="50dp"
-        android:layout_width="50dp"
+        android:layout_height="150dp"
+        android:layout_width="150dp"
         app:layout_constraintLeft_toRightOf="@id/text_message_body"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"/>
