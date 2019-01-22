@@ -69,9 +69,10 @@ void MessageHandler::managerFn()
 
     mReaderThread = std::thread(&MessageHandler::readerFn, this);
 
+    std::unique_lock<std::mutex> lck(mMtx);
+
     while (mNeedOneMoreLoop)
     {
-        std::unique_lock<std::mutex> lck(mMtx);
         mCv.wait(lck);
         Logger::log("cpp Manager notified");
 
