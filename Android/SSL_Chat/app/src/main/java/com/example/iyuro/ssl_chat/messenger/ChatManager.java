@@ -117,7 +117,7 @@ public class ChatManager implements NetworkInterface, ChatInterface{
 
             UIInterface.onNewPhotoMessage(chatMessage.getSrcID(), bitmap);
 
-            cachedFiles.clear();
+            cachedFiles.removeIf(photo -> photo.getFileID() == chatMessage.getFileID());
         }
     }
 
