@@ -5,21 +5,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ChatMessage {
-    String keyAction;
-    String dstID;
-    String srcID;
+    private String keyAction;
+    private String dstID;
+    private String srcID;
 
-    String message;
-    ArrayList<ChatUser> allLoggedUsersList;
-    byte[] file;
-    int fileSliceID;
-    int fileID;
-    boolean isLast;
+    private String message;
+    private ArrayList<ChatUser> allLoggedUsersList;
+    private byte[] file;
+    private int fileSliceID;
+    private int fileID;
+    private boolean isLast;
 
-    int width, height;
+    private int width, height;
 
     public ChatMessage(String keyAction) {
         this.keyAction = keyAction;
