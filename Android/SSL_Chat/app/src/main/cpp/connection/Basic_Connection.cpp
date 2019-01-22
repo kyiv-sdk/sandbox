@@ -48,7 +48,8 @@ void Basic_Connection::load(std::string& resultStr)
     char cur;
     while (read(mSock, &cur, 1) > 0)
     {
-        if (cur == '\n'){
+        if (cur == '\n')
+        {
             break;
         }
 
