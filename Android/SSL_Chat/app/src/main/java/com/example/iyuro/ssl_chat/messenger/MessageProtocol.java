@@ -35,6 +35,12 @@ public class MessageProtocol {
             String srcID, dstID;
 
             switch (keyAction){
+                case "login":
+
+                    String response = receivedMessageJsonObject.getString("message");
+                    resultChatMessage.setMessage(response);
+
+                    break;
                 case "loggedUsersList":
 
                     ArrayList<ChatUser> allLoggedUsersList = new ArrayList<>();

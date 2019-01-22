@@ -1,9 +1,9 @@
 package com.example.iyuro.ssl_chat.register;
+
+import com.example.iyuro.ssl_chat.messenger.ChatMessage;
 import com.example.iyuro.ssl_chat.messenger.MessageProtocol;
 import com.example.iyuro.ssl_chat.network.NetworkInterface;
 import com.example.iyuro.ssl_chat.network.NetworkManager;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class LoginManager implements NetworkInterface {
 
@@ -21,23 +21,11 @@ public class LoginManager implements NetworkInterface {
 
     @Override
     public void onMessageReceive(String data) {
-        try {
-            JSONObject jsonObject = new JSONObject(data);
-            try {
-                String keyAction = jsonObject.getString("keyAction");
-                if (keyAction.equals("login")){
-                    String response = jsonObject.getString("message");
-                    if (response.equals("ok")){
-                        loginInterface.onLoginSuccess();
-                    } else {
-                        loginInterface.onLoginFailed();
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e){
-            e.printStackTrace();
+        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(data);
+        if (chatMessage.getMessage().equals("ok")){
+            loginInterface.onLoginSuccess();
+        } else {
+            loginInterface.onLoginFailed();
         }
     }
 }
