@@ -1,6 +1,5 @@
 package com.example.iyuro.ssl_chat.messenger;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -9,18 +8,13 @@ import com.example.iyuro.ssl_chat.network.NetworkInterface;
 import com.example.iyuro.ssl_chat.network.NetworkManager;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 
 public class ChatManager implements NetworkInterface, ChatInterface{
     private static final ChatManager ourInstance = new ChatManager();
     private static ArrayList<ChatUser> chatUserArrayList = new ArrayList<>();
-//    private MessageProtocol messageProtocol;
     private UI_Interface UIInterface;
     private String currentUserID;
 

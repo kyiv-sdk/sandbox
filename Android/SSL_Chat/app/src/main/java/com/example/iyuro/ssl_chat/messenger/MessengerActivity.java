@@ -2,7 +2,6 @@ package com.example.iyuro.ssl_chat.messenger;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,8 +17,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.example.iyuro.ssl_chat.R;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class MessengerActivity extends AppCompatActivity implements UI_Interface {
@@ -54,40 +51,6 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         }
 
         EditText editText = findViewById(R.id.edittext_chatbox);
-
-//        EditText editText = new android.support.v7.widget.AppCompatEditText(this) {
-//
-//            @Override
-//            public InputConnection onCreateInputConnection(EditorInfo editorInfo) {
-//                final InputConnection ic = super.onCreateInputConnection(editorInfo);
-//                EditorInfoCompat.setContentMimeTypes(editorInfo,
-//                        new String [] {"text/plain", "image/png"});
-//
-//                final InputConnectionCompat.OnCommitContentListener callback =
-//                        new InputConnectionCompat.OnCommitContentListener() {
-//                            @Override
-//                            public boolean onCommitContent(InputContentInfoCompat inputContentInfo,
-//                                                           int flags, Bundle opts) {
-//                                // read and display inputContentInfo asynchronously
-//                                if (BuildCompat.isAtLeastNMR1() && (flags &
-//                                        InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0) {
-//                                    try {
-//                                        inputContentInfo.requestPermission();
-//                                    }
-//                                    catch (Exception e) {
-//                                        return false; // return false if failed
-//                                    }
-//                                }
-//
-//                                // read and display inputContentInfo asynchronously.
-//                                // call inputContentInfo.releasePermission() as needed.
-//
-//                                return true;  // return true if succeeded
-//                            }
-//                        };
-//                return InputConnectionCompat.createWrapper(ic, editorInfo, callback);
-//            }
-//        };
 
         Button btnMessage = findViewById(R.id.button_chatbox_send);
         btnMessage.setOnClickListener(new View.OnClickListener() {

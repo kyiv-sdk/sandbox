@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 public class LoginManager implements NetworkInterface {
 
-    LoginInterface loginInterface;
+    private LoginInterface loginInterface;
 
     public LoginManager(LoginInterface loginInterface) {
         this.loginInterface = loginInterface;

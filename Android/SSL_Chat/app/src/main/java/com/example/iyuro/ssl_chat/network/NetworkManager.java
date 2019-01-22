@@ -1,6 +1,5 @@
 package com.example.iyuro.ssl_chat.network;
 
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.WebResourceResponse;

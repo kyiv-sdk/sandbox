@@ -14,6 +14,7 @@ import com.example.iyuro.ssl_chat.messenger.ChatManager;
 import com.example.iyuro.ssl_chat.messenger.ChatUser;
 import com.example.iyuro.ssl_chat.messenger.UI_Interface;
 import com.example.iyuro.ssl_chat.R;
+
 import java.util.ArrayList;
 
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;

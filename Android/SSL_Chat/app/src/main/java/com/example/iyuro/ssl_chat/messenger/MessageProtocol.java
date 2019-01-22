@@ -1,17 +1,14 @@
 package com.example.iyuro.ssl_chat.messenger;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 
 
 public class MessageProtocol {
@@ -112,9 +109,6 @@ public class MessageProtocol {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
-
-        byte[] bbitmap = byteArray;
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bbitmap , 0, bbitmap.length);
 
         int arrLength = byteArray.length;
         int counter = 0;
