@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 
-import com.example.iyuro.ssl_chat.photo.PhotoActivity;
 import com.example.iyuro.ssl_chat.register.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,16 +30,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 isSSLEnabled = switcher.isChecked();
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        Button takePhotoBtn = findViewById(R.id.photo_activity_btn);
-
-        takePhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PhotoActivity.class);
                 startActivity(intent);
             }
         });
