@@ -24,10 +24,11 @@ public class MessageProtocol {
         return ourInstance;
     }
 
-    public ChatMessage processReceivedMessage(String inMessage){
+    public ChatMessage processReceivedMessage(int headerLen, int fileLen, byte[] inMessage){
         ChatMessage resultChatMessage = null;
+
         try {
-            JSONObject receivedMessageJsonObject = new JSONObject(inMessage);
+            JSONObject receivedMessageJsonObject = new JSONObject(new String(Arrays.copyOfRange(inMessage, 0, headerLen)));
             String keyAction = receivedMessageJsonObject.getString("keyAction");
 
             resultChatMessage = new ChatMessage(keyAction);
@@ -75,16 +76,16 @@ public class MessageProtocol {
                     boolean isLast = receivedMessageJsonObject.getBoolean("isLast");
                     resultChatMessage.setLast(isLast);
 
+//                    JSONArray jsonArrayFile = receivedMessageJsonObject.getJSONArray("file");
+//                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//
+//                    for (int i = 0; i < jsonArrayFile.length(); i++){
+//                        byte b = (byte)jsonArrayFile.getInt(i);
+//                        byteArrayOutputStream.write(b);
+//                    }
 
-                    JSONArray jsonArrayFile = receivedMessageJsonObject.getJSONArray("file");
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-                    for (int i = 0; i < jsonArrayFile.length(); i++){
-                        byte b = (byte)jsonArrayFile.getInt(i);
-                        byteArrayOutputStream.write(b);
-                    }
-
-                    byte[] file = byteArrayOutputStream.toByteArray();
+//                    String fileStr = inMessage.substring(headerLen);
+                    byte[] file = Arrays.copyOfRange(inMessage, headerLen, fileLen);
 
                     resultChatMessage.setFile(file);
                     int width = receivedMessageJsonObject.getInt("width");
@@ -116,12 +117,12 @@ public class MessageProtocol {
         photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
-        int arrLength = byteArray.length;
-        int counter = 0;
+//        int arrLength = byteArray.length;
+//        int counter = 0;
 
-        while (arrLength > 0){
+//        while (arrLength > 0){
             ChatMessage resultChatMessage = new ChatMessage("photo");
-            resultChatMessage.setFileSliceID(counter);
+            resultChatMessage.setFileSliceID(0);
 
             resultChatMessage.setDstID(dstID);
             resultChatMessage.setSrcID(srcID);
@@ -131,15 +132,14 @@ public class MessageProtocol {
 
             resultChatMessage.setFileID(nextFileID);
 
-            int sliceFrom = counter * FILE_SIZE;
-            int sliceTo = arrLength > FILE_SIZE ? (counter + 1) * FILE_SIZE : counter * FILE_SIZE + arrLength;
-            arrLength -= sliceTo - sliceFrom;
-            resultChatMessage.setFile(Arrays.copyOfRange(byteArray, sliceFrom, sliceTo));
+//            int sliceFrom = 0 * FILE_SIZE;
+//            int sliceTo = arrLength;
+            resultChatMessage.setFile(byteArray);
             result.add(resultChatMessage);
 
 
-            counter++;
-        }
+//            counter++;
+//        }
 
         nextFileID++;
 
@@ -161,6 +161,15 @@ public class MessageProtocol {
         ChatMessage resultChatMessage = new ChatMessage("loggedUsersList");
 
         resultChatMessage.setSrcID(srcID);
+
+        return resultChatMessage;
+    }
+
+    public ChatMessage createUniqueIDRequest(String uniqueID){
+
+        ChatMessage resultChatMessage = new ChatMessage("uniqueID");
+
+        resultChatMessage.setMessage(uniqueID);
 
         return resultChatMessage;
     }

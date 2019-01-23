@@ -1,8 +1,14 @@
 package main;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ServerMessageProtocol {
     private UserHandlerInterface userHandlerInterface;
@@ -15,90 +21,190 @@ public class ServerMessageProtocol {
         this.messageProtocolState = MessageProtocolStates.WAIT_FOR_UNIQUEID;
     }
 
-    public void processNewMessage(String inMessage){
-        if(inMessage == null || inMessage.equals("exit")){
+    public UserMessage processNewMessage(RawMessage inRawMessage){
+
+        UserMessage resultUserMessage = new UserMessage();
+
+        byte[] inMessage = inRawMessage.getRawData();
+
+        if(inMessage == null || inMessage.length == 0){
             userHandlerInterface.onConnectionClose();
         } else {
 
-            switch (messageProtocolState){
-                case WAIT_FOR_UNIQUEID:
-                    manageUniqueID(inMessage);
-                    System.out.println("uniqueId handled");
-                    this.messageProtocolState = MessageProtocolStates.WAIT_FOR_LOGIN;
-                    break;
-                case WAIT_FOR_LOGIN:
-                    manageLogin(inMessage);
-                    System.out.println("login handled");
-                    break;
-                case WAIT_FOR_MESSAGE:
-                    System.out.println("message handled");
-                    manageMessage(inMessage);
-                    break;
+            String jsonContent = new String(inMessage);
+
+            int hLen = inRawMessage.getHeaderLen();
+            int fLen = inRawMessage.getFileLen();
+
+            jsonContent = jsonContent.substring(0, hLen);
+
+            byte[] fileContent;
+            if (fLen > 0) {
+                int jLen = jsonContent.length();
+                int mLen = inMessage.length;
+                fileContent = Arrays.copyOfRange(inMessage, hLen, hLen + fLen);
+                int fileCLen = fileContent.length;
+                resultUserMessage.setFile(fileContent);
+            }
+
+            try {
+                JSONObject receivedMessageJsonObject = new JSONObject(jsonContent);
+                String keyAction = receivedMessageJsonObject.getString("keyAction");
+
+                resultUserMessage.setKeyAction(keyAction);
+
+                String srcID, dstID;
+
+                switch (keyAction){
+                    case "uniqueID":
+
+                        String uniqueID = receivedMessageJsonObject.getString("message");
+                        resultUserMessage.setMessage(uniqueID);
+
+                        break;
+                    case "login":
+
+                        String response = receivedMessageJsonObject.getString("message");
+                        resultUserMessage.setMessage(response);
+
+                        break;
+                    case "loggedUsersList":
+
+//                        ArrayList<String> allLoggedUsersList = new ArrayList<>();
+//
+//                        allLoggedUsersList.clear();
+//                        JSONArray loggedUsersJSONArray = receivedMessageJsonObject.getJSONArray("loggedUsers");
+//                        for (i = 0; i < loggedUsersJSONArray.length(); i++) {
+//                            allLoggedUsersList.add(loggedUsersJSONArray.getString(i));
+//                        }
+                        ArrayList<String> allLoggedUsersList = serverInterface.getLoggedUsers();
+
+                        resultUserMessage.setAllLoggedUsersList(allLoggedUsersList);
+
+                        break;
+                    case "msg":
+                        srcID = receivedMessageJsonObject.getString("srcID");
+                        resultUserMessage.setSrcID(srcID);
+                        dstID = receivedMessageJsonObject.getString("dstID");
+                        resultUserMessage.setDstID(dstID);
+                        String message = receivedMessageJsonObject.getString("message");
+                        resultUserMessage.setMessage(message);
+                        break;
+                    case "photo":
+                        srcID = receivedMessageJsonObject.getString("srcID");
+                        resultUserMessage.setSrcID(srcID);
+                        dstID = receivedMessageJsonObject.getString("dstID");
+                        resultUserMessage.setDstID(dstID);
+
+                        int fileID = receivedMessageJsonObject.getInt("fileID");
+                        resultUserMessage.setFileID(fileID);
+                        int fileSliceID = receivedMessageJsonObject.getInt("fileSliceID");
+                        resultUserMessage.setFileSliceID(fileSliceID);
+                        boolean isLast = receivedMessageJsonObject.getBoolean("isLast");
+                        resultUserMessage.setLast(isLast);
+
+
+//                        JSONArray jsonArrayFile = receivedMessageJsonObject.getJSONArray("file");
+//                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//
+//                        for (i = 0; i < jsonArrayFile.length(); i++){
+//                            byte b = (byte)jsonArrayFile.getInt(i);
+//                            byteArrayOutputStream.write(b);
+//                        }
+//
+//                        byte[] file = byteArrayOutputStream.toByteArray();
+//
+//                        resultUserMessage.setFile(file);
+                        int width = receivedMessageJsonObject.getInt("width");
+                        resultUserMessage.setWidth(width);
+                        int height = receivedMessageJsonObject.getInt("height");
+                        resultUserMessage.setHeight(height);
+                        break;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
+
+        return resultUserMessage;
     }
 
-    private void manageUniqueID(String inMessage){
-        userHandlerInterface.setUniqueID(inMessage);
+    public void manageUniqueID(UserMessage userMessage){
+        userHandlerInterface.setUniqueID(userMessage.getMessage());
     }
 
-    private void manageLogin(String inMessage){
-        JSONObject requestJsonObject = new JSONObject(inMessage);
-        String keyAction = requestJsonObject.getString("keyAction");
+    public void manageLogin(UserMessage inUserMessage){
+//        JSONObject requestJsonObject = new JSONObject(inMessage);
+        String keyAction = inUserMessage.getKeyAction();
 
-        JSONObject responseJsonObject = new JSONObject();
-        responseJsonObject.put("keyAction", keyAction);
+        UserMessage responseUserMessage = new UserMessage();
+        responseUserMessage.setKeyAction(keyAction);
 
         if (keyAction.equals("login")){
-            String username = requestJsonObject.getString("message");
+            String username = inUserMessage.getMessage();
             if (userHandlerInterface.isUsernameValid(username)) {
-                responseJsonObject.put("message", "ok");
-                userHandlerInterface.onLoginSuccess(responseJsonObject.toString(), username);
+                responseUserMessage.setMessage("ok");
+
+                userHandlerInterface.onLoginSuccess(responseUserMessage.getBytes(), username);
                 this.messageProtocolState = MessageProtocolStates.WAIT_FOR_MESSAGE;
             } else {
-                this.messageProtocolState = MessageProtocolStates.WAIT_FOR_LOGIN;
-                responseJsonObject.put("message", "nok");
-                userHandlerInterface.onLoginFailed(responseJsonObject.toString(), username);
+                responseUserMessage.setMessage("nok");
+
+                userHandlerInterface.onLoginFailed(responseUserMessage.getBytes(), username);
             }
         }
     }
 
-    private void manageMessage(String inMessage){
-        JSONObject requestJsonObject = new JSONObject(inMessage);
-        String keyAction = requestJsonObject.getString("keyAction");
-
-        JSONObject responseJsonObject = new JSONObject();
-        responseJsonObject.put("keyAction", keyAction);
+    public void manageMessage(UserMessage inUserMessage){
+//        JSONObject requestJsonObject = new JSONObject(inMessage);
+//        String keyAction = requestJsonObject.getString("keyAction");
+//
+//        JSONObject responseJsonObject = new JSONObject();
+        UserMessage responseUserMessage = new UserMessage();
+        responseUserMessage.setKeyAction(inUserMessage.getKeyAction());
         String destinationID;
         String srcID;
 
-        switch (keyAction){
+
+
+
+        switch (inUserMessage.getKeyAction()){
             case "loggedUsersList":
                 ArrayList<String> loggedUsers = serverInterface.getLoggedUsers();
-                responseJsonObject.put("loggedUsers", loggedUsers);
+                responseUserMessage.setAllLoggedUsersList(loggedUsers);
                 destinationID = userHandlerInterface.getUserName();
 
-                userHandlerInterface.onResponse(destinationID, responseJsonObject.toString());
+                userHandlerInterface.onResponse(destinationID, responseUserMessage.getBytes());
                 break;
             case "msg":
-                destinationID = requestJsonObject.getString("dstID");
-                userHandlerInterface.onResponse(destinationID, requestJsonObject.toString());
+                destinationID = inUserMessage.getDstID();
+                userHandlerInterface.onResponse(destinationID, inUserMessage.getBytes());
                 break;
             case "login":
-                String username = requestJsonObject.getString("message");
+                String username = inUserMessage.getMessage();
                 if (userHandlerInterface.getUserName().equals(username)) {
-                    responseJsonObject.put("message", "ok");
-                    userHandlerInterface.onLoginSuccess(responseJsonObject.toString(), username);
+                    responseUserMessage.setMessage("ok");
+
+                    userHandlerInterface.onLoginSuccess(responseUserMessage.getBytes(), username);
                 } else {
-                    responseJsonObject.put("message", "nok");
-                    userHandlerInterface.onLoginFailed(responseJsonObject.toString(), username);
+                    responseUserMessage.setMessage("nok");
+
+                    userHandlerInterface.onLoginFailed(responseUserMessage.getBytes(), username);
                 }
                 break;
             case "photo":
-                destinationID = requestJsonObject.getString("dstID");
+                destinationID = inUserMessage.getDstID();
 
-                userHandlerInterface.onResponse(destinationID, requestJsonObject.toString());
+                userHandlerInterface.onResponse(destinationID, inUserMessage.getBytes());
                 break;
         }
+    }
+
+    public MessageProtocolStates getMessageProtocolState() {
+        return messageProtocolState;
+    }
+
+    public void setMessageProtocolState(MessageProtocolStates messageProtocolState) {
+        this.messageProtocolState = messageProtocolState;
     }
 }

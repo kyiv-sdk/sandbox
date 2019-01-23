@@ -2,19 +2,18 @@ package main;
 
 import main.basic_server.BasicServer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class UserHandler implements UserHandlerInterface {
     private String userName;
     private String uniqueUserId;
-    private final PrintWriter out;
-    private final BufferedReader in;
+    private final OutputStream out;
+    private final InputStream in;
     private Socket socket;
     private boolean isLoggedIn;
 
@@ -23,9 +22,9 @@ public class UserHandler implements UserHandlerInterface {
 
     private ServerInterface serverInterface;
 
-    private final List<UserMessage> messages;
+    private final List<RawMessage> messages;
 
-    public UserHandler(ServerInterface serverInterface, Socket socket, PrintWriter out, BufferedReader in) {
+    public UserHandler(ServerInterface serverInterface, Socket socket, OutputStream out, InputStream in) {
         this.socket = socket;
         this.userName = "default";
         this.out = out;
@@ -76,11 +75,11 @@ public class UserHandler implements UserHandlerInterface {
         this.uniqueUserId = uniqueID;
     }
 
-    public PrintWriter getOut() {
+    public OutputStream getOut() {
         return out;
     }
 
-    public BufferedReader getIn() {
+    public InputStream getIn() {
         return in;
     }
 
@@ -88,33 +87,37 @@ public class UserHandler implements UserHandlerInterface {
         return isLoggedIn;
     }
 
-    public synchronized void writeMessage(String msg){
-        this.out.println(msg);
-        System.out.println("Sent: " + msg + " to " + this.userName);
+    public synchronized void writeMessage(byte[] bytesData){
+        try {
+            this.out.write(bytesData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Sent: " + new String(bytesData) + " to " + this.userName);
     }
 
     @Override
-    public void onLoginSuccess(String response, String userName) {
+    public void onLoginSuccess(byte[] bytesData, String userName) {
         System.out.println("Username " + this.userName + " changed to " + userName);
         this.userName = userName;
-        writeMessage(response);
+        writeMessage(bytesData);
         serverInterface.notifyAllUsersExceptOne(userName);
     }
 
     @Override
-    public void onResponse(String dstId, String msg) {
+    public void onResponse(String dstId, byte[] bytesData) {
         for (UserHandler handler : BasicServer.userHandlers) {
             if ((handler.isLoggedIn()) && (dstId.equals(handler.getUserName()))) {
-                handler.writeMessage(msg);
+                handler.writeMessage(bytesData);
                 break;
             }
         }
     }
 
     @Override
-    public void onLoginFailed(String response, String userName) {
+    public void onLoginFailed(byte[] bytesData, String userName) {
         System.out.println("Username " + this.userName + " (old) " + userName + " (new) " + "loginFailed");
-        writeMessage(response);
+        writeMessage(bytesData);
     }
 
     @Override
@@ -136,7 +139,7 @@ public class UserHandler implements UserHandlerInterface {
 
     public void addMessage(String msg){
         synchronized(messages) {
-            messages.add(new UserMessage(msg));
+            messages.add(new RawMessage(msg.getBytes()));
             System.out.println("Message added");
             messages.notifyAll();
         }

@@ -11,23 +11,23 @@
 class MessageAdapterImplementation: public MessageHandlerAdapter
 {
 private:
-    void (*JNIcallback)(jobject, std::string *);
+    void (*JNIcallback)(jobject, int headerLen, int fileLen, std::string *);
     jobject instance;
     JNIEnv *m_env;
 public:
-    void runCallback(std::string *) override;
+    void runCallback(int headerLen, int fileLen, std::string* ) override;
     MessageAdapterImplementation(JNIEnv *env, jobject ninstance,
-    void (*ncallback)(jobject, std::string *));
+    void (*ncallback)(jobject, int headerLen, int Filelen, std::string *));
     virtual ~MessageAdapterImplementation();
 };
 
-void MessageAdapterImplementation::runCallback(std::string *resultData)
+void MessageAdapterImplementation::runCallback(int headerLen, int fileLen, std::string* resultData)
 {
-    JNIcallback(instance, resultData);
+    JNIcallback(instance, headerLen, fileLen, resultData);
 }
 
 MessageAdapterImplementation::MessageAdapterImplementation(JNIEnv *t_env, jobject ninstance,
-void (*ncallback)(jobject,
+void (*ncallback)(jobject, int headerLen, int fileLen,
                   std::string*))
 {
     JNIcallback = ncallback;
@@ -39,7 +39,7 @@ MessageAdapterImplementation::~MessageAdapterImplementation() {
     m_env->DeleteGlobalRef(instance);
 }
 
-void jni_sendMessageToJava(jobject instance, std::string *resultData)
+void jni_sendMessageToJava(jobject instance, int headerLen, int fileLen, std::string* resultData)
 {
     JNI_Helper jniHelper;
     jniHelper.attachEnv();
@@ -53,7 +53,7 @@ void jni_sendMessageToJava(jobject instance, std::string *resultData)
     jbyteArray result = new_env->NewByteArray(size);
     new_env->SetByteArrayRegion(result, 0, (*resultData).size(), (const jbyte*)(*resultData).c_str());
 
-    new_env->CallVoidMethod(objectMainActivity, mjmethodID, result);
+    new_env->CallVoidMethod(objectMainActivity, mjmethodID, headerLen, fileLen, result);
 
     new_env->DeleteLocalRef(result);
 
@@ -81,12 +81,12 @@ Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppSendMessage(
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
 
     jsize num_bytes = env->GetArrayLength(t_jByteArray);
-    char *buffer = static_cast<char *>(malloc(num_bytes + 1));
+//    char *buffer = static_cast<char *>(malloc(num_bytes + 1));
 
-    if (!buffer)
-    {
-        // handle allocation failure ...
-    }
+//    if (!buffer)
+//    {
+//        // handle allocation failure ...
+//    }
 
     jbyte* elements = env->GetByteArrayElements(t_jByteArray, NULL);
 
@@ -95,10 +95,12 @@ Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppSendMessage(
         // handle JNI error ...
     }
 
-    memcpy(buffer, elements, num_bytes);
-    buffer[num_bytes] = 0;
+//    memcpy(buffer, elements, num_bytes);
+//    buffer[num_bytes] = 0;
 
-    messageHandler->send(buffer);
+    char *buffer = reinterpret_cast<char *>(elements);
+
+    messageHandler->send((int) num_bytes, buffer);
 
     env->ReleaseByteArrayElements(t_jByteArray, elements, JNI_ABORT);
 

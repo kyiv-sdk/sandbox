@@ -96,17 +96,28 @@ void SSL_Connection::write(std::string request)
     SSL_write(mSSL, msg, strlen(msg));
 }
 
-void SSL_Connection::load(std::string &resultStr)
+void SSL_Connection::load(int &headerLen, int &fileLen, std::string& resultStr)
 {
     resultStr = "";
-    char cur;
-    while (SSL_read(mSSL, &cur, 1) > 0)
-    {
-        if (cur == '\n')
-        {
-            break;
-        }
+    char buf[1024];
+    for (;;) {
+        int len = SSL_read(mSSL, buf, sizeof (buf));
 
-        resultStr += cur;
+        if (len == 0)
+            break;
+
+        if (len < 0)
+            handle_error ("Failed reading response data");
+
+        std::string sbuf = buf;
+        int testi = sbuf.length();
+        if (testi > 1024){
+            std::string test = sbuf.substr(0, 1024);
+            resultStr += sbuf.substr(0, 1024);
+        } else {
+            resultStr += buf;
+        }
+        memset(buf, 0, len);
+        if (resultStr.back() == '\n') break;
     }
 }

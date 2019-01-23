@@ -4,9 +4,7 @@ import main.ServerInterface;
 import main.UserHandler;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -89,10 +87,14 @@ public class BasicServer implements ServerInterface, Runnable {
             while (true){
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Basic accepted new connection");
-                PrintWriter out =
-                        new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
+//                PrintWriter out =
+//                        new PrintWriter(clientSocket.getOutputStream(), true);
+//                BufferedReader in = new BufferedReader(
+//                        new InputStreamReader(clientSocket.getInputStream()));
+
+                InputStream in = clientSocket.getInputStream();
+
+                OutputStream out = clientSocket.getOutputStream();
 
 //                try {
 //                    String userUniqueId;

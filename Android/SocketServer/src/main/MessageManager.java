@@ -3,12 +3,12 @@ package main;
 import java.util.List;
 
 public class MessageManager implements Runnable{
-    final List<UserMessage> userMessages;
+    final List<RawMessage> inMessages;
     boolean loopFlag;
     ServerMessageProtocol serverMessageProtocol;
 
-    public MessageManager(List<UserMessage> userMessages, ServerMessageProtocol serverMessageProtocol) {
-        this.userMessages = userMessages;
+    public MessageManager(List<RawMessage> inMessages, ServerMessageProtocol serverMessageProtocol) {
+        this.inMessages = inMessages;
         this.loopFlag = true;
         this.serverMessageProtocol = serverMessageProtocol;
     }
@@ -18,17 +18,34 @@ public class MessageManager implements Runnable{
         System.out.println("main.MessageManager started");
         while (loopFlag){
             try {
-                synchronized (userMessages) {
+                synchronized (inMessages) {
                     try {
-                        userMessages.wait();
+                        inMessages.wait();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     System.out.println("manager notified");
-                    while (userMessages.size() > 0) {
-                        String msg = userMessages.get(0).rawMessage;
-                        userMessages.remove(0);
-                        serverMessageProtocol.processNewMessage(msg);
+                    while (inMessages.size() > 0) {
+                        RawMessage msg = inMessages.get(0);
+                        inMessages.remove(0);
+
+                        UserMessage userMessage = serverMessageProtocol.processNewMessage(msg);
+
+                        switch (serverMessageProtocol.getMessageProtocolState()){
+                            case WAIT_FOR_UNIQUEID:
+                                serverMessageProtocol.manageUniqueID(userMessage);
+                                System.out.println("uniqueId handled");
+                                serverMessageProtocol.setMessageProtocolState(MessageProtocolStates.WAIT_FOR_LOGIN);
+                                break;
+                            case WAIT_FOR_LOGIN:
+                                serverMessageProtocol.manageLogin(userMessage);
+                                System.out.println("login handled");
+                                break;
+                            case WAIT_FOR_MESSAGE:
+                                System.out.println("message handled");
+                                serverMessageProtocol.manageMessage(userMessage);
+                                break;
+                        }
                     }
                 }
             } catch (Exception e){

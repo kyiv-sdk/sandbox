@@ -15,13 +15,13 @@ public class LoginManager implements NetworkInterface {
     }
 
     public void logIn(String username){
-        String request = MessageProtocol.getInstance().createLoginRequest(username).toString();
-        NetworkManager.getInstance().send(request.getBytes());
+        byte[] request = MessageProtocol.getInstance().createLoginRequest(username).getBytes();
+        NetworkManager.getInstance().send(request);
     }
 
     @Override
-    public void onMessageReceive(String data) {
-        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(data);
+    public void onMessageReceive(int headerLen, int fileLen, byte[] data) {
+        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(headerLen, fileLen, data);
         if (chatMessage.getMessage().equals("ok")){
             loginInterface.onLoginSuccess();
         } else {

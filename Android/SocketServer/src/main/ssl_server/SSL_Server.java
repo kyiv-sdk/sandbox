@@ -55,11 +55,9 @@ public class SSL_Server extends BasicServer {
 
                 System.out.println("SSL_Server accepted new connection");
 
-                PrintWriter out =
-                        new PrintWriter(clientSocket.getOutputStream(), true);
+                OutputStream out = clientSocket.getOutputStream();
 
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
+                InputStream in = clientSocket.getInputStream();
 
                 UserHandler newUserHandler = new UserHandler(this, clientSocket, out, in);
 

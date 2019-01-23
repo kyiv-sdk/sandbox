@@ -5,6 +5,8 @@ import android.util.Log;
 import android.webkit.WebResourceResponse;
 
 import com.example.iyuro.ssl_chat.MainActivity;
+import com.example.iyuro.ssl_chat.messenger.ChatMessage;
+import com.example.iyuro.ssl_chat.messenger.MessageProtocol;
 import com.example.iyuro.ssl_chat.messenger.RawNetworkInterface;
 
 import java.io.BufferedReader;
@@ -43,28 +45,28 @@ public class NetworkManager implements RawNetworkInterface {
 
     public void send(final byte[] bytesData){
 
-        try {
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytesData);
-
-            WebResourceResponse webResourceResponse = new WebResourceResponse("text/html", "utf-8", byteArrayInputStream);
-
-            InputStream inputStream = webResourceResponse.getData();
-
-            StringBuilder textBuilder = new StringBuilder();
-
-            Reader reader = new BufferedReader(new InputStreamReader
-                    (inputStream, Charset.forName(StandardCharsets.UTF_8.name())));
-            int c = 0;
-            while ((c = reader.read()) != -1) {
-                textBuilder.append((char) c);
-            }
-
-            String data = textBuilder.toString();
-            Log.i("--------MY_LOG--------", "data to send: " + data);
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+//        try {
+//            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytesData);
+//
+//            WebResourceResponse webResourceResponse = new WebResourceResponse("text/html", "utf-8", byteArrayInputStream);
+//
+//            InputStream inputStream = webResourceResponse.getData();
+//
+//            StringBuilder textBuilder = new StringBuilder();
+//
+//            Reader reader = new BufferedReader(new InputStreamReader
+//                    (inputStream, Charset.forName(StandardCharsets.UTF_8.name())));
+//            int c = 0;
+//            while ((c = reader.read()) != -1) {
+//                textBuilder.append((char) c);
+//            }
+//
+//            String data = textBuilder.toString();
+//            Log.i("--------MY_LOG--------", "data to send: " + data);
+//
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
 
         cppSendMessage(cppMessageHandler, bytesData);
     }
@@ -73,7 +75,8 @@ public class NetworkManager implements RawNetworkInterface {
         if (cppMessageHandler == -1) {
             this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", MainActivity.isSSLEnabled? SSL_PORT : BASIC_POST, MainActivity.isSSLEnabled);
             Log.i("--------MY_LOG--------", uniqueID);
-            this.send(uniqueID.getBytes());
+            ChatMessage uniqueIDRequest = MessageProtocol.getInstance().createUniqueIDRequest(uniqueID);
+            this.send(uniqueIDRequest.getBytes());
         }
     }
 
@@ -87,15 +90,19 @@ public class NetworkManager implements RawNetworkInterface {
     }
 
     @Override
-    public void onMessageReceive(final byte[] bytesData) {
-        String strData = convertBytesToString(bytesData);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.i("--------MY_LOG--------", "post runned");
-                networkInterface.onMessageReceive(strData);
-            }
-        });
+    public void onMessageReceive(int headerLen, int fileLen, final byte[] bytesData) {
+//        String strData = convertBytesToString(bytesData);
+        if (bytesData.length > 0) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i("--------MY_LOG--------", "post runned");
+                    networkInterface.onMessageReceive(headerLen, fileLen, bytesData);
+                }
+            });
+        } else {
+            closeConnection();
+        }
     }
 
     private String convertBytesToString(final byte[] bytesData){

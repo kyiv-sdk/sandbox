@@ -53,9 +53,9 @@ public class ChatManager implements NetworkInterface, ChatInterface{
     }
 
     @Override
-    public void onMessageReceive(String data) {
+    public void onMessageReceive(int headerLen, int fileLen, byte[] data) {
         Log.i("--------MY_LOG--------", "chat manager onMessageReceive");
-        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(data);
+        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(headerLen, fileLen, data);
         if (chatMessage.getKeyAction().equals("msg")){
             onNewMessage(chatMessage.getSrcID(), chatMessage.getMessage());
         } else if (chatMessage.getKeyAction().equals("loggedUsersList")){
@@ -147,14 +147,14 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         UIInterface.onUsersListRefresh();
     }
 
-    public void sendMessage(String message){
-        NetworkManager.getInstance().send(message.getBytes());
+    public void sendMessage(byte[] message){
+        NetworkManager.getInstance().send(message);
     }
 
     public void sendMessage(String dstUserID, String message){
-        String processedMessage = MessageProtocol.getInstance().processSendMessage(currentUserID, dstUserID, message).toString();
-        if (!processedMessage.equals("")) {
-            NetworkManager.getInstance().send(processedMessage.getBytes());
+        byte[] processedMessage = MessageProtocol.getInstance().processSendMessage(currentUserID, dstUserID, message).getBytes();
+        if (processedMessage.length > 0) {
+            NetworkManager.getInstance().send(processedMessage);
         }
     }
 
@@ -162,7 +162,7 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         ArrayList<ChatMessage> photoSlices = MessageProtocol.getInstance().processSendPhoto(currentUserID, dstUserID, photo);
 
         for (ChatMessage photoChatMessage : photoSlices) {
-            NetworkManager.getInstance().send(photoChatMessage.toString().getBytes());
+            NetworkManager.getInstance().send(photoChatMessage.getBytes());
         }
     }
 
@@ -187,7 +187,7 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         }
     }
 
-    public String createLoggedUsersListRequest(){
-        return MessageProtocol.getInstance().createLoggedUsersListRequest(currentUserID).toString();
+    public byte[] createLoggedUsersListRequest(){
+        return MessageProtocol.getInstance().createLoggedUsersListRequest(currentUserID).getBytes();
     }
 }

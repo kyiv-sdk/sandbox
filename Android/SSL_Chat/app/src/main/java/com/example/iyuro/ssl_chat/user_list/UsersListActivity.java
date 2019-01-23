@@ -66,7 +66,7 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
     }
 
     public void requestUsersList(){
-        String request = ChatManager.getInstance().createLoggedUsersListRequest();
+        byte[] request = ChatManager.getInstance().createLoggedUsersListRequest();
         ChatManager.getInstance().sendMessage(request);
     }
 

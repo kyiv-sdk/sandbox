@@ -10,7 +10,7 @@
 class MessageHandlerAdapter
 {
 public:
-    virtual void runCallback(std::string* ) = 0;
+    virtual void runCallback( int, int, std::string* ) = 0;
     virtual ~MessageHandlerAdapter();
 };
 

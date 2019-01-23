@@ -16,7 +16,7 @@ public:
     Basic_Connection();
     virtual void open_connection(const char *hostname, int port);
     virtual void close_connection();
-    virtual void load(std::string& resultStr);
+    virtual void load(int &headerLen, int &fileLen, std::string& resultStr);
     virtual void write(std::string request);
 };
 

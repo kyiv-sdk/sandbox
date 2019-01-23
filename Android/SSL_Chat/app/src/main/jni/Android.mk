@@ -22,7 +22,8 @@ LOCAL_SRC_FILES := ../cpp/jni_helpers/com_example_iyuro_ssl_chat_network_Network
                    ../cpp/connection/SSL_Connection.cpp \
                    ../cpp/chat/MessageHandlerAdapter.cpp \
                    ../cpp/chat/MessageHandler.cpp \
-                   ../cpp/logger/Logger.cpp
+                   ../cpp/logger/Logger.cpp \
+                   ../cpp/chat/RawMessage.cpp
 
 LOCAL_STATIC_LIBRARIES := ssl_prebuilt crypto_prebuilt
 

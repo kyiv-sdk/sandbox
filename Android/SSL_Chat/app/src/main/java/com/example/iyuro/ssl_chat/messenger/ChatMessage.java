@@ -1,9 +1,14 @@
 package com.example.iyuro.ssl_chat.messenger;
 
+import android.graphics.Bitmap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class ChatMessage {
@@ -20,6 +25,8 @@ public class ChatMessage {
 
     private int width, height;
 
+    private int photoLength;
+
     public ChatMessage(String keyAction) {
         this.keyAction = keyAction;
         this.dstID = null;
@@ -32,6 +39,7 @@ public class ChatMessage {
         this.isLast = false;
         this.width = -1;
         this.height = -1;
+        this.photoLength = -1;
     }
 
     public String getKeyAction() {
@@ -157,13 +165,17 @@ public class ChatMessage {
                     jsonObject.put("height", this.height);
                 }
 
+                if (this.photoLength != -1) {
+                    jsonObject.put("photoLength", this.photoLength);
+                }
+
                 jsonObject.put("isLast", this.isLast);
 
-                JSONArray jsonArray = new JSONArray();
-                for (byte b : this.file){
-                    jsonArray.put(b);
-                }
-                jsonObject.put("file", jsonArray);
+//                JSONArray jsonArray = new JSONArray();
+//                for (byte b : this.file){
+//                    jsonArray.put(b);
+//                }
+//                jsonObject.put("file", jsonArray);
             }
 
         } catch (JSONException e) {
@@ -174,7 +186,45 @@ public class ChatMessage {
 
     @Override
     public String toString() {
-        return this.toJSON().toString();
+        String result = this.toJSON().toString();
+
+
+        return result;
+    }
+
+    public byte[] getBytes(){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        try {
+            stream.write((byte)1);
+            int len = this.toString().length();
+            StringBuilder strLen = new StringBuilder(String.valueOf(len));
+            while (strLen.length() < 8){
+                strLen.insert(0, '0');
+            }
+            stream.write(strLen.toString().getBytes());
+            stream.write((byte)2);
+
+            int fLen = 0;
+            if (file != null) {
+                fLen = file.length;
+            }
+            StringBuilder strFLen = new StringBuilder(String.valueOf(fLen));
+            while (strFLen.length() < 8){
+                strFLen.insert(0, '0');
+            }
+            stream.write(strFLen.toString().getBytes());
+            stream.write((byte)2);
+
+            stream.write(this.toString().getBytes());
+            if (this.file != null) {
+                stream.write(this.file);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return stream.toByteArray();
     }
 }
 

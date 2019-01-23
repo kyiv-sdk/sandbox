@@ -46,12 +46,16 @@ MessageHandler::~MessageHandler()
     }
 }
 
-void MessageHandler::send(const char* message)
+void MessageHandler::send(int len, const char* message)
 {
-    Logger::log("cpp send");
-    Logger::log(message);
     std::unique_lock<std::mutex> lck(mMtx);
-    mMessagesToSend.push(std::make_pair(false, message));
+    std::string s_message = std::string(message, len);
+    int msgLen = s_message.length();
+    Logger::log("cpp send");
+    Logger::log(s_message);
+
+    RawMessage rawMessage(msgLen, 0, false, s_message);
+    mMessagesToSend.push(rawMessage);
     mCv.notify_all();
 }
 
@@ -78,14 +82,17 @@ void MessageHandler::managerFn()
 
         while (!mMessagesToSend.empty())
         {
-            bool fromServer = mMessagesToSend.front().first;
-            std::string strToProcess = mMessagesToSend.front().second;
+            bool fromServer = mMessagesToSend.front().isFromServer();
+            std::string strToProcess = mMessagesToSend.front().getData();
+            int headerLen = mMessagesToSend.front().getHeaderLen();
+            int fileLen = mMessagesToSend.front().getFileLen();
+
             mMessagesToSend.pop();
             if (fromServer)
             {
                 Logger::log("cpp Manager managing with");
                 Logger::log(strToProcess);
-                mMessageHandlerAdapter->runCallback(&strToProcess);
+                mMessageHandlerAdapter->runCallback(headerLen, fileLen, &strToProcess);
             } else {
                 mConnection->write(strToProcess);
             }
@@ -100,14 +107,16 @@ void MessageHandler::readerFn()
 
     while (mNeedOneMoreLoop)
     {
-        Logger::log("reader: waiting for load...");
-        mConnection->load(resultStr);
+//        Logger::log("reader: waiting for load...");
+        int headerLen = 0, fileLen = 0;
+        mConnection->load(headerLen, fileLen, resultStr);
+        RawMessage rawMessage(headerLen, fileLen, true, resultStr);
         if (!resultStr.empty())
         {
             Logger::log("reader: try to lock...");
             std::unique_lock<std::mutex> lck(mMtx);
             Logger::log("reader: locked!");
-            mMessagesToSend.push(std::make_pair(true, resultStr));
+            mMessagesToSend.push(rawMessage);
             mCv.notify_all();
             Logger::log("readerFn");
             Logger::log(resultStr.c_str());
