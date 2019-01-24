@@ -1,10 +1,14 @@
 package com.example.iyuro.ssl_chat.messenger;
 
+import android.app.Activity;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.iyuro.ssl_chat.R;
@@ -18,9 +22,11 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
 
     private ArrayList<UserMessage> mMessageList;
+    private Activity activity;
 
-    public MessageListAdapter(ArrayList<UserMessage> mMessageList) {
+    public MessageListAdapter(Activity activity, ArrayList<UserMessage> mMessageList) {
         this.mMessageList = mMessageList;
+        this.activity = activity;
     }
 
     @Override
@@ -72,12 +78,36 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private class SentMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText;
         ImageView imageView;
+        boolean isImageFitToScreen;
 
         SentMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
             imageView = itemView.findViewById(R.id.imageViewSent);
+
+            isImageFitToScreen = false;
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int dimensionInPixel;
+
+                    if(isImageFitToScreen) {
+                        isImageFitToScreen=false;
+                        dimensionInPixel = 150;
+                    }else{
+                        isImageFitToScreen=true;
+                        dimensionInPixel = 300;
+                    }
+
+                    int dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dimensionInPixel, activity.getResources().getDisplayMetrics());
+
+                    imageView.getLayoutParams().height = dimensionInDp;
+                    imageView.getLayoutParams().width = dimensionInDp;
+                    itemView.requestLayout();
+                }
+            });
         }
 
         void bind(UserMessage message) {
@@ -97,12 +127,36 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText;
         ImageView imageView;
+        boolean isImageFitToScreen;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
             imageView = itemView.findViewById(R.id.imageViewReceived);
+
+            isImageFitToScreen = false;
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int dimensionInPixel;
+
+                    if(isImageFitToScreen) {
+                        isImageFitToScreen=false;
+                        dimensionInPixel = 150;
+                    }else{
+                        isImageFitToScreen=true;
+                        dimensionInPixel = 300;
+                    }
+
+                    int dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dimensionInPixel, activity.getResources().getDisplayMetrics());
+
+                    imageView.getLayoutParams().height = dimensionInDp;
+                    imageView.getLayoutParams().width = dimensionInDp;
+                    itemView.requestLayout();
+                }
+            });
         }
 
         void bind(UserMessage message) {
@@ -118,4 +172,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             }
         }
     }
+
+
 }

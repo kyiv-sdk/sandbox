@@ -91,7 +91,7 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         if (messageList == null) {
             Toast.makeText(this, "Message list in ChatManager is null", Toast.LENGTH_SHORT).show();
         } else {
-            mMessageAdapter = new MessageListAdapter(messageList);
+            mMessageAdapter = new MessageListAdapter(this, messageList);
             mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
             mMessageRecycler.setAdapter(mMessageAdapter);
 
