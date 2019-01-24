@@ -1,4 +1,4 @@
-package com.example.iyuro.ssl_chat.messenger;
+package com.example.mynetworklibrary.messenger;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -13,10 +13,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static boolean isSSLEnabled = true;
 
-    static {
-        System.loadLibrary("native-lib");
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

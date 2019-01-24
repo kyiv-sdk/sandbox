@@ -16,6 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.example.iyuro.ssl_chat.R;
+import com.example.mynetworklibrary.messenger.ChatManager;
+import com.example.mynetworklibrary.messenger.UI_Interface;
+import com.example.mynetworklibrary.messenger.UserMessage;
 
 import java.util.ArrayList;
 

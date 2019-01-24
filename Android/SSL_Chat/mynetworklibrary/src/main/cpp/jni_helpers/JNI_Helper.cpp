@@ -53,7 +53,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
         return -1;
     }
 
-    jclass messageHandlerSingleton = env->FindClass("com/example/iyuro/ssl_chat/network/NetworkManager");
+    jclass messageHandlerSingleton = env->FindClass("com/example/mynetworklibrary/network/NetworkManager");
     jmethodID globalMethodIdMessageHandler = nullptr;
     if (messageHandlerSingleton != nullptr)
     {

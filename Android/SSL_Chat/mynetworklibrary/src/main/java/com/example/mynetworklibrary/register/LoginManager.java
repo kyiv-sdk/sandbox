@@ -1,9 +1,9 @@
-package com.example.iyuro.ssl_chat.register;
+package com.example.mynetworklibrary.register;
 
-import com.example.iyuro.ssl_chat.messenger.ChatMessage;
-import com.example.iyuro.ssl_chat.messenger.MessageProtocol;
-import com.example.iyuro.ssl_chat.network.NetworkInterface;
-import com.example.iyuro.ssl_chat.network.NetworkManager;
+import com.example.mynetworklibrary.messenger.ChatMessage;
+import com.example.mynetworklibrary.messenger.MessageProtocol;
+import com.example.mynetworklibrary.network.NetworkInterface;
+import com.example.mynetworklibrary.network.NetworkManager;
 
 public class LoginManager implements NetworkInterface {
 

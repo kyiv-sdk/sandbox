@@ -1,12 +1,11 @@
-package com.example.iyuro.ssl_chat.network;
+package com.example.mynetworklibrary.network;
 
 import android.os.Handler;
 import android.util.Log;
 
-import com.example.iyuro.ssl_chat.MainActivity;
-import com.example.iyuro.ssl_chat.messenger.ChatMessage;
-import com.example.iyuro.ssl_chat.messenger.MessageProtocol;
-import com.example.iyuro.ssl_chat.messenger.RawNetworkInterface;
+import com.example.mynetworklibrary.messenger.ChatMessage;
+import com.example.mynetworklibrary.messenger.MessageProtocol;
+import com.example.mynetworklibrary.messenger.RawNetworkInterface;
 
 public class NetworkManager implements RawNetworkInterface {
     static {
@@ -38,9 +37,9 @@ public class NetworkManager implements RawNetworkInterface {
         cppSendMessage(cppMessageHandler, bytesData);
     }
 
-    public void openConnection(String uniqueID){
+    public void openConnection(boolean isSSLEnabled, String uniqueID){
         if (cppMessageHandler == -1) {
-            this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", MainActivity.isSSLEnabled? SSL_PORT : BASIC_POST, MainActivity.isSSLEnabled);
+            this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", isSSLEnabled? SSL_PORT : BASIC_POST, isSSLEnabled);
             Log.i("--------MY_LOG--------", uniqueID);
             ChatMessage uniqueIDRequest = MessageProtocol.getInstance().createUniqueIDRequest(uniqueID);
             this.send(uniqueIDRequest.getBytes());
@@ -57,7 +56,7 @@ public class NetworkManager implements RawNetworkInterface {
     }
 
     @Override
-    public void onMessageReceive(int headerLen, int fileLen, final byte[] bytesData) {
+    public void onMessageReceive(final int headerLen, final int fileLen, final byte[] bytesData) {
         if (bytesData.length > 0) {
             handler.post(new Runnable() {
                 @Override

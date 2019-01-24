@@ -1,11 +1,13 @@
-package com.example.iyuro.ssl_chat.messenger;
+package com.example.mynetworklibrary.messenger;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.example.iyuro.ssl_chat.network.NetworkInterface;
-import com.example.iyuro.ssl_chat.network.NetworkManager;
+
+import com.example.mynetworklibrary.network.NetworkInterface;
+import com.example.mynetworklibrary.network.NetworkManager;
+
 import java.util.ArrayList;
 
 public class ChatManager implements NetworkInterface, ChatInterface{

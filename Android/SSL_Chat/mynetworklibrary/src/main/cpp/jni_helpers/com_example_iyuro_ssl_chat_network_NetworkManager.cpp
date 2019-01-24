@@ -62,7 +62,7 @@ void jni_sendMessageToJava(jobject instance, int headerLen, int fileLen, std::st
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppCreateMessageHandler(
+Java_com_example_mynetworklibrary_network_NetworkManager_cppCreateMessageHandler(
         JNIEnv *env, jobject instance, jstring t_host, jint t_port, jboolean isSSLEnabled)
 {
     const char* m_host = env->GetStringUTFChars(t_host, 0);
@@ -75,7 +75,7 @@ Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppCreateMessageHandler(
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppSendMessage(
+Java_com_example_mynetworklibrary_network_NetworkManager_cppSendMessage(
         JNIEnv *env, jobject instance, jlong t_messageHandler, jbyteArray t_jByteArray)
 {
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
@@ -99,7 +99,7 @@ Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppSendMessage(
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppDeleteMessageHandler(
+Java_com_example_mynetworklibrary_mynetworklibrary_network_NetworkManager_cppDeleteMessageHandler(
         JNIEnv *env, jobject instance, jlong t_messageHandler)
 {
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;

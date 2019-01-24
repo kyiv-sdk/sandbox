@@ -10,10 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.iyuro.ssl_chat.messenger.ChatManager;
-import com.example.iyuro.ssl_chat.network.NetworkManager;
+import com.example.iyuro.ssl_chat.MainActivity;
 import com.example.iyuro.ssl_chat.R;
 import com.example.iyuro.ssl_chat.user_list.UsersListActivity;
+
+import com.example.mynetworklibrary.messenger.ChatManager;
+import com.example.mynetworklibrary.network.NetworkManager;
+import com.example.mynetworklibrary.register.LoginInterface;
+import com.example.mynetworklibrary.register.LoginManager;
 
 /**
  * A login screen that offers login via email/password.
@@ -36,7 +40,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         String android_id = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
-        NetworkManager.getInstance().openConnection(android_id);
+        NetworkManager.getInstance().openConnection(MainActivity.isSSLEnabled, android_id);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -10,10 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.example.iyuro.ssl_chat.MainActivity;
-import com.example.iyuro.ssl_chat.messenger.ChatManager;
-import com.example.iyuro.ssl_chat.messenger.ChatUser;
-import com.example.iyuro.ssl_chat.messenger.UI_Interface;
 import com.example.iyuro.ssl_chat.R;
+import com.example.mynetworklibrary.messenger.ChatManager;
+import com.example.mynetworklibrary.messenger.ChatUser;
+import com.example.mynetworklibrary.messenger.UI_Interface;
 
 import java.util.ArrayList;
 

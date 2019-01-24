@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.iyuro.ssl_chat.R;
+import com.example.mynetworklibrary.messenger.UserMessage;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.example.iyuro.ssl_chat.messenger;
+package com.example.mynetworklibrary.messenger;
 
 import java.util.ArrayList;
 import java.util.Objects;
