@@ -58,6 +58,8 @@ public class MessageProtocol {
                     break;
 
                 case "file":
+                    String contentType = receivedMessageJsonObject.getString("contentType");
+                    resultChatMessage.setContentType(contentType);
                     srcID = receivedMessageJsonObject.getString("srcID");
                     resultChatMessage.setSrcID(srcID);
                     dstID = receivedMessageJsonObject.getString("dstID");
@@ -88,6 +90,7 @@ public class MessageProtocol {
         byte[] byteArray = stream.toByteArray();
 
         ChatMessage resultChatMessage = new ChatMessage("file");
+        resultChatMessage.setContentType("photo");
         resultChatMessage.setDstID(dstID);
         resultChatMessage.setSrcID(srcID);
         resultChatMessage.setFile(byteArray);

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class ChatMessage {
     private String keyAction;
+    private String contentType;
     private String dstID;
     private String srcID;
 
@@ -18,6 +19,7 @@ public class ChatMessage {
 
     public ChatMessage(String keyAction) {
         this.keyAction = keyAction;
+        this.contentType = null;
         this.dstID = null;
         this.srcID = null;
         this.message = null;
@@ -73,10 +75,23 @@ public class ChatMessage {
         this.file = file;
     }
 
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("keyAction", keyAction);
+            if (this.keyAction != null && !this.keyAction.equals("")) {
+                jsonObject.put("keyAction", keyAction);
+            }
+            if (this.contentType != null && !this.contentType.equals("")) {
+                jsonObject.put("contentType", this.contentType);
+            }
             if (this.message != null && !this.message.equals("")) {
                 jsonObject.put("message", this.message);
             }

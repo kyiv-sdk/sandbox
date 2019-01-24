@@ -62,6 +62,8 @@ public class ServerMessageProtocol {
                     break;
 
                 case "file":
+                    String contentType = receivedMessageJsonObject.getString("contentType");
+                    resultUserMessage.setContentType(contentType);
                     srcID = receivedMessageJsonObject.getString("srcID");
                     resultUserMessage.setSrcID(srcID);
                     dstID = receivedMessageJsonObject.getString("dstID");

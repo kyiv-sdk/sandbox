@@ -60,16 +60,21 @@ public class ChatManager implements NetworkInterface, ChatInterface{
     }
 
     public void onNewFile(ChatMessage chatMessage){
-            Bitmap bitmap = BitmapFactory.decodeByteArray(chatMessage.getFile() , 0, chatMessage.getFile().length);
-            for (int i = 0; i < chatUserArrayList.size(); i++){
-                ChatUser chatUser = chatUserArrayList.get(i);
-                if (chatUser.getUserID().equals(chatMessage.getSrcID())){
-                    UserMessage userMessage = new UserMessage(bitmap, true);
-                    chatUser.addMessage(userMessage);
-                    break;
+        switch (chatMessage.getContentType()){
+            case "photo":
+                Bitmap bitmap = BitmapFactory.decodeByteArray(chatMessage.getFile() , 0, chatMessage.getFile().length);
+                for (int i = 0; i < chatUserArrayList.size(); i++){
+                    ChatUser chatUser = chatUserArrayList.get(i);
+                    if (chatUser.getUserID().equals(chatMessage.getSrcID())){
+                        UserMessage userMessage = new UserMessage(bitmap, true);
+                        chatUser.addMessage(userMessage);
+                        break;
+                    }
                 }
-            }
-            UIInterface.onNewPhotoMessage(chatMessage.getSrcID(), bitmap);
+                UIInterface.onNewPhotoMessage(chatMessage.getSrcID(), bitmap);
+                break;
+        }
+
     }
 
     @Override
