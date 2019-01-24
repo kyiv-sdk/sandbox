@@ -79,39 +79,20 @@ public class BasicServer implements ServerInterface, Runnable {
 
     @Override
     public void run() {
-        ServerSocket serverSocket = null;
         try {
-            serverSocket = new ServerSocket(portNumber);
+            ServerSocket serverSocket = new ServerSocket(portNumber);
             System.out.println("BasicServer started successfully");
 
             while (true){
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Basic accepted new connection");
-//                PrintWriter out =
-//                        new PrintWriter(clientSocket.getOutputStream(), true);
-//                BufferedReader in = new BufferedReader(
-//                        new InputStreamReader(clientSocket.getInputStream()));
 
                 InputStream in = clientSocket.getInputStream();
-
                 OutputStream out = clientSocket.getOutputStream();
-
-//                try {
-//                    String userUniqueId;
-//                    String inputLine = in.readLine();
-//                    System.out.println("Received on server: " + inputLine);
-//
-//                    if (inputLine != null) {
-
-//                        userUniqueId = inputLine;
 
                 UserHandler newUserHandler = new UserHandler(this, clientSocket, out, in);
 
                 userHandlers.add(newUserHandler);
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
             }
 
         } catch (Exception e) {

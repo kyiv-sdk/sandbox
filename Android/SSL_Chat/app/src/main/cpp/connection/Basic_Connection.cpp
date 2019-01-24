@@ -24,17 +24,18 @@ void Basic_Connection::open_connection(const char *hostname, int port)
         perror(hostname);
         exit(1);
     }
+
     mSock = socket(PF_INET, SOCK_STREAM, 0);
     bzero(&addr, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     memcpy(&addr.sin_addr, host->h_addr, (size_t)host->h_length);
+
     if ( connect(mSock, (struct sockaddr *)&addr, sizeof(addr)) != 0 )
     {
         handle_error("connection failed");
         close(mSock);
         perror(hostname);
-//        exit(1);
     }
 }
 
@@ -45,43 +46,19 @@ void Basic_Connection::close_connection()
 
 void Basic_Connection::load(int &headerLen, int &fileLen, std::string& resultStr)
 {
-    std::string strHeaderLen = "";
-    std::string strFileLen = "";
-    char cur;
-    while (read(mSock, &cur, 1) > 0)
-    {
-        if (cur == 1)
-        {
-            continue;
-        }
-        if (cur == 2)
-        {
-            break;
-        }
-
-        strHeaderLen += cur;
-    }
-
-    headerLen = atoi(strHeaderLen.c_str());
-
-    while (read(mSock, &cur, 1) > 0)
-    {
-        if (cur == 2)
-        {
-            break;
-        }
-
-        strFileLen += cur;
-    }
-
-    fileLen = atoi(strFileLen.c_str());
+    headerLen = readNum();
+    fileLen = readNum();
 
     int remainedLen = headerLen + fileLen;
     resultStr = "";
     int bufLen = headerLen;
     const int MAX_BUF_SIZE = 1024;
     char buf[MAX_BUF_SIZE];
-    for (;;) {
+
+    resultStr.reserve(headerLen + fileLen);
+
+    for (;;)
+    {
         int len = read(mSock, buf, bufLen);
 
         if (len == 0)
@@ -95,19 +72,17 @@ void Basic_Connection::load(int &headerLen, int &fileLen, std::string& resultStr
 
         remainedLen -= len;
 
-        std::string sbuf = buf;
-        int testi = sbuf.length();
-        if (testi > bufLen){
-            std::string test = sbuf.substr(0, bufLen);
-            resultStr += sbuf.substr(0, bufLen);
-        } else {
-            resultStr += buf;
-        }
+        std::string sbuf(buf, len);
+
+        resultStr.append(sbuf.c_str(), len);
+
         memset(buf, 0, len);
-        if (remainedLen == 0){
+        if (remainedLen == 0)
+        {
             break;
         } else {
-            if (remainedLen > MAX_BUF_SIZE){
+            if (remainedLen > MAX_BUF_SIZE)
+            {
                 bufLen = MAX_BUF_SIZE;
             } else {
                 bufLen = remainedLen;
@@ -118,14 +93,15 @@ void Basic_Connection::load(int &headerLen, int &fileLen, std::string& resultStr
 
 void Basic_Connection::write(std::string request)
 {
-//    request += "\n";
     int strLen = request.length();
     int MAX_BUF_SIZE = 1024;
 
-    int msgToSendLen = strLen;
+    int msgToSendLen = 0;
     int i = 0;
-    while (strLen > 0){
-        if (strLen > MAX_BUF_SIZE){
+    while (strLen > 0)
+    {
+        if (strLen > MAX_BUF_SIZE)
+        {
             msgToSendLen = MAX_BUF_SIZE;
         } else {
             msgToSendLen = strLen;
@@ -146,5 +122,25 @@ void Basic_Connection::handle_error (const char *msg)
 {
     Logger::log("error");
     Logger::log(msg);
-//    exit (1);
+}
+
+int Basic_Connection::readNum()
+{
+    std::string strNum = "";
+    char cur;
+    while (read(mSock, &cur, 1) > 0)
+    {
+        if (cur == 1)
+        {
+            continue;
+        }
+        if (cur == 2)
+        {
+            break;
+        }
+
+        strNum += cur;
+    }
+
+    return atoi(strNum.c_str());
 }

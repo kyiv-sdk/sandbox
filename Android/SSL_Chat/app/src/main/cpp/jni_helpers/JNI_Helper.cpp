@@ -48,26 +48,10 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
     gJvm = pjvm;
     JNIEnv *env = nullptr;
 
-    if (gJvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_4) != JNI_OK) {
+    if (gJvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_4) != JNI_OK)
+    {
         return -1;
     }
-
-//    jclass networkSingleton = env->FindClass("com/example/iyuro/socketstest/url/NetworkExecutor");
-//    jmethodID globalMethodIdNetworkSingleton = nullptr;
-//    if (networkSingleton != nullptr)
-//    {
-//        globalMethodIdNetworkSingleton = env->GetMethodID(networkSingleton, "onSuccessDownload", "([B)V");
-//    } else {
-//        Logger::log("Failed to find NetworkManager class");
-//    }
-//
-//    if (globalMethodIdNetworkSingleton == nullptr)
-//    {
-//        Logger::log("Failed to get method id");
-//    }
-//
-//    JNI_Helper::mNetworkExecutorOnSuccessMethodId = globalMethodIdNetworkSingleton;
-
 
     jclass messageHandlerSingleton = env->FindClass("com/example/iyuro/ssl_chat/network/NetworkManager");
     jmethodID globalMethodIdMessageHandler = nullptr;

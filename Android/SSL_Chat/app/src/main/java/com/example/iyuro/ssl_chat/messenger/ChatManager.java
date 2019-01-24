@@ -6,19 +6,13 @@ import android.util.Log;
 
 import com.example.iyuro.ssl_chat.network.NetworkInterface;
 import com.example.iyuro.ssl_chat.network.NetworkManager;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class ChatManager implements NetworkInterface, ChatInterface{
     private static final ChatManager ourInstance = new ChatManager();
     private static ArrayList<ChatUser> chatUserArrayList = new ArrayList<>();
     private UI_Interface UIInterface;
     private String currentUserID;
-
-    private ArrayList<ChatMessage> cachedFiles;
 
     public static ChatManager getInstance() {
         return ourInstance;
@@ -29,7 +23,6 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         refreshNetworkInterface();
         UIInterface = null;
         currentUserID = null;
-        this.cachedFiles = new ArrayList<>();
     }
 
     public String getCurrentUserID() {
@@ -61,45 +54,12 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         } else if (chatMessage.getKeyAction().equals("loggedUsersList")){
             onUsersListRefresh(chatMessage.getAllLoggedUsersList());
         } else if (chatMessage.getKeyAction().equals("photo")){
-            onNewFileSlice(chatMessage);
+            onNewFile(chatMessage);
         }
     }
 
-    public void onNewFileSlice(ChatMessage chatMessage){
-        cachedFiles.add(chatMessage);
-
-        if (chatMessage.isLast()){
-
-            int fileID = chatMessage.getFileID();
-
-            ArrayList<ChatMessage> thisFileIDMessages = new ArrayList<>();
-
-            for (ChatMessage cm : cachedFiles){
-                if (fileID == cm.getFileID()){
-                    thisFileIDMessages.add(cm);
-                }
-            }
-
-            thisFileIDMessages.sort(new Comparator<ChatMessage>() {
-                @Override
-                public int compare(ChatMessage o1, ChatMessage o2) {
-                    return o1.getFileSliceID() - o2.getFileSliceID();
-                }
-            });
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-            try {
-                for (ChatMessage cm : thisFileIDMessages){
-                        byteArrayOutputStream.write(cm.getFile());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            String str = byteArrayOutputStream.toString();
-            byte[] bbitmap = byteArrayOutputStream.toByteArray();
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bbitmap , 0, bbitmap.length);
+    public void onNewFile(ChatMessage chatMessage){
+            Bitmap bitmap = BitmapFactory.decodeByteArray(chatMessage.getFile() , 0, chatMessage.getFile().length);
             for (int i = 0; i < chatUserArrayList.size(); i++){
                 ChatUser chatUser = chatUserArrayList.get(i);
                 if (chatUser.getUserID().equals(chatMessage.getSrcID())){
@@ -108,11 +68,7 @@ public class ChatManager implements NetworkInterface, ChatInterface{
                     break;
                 }
             }
-
             UIInterface.onNewPhotoMessage(chatMessage.getSrcID(), bitmap);
-
-            cachedFiles.removeIf(photo -> photo.getFileID() == chatMessage.getFileID());
-        }
     }
 
     @Override
@@ -159,11 +115,8 @@ public class ChatManager implements NetworkInterface, ChatInterface{
     }
 
     public void sendPhoto(String dstUserID, Bitmap photo){
-        ArrayList<ChatMessage> photoSlices = MessageProtocol.getInstance().processSendPhoto(currentUserID, dstUserID, photo);
-
-        for (ChatMessage photoChatMessage : photoSlices) {
-            NetworkManager.getInstance().send(photoChatMessage.getBytes());
-        }
+        ChatMessage photoMessage = MessageProtocol.getInstance().processSendPhoto(currentUserID, dstUserID, photo);
+        NetworkManager.getInstance().send(photoMessage.getBytes());
     }
 
     public ArrayList<UserMessage> getUserMessagesByID(String userID){

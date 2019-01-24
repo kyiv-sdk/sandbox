@@ -90,34 +90,95 @@ SSL_CTX* SSL_Connection::InitCTX(void)
 
 void SSL_Connection::write(std::string request)
 {
-    request += "\n";
-    const char *msg = request.c_str();
+    int strLen = request.length();
+    int MAX_BUF_SIZE = 1024;
 
-    SSL_write(mSSL, msg, strlen(msg));
+    int msgToSendLen = 0;
+    int i = 0;
+    while (strLen > 0)
+    {
+        if (strLen > MAX_BUF_SIZE)
+        {
+            msgToSendLen = MAX_BUF_SIZE;
+        } else {
+            msgToSendLen = strLen;
+        }
+        strLen -= msgToSendLen;
+
+        std::string toSend = request.substr(i, i + msgToSendLen);
+        if (SSL_write(mSSL, toSend.c_str(), msgToSendLen) != msgToSendLen)
+        {
+            handle_error("Error sending request.");
+        }
+
+        i+= msgToSendLen;
+    }
 }
 
 void SSL_Connection::load(int &headerLen, int &fileLen, std::string& resultStr)
 {
+    headerLen = readNum();
+    fileLen = readNum();
+
+    int remainedLen = headerLen + fileLen;
     resultStr = "";
-    char buf[1024];
-    for (;;) {
-        int len = SSL_read(mSSL, buf, sizeof (buf));
+    int bufLen = headerLen;
+    const int MAX_BUF_SIZE = 1024;
+    char buf[MAX_BUF_SIZE];
+
+    resultStr.reserve(headerLen + fileLen);
+
+    for (;;)
+    {
+        int len = SSL_read(mSSL, buf, bufLen);
 
         if (len == 0)
             break;
 
         if (len < 0)
+        {
             handle_error ("Failed reading response data");
-
-        std::string sbuf = buf;
-        int testi = sbuf.length();
-        if (testi > 1024){
-            std::string test = sbuf.substr(0, 1024);
-            resultStr += sbuf.substr(0, 1024);
-        } else {
-            resultStr += buf;
+            break;
         }
+
+        remainedLen -= len;
+
+        std::string sbuf(buf, len);
+
+        resultStr.append(sbuf.c_str(), len);
+
         memset(buf, 0, len);
-        if (resultStr.back() == '\n') break;
+        if (remainedLen == 0)
+        {
+            break;
+        } else {
+            if (remainedLen > MAX_BUF_SIZE)
+            {
+                bufLen = MAX_BUF_SIZE;
+            } else {
+                bufLen = remainedLen;
+            }
+        }
     }
+}
+
+int SSL_Connection::readNum()
+{
+    std::string strNum = "";
+    char cur;
+    while (SSL_read(mSSL, &cur, 1) > 0)
+    {
+        if (cur == 1)
+        {
+            continue;
+        }
+        if (cur == 2)
+        {
+            break;
+        }
+
+        strNum += cur;
+    }
+
+    return atoi(strNum.c_str());
 }

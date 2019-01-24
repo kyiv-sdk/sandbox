@@ -81,22 +81,13 @@ Java_com_example_iyuro_ssl_1chat_network_NetworkManager_cppSendMessage(
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
 
     jsize num_bytes = env->GetArrayLength(t_jByteArray);
-//    char *buffer = static_cast<char *>(malloc(num_bytes + 1));
-
-//    if (!buffer)
-//    {
-//        // handle allocation failure ...
-//    }
 
     jbyte* elements = env->GetByteArrayElements(t_jByteArray, NULL);
 
     if (!elements)
     {
-        // handle JNI error ...
-    }
 
-//    memcpy(buffer, elements, num_bytes);
-//    buffer[num_bytes] = 0;
+    }
 
     char *buffer = reinterpret_cast<char *>(elements);
 

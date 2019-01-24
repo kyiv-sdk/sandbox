@@ -14,9 +14,6 @@ public class UserMessage {
 
     private String message;
     private byte[] file;
-    private int fileSliceID;
-    private int fileID;
-    private boolean isLast;
 
     private int width, height;
 
@@ -30,24 +27,6 @@ public class UserMessage {
         this.srcID = null;
         this.message = null;
         this.file = null;
-        this.fileSliceID = -1;
-        this.fileID = -1;
-        this.isLast = false;
-        this.width = -1;
-        this.height = -1;
-        this.photoLength = -1;
-        this.allLoggedUsersList = null;
-    }
-
-    public UserMessage(String keyAction) {
-        this.keyAction = keyAction;
-        this.dstID = null;
-        this.srcID = null;
-        this.message = null;
-        this.file = null;
-        this.fileSliceID = -1;
-        this.fileID = -1;
-        this.isLast = false;
         this.width = -1;
         this.height = -1;
         this.photoLength = -1;
@@ -94,30 +73,6 @@ public class UserMessage {
         this.file = file;
     }
 
-    public int getFileSliceID() {
-        return fileSliceID;
-    }
-
-    public void setFileSliceID(int fileSliceID) {
-        this.fileSliceID = fileSliceID;
-    }
-
-    public int getFileID() {
-        return fileID;
-    }
-
-    public void setFileID(int fileID) {
-        this.fileID = fileID;
-    }
-
-    public boolean isLast() {
-        return isLast;
-    }
-
-    public void setLast(boolean last) {
-        isLast = last;
-    }
-
     public int getWidth() {
         return width;
     }
@@ -162,13 +117,6 @@ public class UserMessage {
             }
 
             if (this.file != null) {
-                if (this.fileSliceID != -1) {
-                    jsonObject.put("fileSliceID", this.fileSliceID);
-                }
-
-                if (this.fileID != -1) {
-                    jsonObject.put("fileID", this.fileID);
-                }
 
                 if (this.width != -1) {
                     jsonObject.put("width", this.width);
@@ -181,14 +129,6 @@ public class UserMessage {
                 if (this.photoLength != -1) {
                     jsonObject.put("photoLength", this.photoLength);
                 }
-
-                jsonObject.put("isLast", this.isLast);
-
-//                JSONArray jsonArray = new JSONArray();
-//                for (byte b : this.file){
-//                    jsonArray.put(b);
-//                }
-//                jsonObject.put("file", jsonArray);
             }
 
         } catch (JSONException e) {
@@ -210,22 +150,14 @@ public class UserMessage {
         try {
             stream.write((byte)1);
             int len = this.toString().length();
-            StringBuilder strLen = new StringBuilder(String.valueOf(len));
-            while (strLen.length() < 8){
-                strLen.insert(0, '0');
-            }
-            stream.write(strLen.toString().getBytes());
+            stream.write(String.valueOf(len).getBytes());
             stream.write((byte)2);
 
             int fLen = 0;
             if (file != null) {
                 fLen = file.length;
             }
-            StringBuilder strFLen = new StringBuilder(String.valueOf(fLen));
-            while (strFLen.length() < 8){
-                strFLen.insert(0, '0');
-            }
-            stream.write(strFLen.toString().getBytes());
+            stream.write(String.valueOf(fLen).getBytes());
             stream.write((byte)2);
 
             stream.write(this.toString().getBytes());

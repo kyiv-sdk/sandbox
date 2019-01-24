@@ -50,23 +50,19 @@ public class SSL_Server extends BasicServer {
 
             System.out.println("SSL_Server started successfully");
 
-            while (true){
+            while (true) {
                 Socket clientSocket = serverSocket.accept();
-
                 System.out.println("SSL_Server accepted new connection");
 
                 OutputStream out = clientSocket.getOutputStream();
-
                 InputStream in = clientSocket.getInputStream();
 
                 UserHandler newUserHandler = new UserHandler(this, clientSocket, out, in);
 
                 userHandlers.add(newUserHandler);
             }
-
-        } catch (IOException e) {
-            System.out.println("Unable to start SSL server: " +
-                    e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Unable to start SSL server: " + e.getMessage());
             e.printStackTrace();
         }
     }

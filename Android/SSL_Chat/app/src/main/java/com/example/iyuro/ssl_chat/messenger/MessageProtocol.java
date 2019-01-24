@@ -14,9 +14,6 @@ import java.util.Arrays;
 public class MessageProtocol {
     private static final MessageProtocol ourInstance = new MessageProtocol();
 
-    private final int FILE_SIZE = 1000;
-    private static int nextFileID = 0;
-
     public MessageProtocol() {
     }
 
@@ -37,24 +34,20 @@ public class MessageProtocol {
 
             switch (keyAction){
                 case "login":
-
                     String response = receivedMessageJsonObject.getString("message");
                     resultChatMessage.setMessage(response);
-
                     break;
+
                 case "loggedUsersList":
-
                     ArrayList<ChatUser> allLoggedUsersList = new ArrayList<>();
-
                     allLoggedUsersList.clear();
                     JSONArray loggedUsersJSONArray = receivedMessageJsonObject.getJSONArray("loggedUsers");
                     for (int i = 0; i < loggedUsersJSONArray.length(); i++) {
                         allLoggedUsersList.add(new ChatUser(loggedUsersJSONArray.getString(i)));
                     }
-
                     resultChatMessage.setAllLoggedUsersList(allLoggedUsersList);
-
                     break;
+
                 case "msg":
                     srcID = receivedMessageJsonObject.getString("srcID");
                     resultChatMessage.setSrcID(srcID);
@@ -63,30 +56,13 @@ public class MessageProtocol {
                     String message = receivedMessageJsonObject.getString("message");
                     resultChatMessage.setMessage(message);
                     break;
+
                 case "photo":
                     srcID = receivedMessageJsonObject.getString("srcID");
                     resultChatMessage.setSrcID(srcID);
                     dstID = receivedMessageJsonObject.getString("dstID");
                     resultChatMessage.setDstID(dstID);
-
-                    int fileID = receivedMessageJsonObject.getInt("fileID");
-                    resultChatMessage.setFileID(fileID);
-                    int fileSliceID = receivedMessageJsonObject.getInt("fileSliceID");
-                    resultChatMessage.setFileSliceID(fileSliceID);
-                    boolean isLast = receivedMessageJsonObject.getBoolean("isLast");
-                    resultChatMessage.setLast(isLast);
-
-//                    JSONArray jsonArrayFile = receivedMessageJsonObject.getJSONArray("file");
-//                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//
-//                    for (int i = 0; i < jsonArrayFile.length(); i++){
-//                        byte b = (byte)jsonArrayFile.getInt(i);
-//                        byteArrayOutputStream.write(b);
-//                    }
-
-//                    String fileStr = inMessage.substring(headerLen);
-                    byte[] file = Arrays.copyOfRange(inMessage, headerLen, fileLen);
-
+                    byte[] file = Arrays.copyOfRange(inMessage, headerLen, headerLen + fileLen);
                     resultChatMessage.setFile(file);
                     int width = receivedMessageJsonObject.getInt("width");
                     resultChatMessage.setWidth(width);
@@ -110,67 +86,36 @@ public class MessageProtocol {
         return resultChatMessage;
     }
 
-    public ArrayList<ChatMessage> processSendPhoto(String srcID, String dstID, Bitmap photo){
-        ArrayList<ChatMessage> result = new ArrayList<>();
-
+    public ChatMessage processSendPhoto(String srcID, String dstID, Bitmap photo){
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
-//        int arrLength = byteArray.length;
-//        int counter = 0;
+        ChatMessage resultChatMessage = new ChatMessage("photo");
+        resultChatMessage.setDstID(dstID);
+        resultChatMessage.setSrcID(srcID);
+        resultChatMessage.setWidth(photo.getWidth());
+        resultChatMessage.setHeight(photo.getHeight());
+        resultChatMessage.setFile(byteArray);
 
-//        while (arrLength > 0){
-            ChatMessage resultChatMessage = new ChatMessage("photo");
-            resultChatMessage.setFileSliceID(0);
-
-            resultChatMessage.setDstID(dstID);
-            resultChatMessage.setSrcID(srcID);
-
-            resultChatMessage.setWidth(photo.getWidth());
-            resultChatMessage.setHeight(photo.getHeight());
-
-            resultChatMessage.setFileID(nextFileID);
-
-//            int sliceFrom = 0 * FILE_SIZE;
-//            int sliceTo = arrLength;
-            resultChatMessage.setFile(byteArray);
-            result.add(resultChatMessage);
-
-
-//            counter++;
-//        }
-
-        nextFileID++;
-
-        result.get(result.size() - 1).setLast(true);
-
-        return result;
+        return resultChatMessage;
     }
 
     public ChatMessage createLoginRequest(String username){
         ChatMessage resultChatMessage = new ChatMessage("login");
-
         resultChatMessage.setMessage(username);
-
         return resultChatMessage;
     }
 
     public ChatMessage createLoggedUsersListRequest(String srcID){
-
         ChatMessage resultChatMessage = new ChatMessage("loggedUsersList");
-
         resultChatMessage.setSrcID(srcID);
-
         return resultChatMessage;
     }
 
     public ChatMessage createUniqueIDRequest(String uniqueID){
-
         ChatMessage resultChatMessage = new ChatMessage("uniqueID");
-
         resultChatMessage.setMessage(uniqueID);
-
         return resultChatMessage;
     }
 }

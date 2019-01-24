@@ -1,14 +1,10 @@
 package com.example.iyuro.ssl_chat.messenger;
 
-import android.graphics.Bitmap;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class ChatMessage {
@@ -19,9 +15,6 @@ public class ChatMessage {
     private String message;
     private ArrayList<ChatUser> allLoggedUsersList;
     private byte[] file;
-    private int fileSliceID;
-    private int fileID;
-    private boolean isLast;
 
     private int width, height;
 
@@ -34,9 +27,6 @@ public class ChatMessage {
         this.message = null;
         this.allLoggedUsersList = null;
         this.file = null;
-        this.fileSliceID = -1;
-        this.fileID = -1;
-        this.isLast = false;
         this.width = -1;
         this.height = -1;
         this.photoLength = -1;
@@ -90,30 +80,6 @@ public class ChatMessage {
         this.file = file;
     }
 
-    public int getFileSliceID() {
-        return fileSliceID;
-    }
-
-    public void setFileSliceID(int fileSliceID) {
-        this.fileSliceID = fileSliceID;
-    }
-
-    public int getFileID() {
-        return fileID;
-    }
-
-    public void setFileID(int fileID) {
-        this.fileID = fileID;
-    }
-
-    public boolean isLast() {
-        return isLast;
-    }
-
-    public void setLast(boolean last) {
-        isLast = last;
-    }
-
     public int getWidth() {
         return width;
     }
@@ -147,15 +113,7 @@ public class ChatMessage {
                 jsonObject.put("loggedUsers", this.allLoggedUsersList);
             }
 
-
             if (this.file != null) {
-                if (this.fileSliceID != -1) {
-                    jsonObject.put("fileSliceID", this.fileSliceID);
-                }
-
-                if (this.fileID != -1) {
-                    jsonObject.put("fileID", this.fileID);
-                }
 
                 if (this.width != -1) {
                     jsonObject.put("width", this.width);
@@ -168,14 +126,6 @@ public class ChatMessage {
                 if (this.photoLength != -1) {
                     jsonObject.put("photoLength", this.photoLength);
                 }
-
-                jsonObject.put("isLast", this.isLast);
-
-//                JSONArray jsonArray = new JSONArray();
-//                for (byte b : this.file){
-//                    jsonArray.put(b);
-//                }
-//                jsonObject.put("file", jsonArray);
             }
 
         } catch (JSONException e) {
@@ -186,10 +136,7 @@ public class ChatMessage {
 
     @Override
     public String toString() {
-        String result = this.toJSON().toString();
-
-
-        return result;
+        return this.toJSON().toString();
     }
 
     public byte[] getBytes(){
@@ -198,22 +145,14 @@ public class ChatMessage {
         try {
             stream.write((byte)1);
             int len = this.toString().length();
-            StringBuilder strLen = new StringBuilder(String.valueOf(len));
-            while (strLen.length() < 8){
-                strLen.insert(0, '0');
-            }
-            stream.write(strLen.toString().getBytes());
+            stream.write(String.valueOf(len).getBytes());
             stream.write((byte)2);
 
             int fLen = 0;
             if (file != null) {
                 fLen = file.length;
             }
-            StringBuilder strFLen = new StringBuilder(String.valueOf(fLen));
-            while (strFLen.length() < 8){
-                strFLen.insert(0, '0');
-            }
-            stream.write(strFLen.toString().getBytes());
+            stream.write(String.valueOf(fLen).getBytes());
             stream.write((byte)2);
 
             stream.write(this.toString().getBytes());

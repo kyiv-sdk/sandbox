@@ -5,7 +5,6 @@ import main.basic_server.BasicServer;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,13 +33,13 @@ public class UserHandler implements UserHandlerInterface {
 
         this.serverInterface = serverInterface;
 
-        ServerMessageProtocol serverMessageProtocol = new ServerMessageProtocol(serverInterface, this);
+        ServerMessageProtocol serverMessageProtocol = new ServerMessageProtocol();
 
         System.out.println("Created user handler");
 
         messages = Collections.synchronizedList(new ArrayList<>());
 
-        messageManager = new MessageManager(messages, serverMessageProtocol);
+        messageManager = new MessageManager(messages, serverMessageProtocol, this, serverInterface);
         Thread threadWriter = new Thread(messageManager);
         threadWriter.start();
 
@@ -139,7 +138,7 @@ public class UserHandler implements UserHandlerInterface {
 
     public void addMessage(String msg){
         synchronized(messages) {
-            messages.add(new RawMessage(msg.getBytes()));
+            messages.add(new RawMessage(msg.length(), 0, msg.getBytes()));
             System.out.println("Message added");
             messages.notifyAll();
         }
