@@ -57,7 +57,7 @@ public class MessageProtocol {
                     resultChatMessage.setMessage(message);
                     break;
 
-                case "photo":
+                case "file":
                     srcID = receivedMessageJsonObject.getString("srcID");
                     resultChatMessage.setSrcID(srcID);
                     dstID = receivedMessageJsonObject.getString("dstID");
@@ -87,7 +87,7 @@ public class MessageProtocol {
         photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
-        ChatMessage resultChatMessage = new ChatMessage("photo");
+        ChatMessage resultChatMessage = new ChatMessage("file");
         resultChatMessage.setDstID(dstID);
         resultChatMessage.setSrcID(srcID);
         resultChatMessage.setFile(byteArray);

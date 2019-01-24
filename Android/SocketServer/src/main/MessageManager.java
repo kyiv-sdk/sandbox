@@ -129,7 +129,7 @@ public class MessageManager implements Runnable{
                 }
                 break;
 
-            case "photo":
+            case "file":
                 destinationID = inUserMessage.getDstID();
                 userHandlerInterface.onResponse(destinationID, inUserMessage.getBytes());
                 break;

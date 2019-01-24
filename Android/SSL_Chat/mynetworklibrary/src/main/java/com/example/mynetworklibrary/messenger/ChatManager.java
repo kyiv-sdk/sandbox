@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-
 import com.example.mynetworklibrary.network.NetworkInterface;
 import com.example.mynetworklibrary.network.NetworkManager;
 
@@ -55,7 +54,7 @@ public class ChatManager implements NetworkInterface, ChatInterface{
             onNewMessage(chatMessage.getSrcID(), chatMessage.getMessage());
         } else if (chatMessage.getKeyAction().equals("loggedUsersList")){
             onUsersListRefresh(chatMessage.getAllLoggedUsersList());
-        } else if (chatMessage.getKeyAction().equals("photo")){
+        } else if (chatMessage.getKeyAction().equals("file")){
             onNewFile(chatMessage);
         }
     }

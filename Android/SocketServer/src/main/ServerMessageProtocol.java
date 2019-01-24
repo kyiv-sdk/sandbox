@@ -61,7 +61,7 @@ public class ServerMessageProtocol {
                     resultUserMessage.setMessage(message);
                     break;
 
-                case "photo":
+                case "file":
                     srcID = receivedMessageJsonObject.getString("srcID");
                     resultUserMessage.setSrcID(srcID);
                     dstID = receivedMessageJsonObject.getString("dstID");
