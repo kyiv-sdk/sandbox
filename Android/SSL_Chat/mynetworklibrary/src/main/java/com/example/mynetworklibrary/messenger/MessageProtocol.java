@@ -64,10 +64,6 @@ public class MessageProtocol {
                     resultChatMessage.setDstID(dstID);
                     byte[] file = Arrays.copyOfRange(inMessage, headerLen, headerLen + fileLen);
                     resultChatMessage.setFile(file);
-                    int width = receivedMessageJsonObject.getInt("width");
-                    resultChatMessage.setWidth(width);
-                    int height = receivedMessageJsonObject.getInt("height");
-                    resultChatMessage.setHeight(height);
                     break;
             }
         } catch (JSONException e) {
@@ -94,8 +90,6 @@ public class MessageProtocol {
         ChatMessage resultChatMessage = new ChatMessage("photo");
         resultChatMessage.setDstID(dstID);
         resultChatMessage.setSrcID(srcID);
-        resultChatMessage.setWidth(photo.getWidth());
-        resultChatMessage.setHeight(photo.getHeight());
         resultChatMessage.setFile(byteArray);
 
         return resultChatMessage;

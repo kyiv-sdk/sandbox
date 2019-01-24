@@ -66,10 +66,6 @@ public class ServerMessageProtocol {
                     resultUserMessage.setSrcID(srcID);
                     dstID = receivedMessageJsonObject.getString("dstID");
                     resultUserMessage.setDstID(dstID);
-                    int width = receivedMessageJsonObject.getInt("width");
-                    resultUserMessage.setWidth(width);
-                    int height = receivedMessageJsonObject.getInt("height");
-                    resultUserMessage.setHeight(height);
                     break;
             }
         } catch (JSONException e) {

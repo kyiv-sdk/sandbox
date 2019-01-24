@@ -15,10 +15,6 @@ public class UserMessage {
     private String message;
     private byte[] file;
 
-    private int width, height;
-
-    private int photoLength;
-
     private ArrayList<String> allLoggedUsersList;
 
     public UserMessage() {
@@ -27,9 +23,6 @@ public class UserMessage {
         this.srcID = null;
         this.message = null;
         this.file = null;
-        this.width = -1;
-        this.height = -1;
-        this.photoLength = -1;
         this.allLoggedUsersList = null;
     }
 
@@ -73,22 +66,6 @@ public class UserMessage {
         this.file = file;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
     public ArrayList<String> getAllLoggedUsersList() {
         return allLoggedUsersList;
     }
@@ -114,21 +91,6 @@ public class UserMessage {
             }
             if (this.allLoggedUsersList != null && !this.allLoggedUsersList.isEmpty()) {
                 jsonObject.put("loggedUsers", this.allLoggedUsersList);
-            }
-
-            if (this.file != null) {
-
-                if (this.width != -1) {
-                    jsonObject.put("width", this.width);
-                }
-
-                if (this.height != -1) {
-                    jsonObject.put("height", this.height);
-                }
-
-                if (this.photoLength != -1) {
-                    jsonObject.put("photoLength", this.photoLength);
-                }
             }
 
         } catch (JSONException e) {

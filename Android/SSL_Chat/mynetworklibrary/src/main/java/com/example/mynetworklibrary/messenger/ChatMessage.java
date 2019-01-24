@@ -16,10 +16,6 @@ public class ChatMessage {
     private ArrayList<ChatUser> allLoggedUsersList;
     private byte[] file;
 
-    private int width, height;
-
-    private int photoLength;
-
     public ChatMessage(String keyAction) {
         this.keyAction = keyAction;
         this.dstID = null;
@@ -27,9 +23,6 @@ public class ChatMessage {
         this.message = null;
         this.allLoggedUsersList = null;
         this.file = null;
-        this.width = -1;
-        this.height = -1;
-        this.photoLength = -1;
     }
 
     public String getKeyAction() {
@@ -80,22 +73,6 @@ public class ChatMessage {
         this.file = file;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -111,21 +88,6 @@ public class ChatMessage {
             }
             if (this.allLoggedUsersList != null && !this.allLoggedUsersList.isEmpty()) {
                 jsonObject.put("loggedUsers", this.allLoggedUsersList);
-            }
-
-            if (this.file != null) {
-
-                if (this.width != -1) {
-                    jsonObject.put("width", this.width);
-                }
-
-                if (this.height != -1) {
-                    jsonObject.put("height", this.height);
-                }
-
-                if (this.photoLength != -1) {
-                    jsonObject.put("photoLength", this.photoLength);
-                }
             }
 
         } catch (JSONException e) {
