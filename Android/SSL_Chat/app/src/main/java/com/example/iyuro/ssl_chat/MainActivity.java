@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 
-import com.example.iyuro.socketstest.url.URL_DownloadActivity;
+//import com.example.iyuro.socketstest.url.URL_DownloadActivity;
 import com.example.iyuro.ssl_chat.register.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,14 +31,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button startBrowserBtn = findViewById(R.id.start_browser_btn);
-
-        startBrowserBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), URL_DownloadActivity.class);
-                startActivity(intent);
-            }
-        });
+//        Button startBrowserBtn = findViewById(R.id.start_browser_btn);
+//
+//        startBrowserBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getApplicationContext(), URL_DownloadActivity.class);
+//                startActivity(intent);
+//            }
+//        });
     }
 }

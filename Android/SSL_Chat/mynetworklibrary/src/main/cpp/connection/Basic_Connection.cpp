@@ -49,10 +49,10 @@ void Basic_Connection::close_connection()
     close(mSock);
 }
 
-void Basic_Connection::load(int &headerLen, int &fileLen, std::string& resultStr)
+void Basic_Connection::load(int &headerLen, int &fileLen, std::string &resultStr)
 {
-    headerLen = readNum();
-    fileLen = readNum();
+//    headerLen = readNum();
+//    fileLen = readNum();
 
     int remainedLen = headerLen + fileLen;
     resultStr = "";
@@ -94,6 +94,34 @@ void Basic_Connection::load(int &headerLen, int &fileLen, std::string& resultStr
                 bufLen = remainedLen;
             }
         }
+    }
+}
+
+void Basic_Connection::load(std::string &resultStr)
+{
+    const int MAX_BUF_SIZE = 1024;
+    int bufLen = MAX_BUF_SIZE;
+    char buf[MAX_BUF_SIZE];
+
+    for (;;)
+    {
+        int len = read(mSock, buf, bufLen);
+
+        if (len == 0)
+            break;
+
+        if (len < 0)
+        {
+            handle_error ("Connection: Failed reading data");
+            resultStr = "";
+            break;
+        }
+
+        std::string sbuf(buf, len);
+
+        resultStr.append(sbuf.c_str(), len);
+
+        memset(buf, 0, len);
     }
 }
 

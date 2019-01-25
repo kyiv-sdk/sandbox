@@ -22,7 +22,8 @@ public:
 
     void open_connection(const char *hostname, int port) override;
     void close_connection() override;
-    void load(int &headerLen, int &fileLen, std::string& resultStr) override;
+    void load(std::string &resultStr) override;
+    void load(int &headerLen, int &fileLen, std::string &resultStr) override;
     void write(std::string request) override;
     int readNum() override;
 };

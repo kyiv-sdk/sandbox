@@ -119,10 +119,10 @@ void SSL_Connection::write(std::string request)
     }
 }
 
-void SSL_Connection::load(int &headerLen, int &fileLen, std::string& resultStr)
+void SSL_Connection::load(int &headerLen, int &fileLen, std::string &resultStr)
 {
-    headerLen = readNum();
-    fileLen = readNum();
+//    headerLen = readNum();
+//    fileLen = readNum();
 
     int remainedLen = headerLen + fileLen;
     resultStr = "";
@@ -163,6 +163,34 @@ void SSL_Connection::load(int &headerLen, int &fileLen, std::string& resultStr)
                 bufLen = remainedLen;
             }
         }
+    }
+}
+
+void SSL_Connection::load(std::string &resultStr)
+{
+    const int MAX_BUF_SIZE = 1024;
+    int bufLen = MAX_BUF_SIZE;
+    char buf[MAX_BUF_SIZE];
+
+    for (;;)
+    {
+        int len = SSL_read(mSSL, buf, bufLen);
+
+        if (len == 0)
+            break;
+
+        if (len < 0)
+        {
+            handle_error ("Connection: Failed reading data");
+            resultStr = "";
+            break;
+        }
+
+        std::string sbuf(buf, len);
+
+        resultStr.append(sbuf.c_str(), len);
+
+        memset(buf, 0, len);
     }
 }
 

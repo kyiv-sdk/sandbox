@@ -115,6 +115,8 @@ void MessageHandler::readerFn()
     {
         Logger::log("reader: waiting for load...");
         int headerLen = 0, fileLen = 0;
+        headerLen = mConnection->readNum();
+        fileLen = mConnection->readNum();
         mConnection->load(headerLen, fileLen, resultStr);
         RawMessage rawMessage(headerLen, fileLen, true, resultStr);
 
