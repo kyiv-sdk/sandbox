@@ -27,4 +27,17 @@
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"/>
 
+    <Button
+        android:id="@+id/button_sent_audio_listen"
+        android:text="Start playing"
+        android:textSize="11dp"
+        android:background="@drawable/rounded_rectangle_blue"
+        android:clickable="true"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
+        android:textColor="#ffffff"
+        app:layout_constraintRight_toLeftOf="@id/text_message_body"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone" />
+
 </android.support.constraint.ConstraintLayout>

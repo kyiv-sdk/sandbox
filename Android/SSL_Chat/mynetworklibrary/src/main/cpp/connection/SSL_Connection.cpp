@@ -17,6 +17,10 @@ void SSL_Connection::open_connection(const char *hostname, int port)
 {
     Basic_Connection::open_connection(hostname, port);
 
+    if (!mConnected){
+        return;
+    }
+
     SSL_CTX *ctx;
 
     SSL_load_error_strings ();

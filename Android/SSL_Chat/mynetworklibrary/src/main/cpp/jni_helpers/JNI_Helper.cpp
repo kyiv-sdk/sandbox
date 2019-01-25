@@ -4,7 +4,7 @@
 
 #include "JNI_Helper.h"
 
-#include <Logger.h>
+#include "../logger/Logger.h"
 
 static JavaVM* gJvm = nullptr;
 jmethodID JNI_Helper::mMessageHandlerOnSuccessMethodId;
@@ -53,13 +53,13 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
         return -1;
     }
 
-    jclass messageHandlerSingleton = env->FindClass("com/example/mynetworklibrary/network/NetworkManager");
+    jclass messageHandlerSingleton = env->FindClass("com/example/mynetworklibrary/network/NativeNetworkManager");
     jmethodID globalMethodIdMessageHandler = nullptr;
     if (messageHandlerSingleton != nullptr)
     {
         globalMethodIdMessageHandler = env->GetMethodID(messageHandlerSingleton, "onMessageReceive", "(II[B)V");
     } else {
-        Logger::log("Failed to find NetworkManager class");
+        Logger::log("Failed to find NativeNetworkManager class");
     }
 
     if (globalMethodIdMessageHandler == nullptr)

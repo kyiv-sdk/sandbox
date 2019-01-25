@@ -6,11 +6,12 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.chatlibrary.messenger.chat.UserMessage;
 import com.example.iyuro.ssl_chat.R;
-import com.example.mynetworklibrary.messenger.UserMessage;
 
 import java.util.ArrayList;
 
@@ -77,16 +78,25 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         TextView messageText;
         ImageView imageView;
         boolean isImageFitToScreen;
+        Button button;
+        private boolean mStartPlaying;
+
+        private AudioHandler audioHandler;
 
         SentMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
             imageView = itemView.findViewById(R.id.imageViewSent);
+            button = itemView.findViewById(R.id.button_sent_audio_listen);
 
             isImageFitToScreen = false;
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+            mStartPlaying = true;
+
+            audioHandler = null;
+
+            imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int dimensionInPixel;
@@ -106,6 +116,19 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                     itemView.requestLayout();
                 }
             });
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    audioHandler.onPlay(mStartPlaying);
+                    if (mStartPlaying) {
+                        button.setText("Stop playing");
+                    } else {
+                        button.setText("Start playing");
+                    }
+                    mStartPlaying = !mStartPlaying;
+                }
+            });
         }
 
         void bind(UserMessage message) {
@@ -113,11 +136,18 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 messageText.setText(message.getMessage());
                 imageView.setVisibility(View.GONE);
                 messageText.setVisibility(View.VISIBLE);
-            }
-            if (message.getImage() != null){
+                button.setVisibility(View.GONE);
+            } else if (message.getImage() != null){
                 imageView.setImageBitmap(message.getImage());
                 imageView.setVisibility(View.VISIBLE);
                 messageText.setVisibility(View.GONE);
+                button.setVisibility(View.GONE);
+            } else if (message.getFilePath() != null){
+                imageView.setVisibility(View.GONE);
+                messageText.setVisibility(View.GONE);
+                button.setVisibility(View.VISIBLE);
+                audioHandler = new AudioHandler();
+                audioHandler.setFileName(message.getFilePath());
             }
         }
     }
@@ -127,15 +157,25 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         ImageView imageView;
         boolean isImageFitToScreen;
 
+        Button button;
+        private boolean mStartPlaying;
+
+        private AudioHandler audioHandler;
+
         ReceivedMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
             imageView = itemView.findViewById(R.id.imageViewReceived);
+            button = itemView.findViewById(R.id.button_sent_audio_received);
 
             isImageFitToScreen = false;
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+            mStartPlaying = true;
+
+            audioHandler = null;
+
+            imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int dimensionInPixel;
@@ -152,7 +192,21 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
                     imageView.getLayoutParams().height = dimensionInDp;
                     imageView.getLayoutParams().width = dimensionInDp;
+
                     itemView.requestLayout();
+                }
+            });
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    audioHandler.onPlay(mStartPlaying);
+                    if (mStartPlaying) {
+                        button.setText("Stop playing");
+                    } else {
+                        button.setText("Start playing");
+                    }
+                    mStartPlaying = !mStartPlaying;
                 }
             });
         }
@@ -162,11 +216,18 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 messageText.setText(message.getMessage());
                 imageView.setVisibility(View.GONE);
                 messageText.setVisibility(View.VISIBLE);
-            }
-            if (message.getImage() != null){
+                button.setVisibility(View.GONE);
+            } else if (message.getImage() != null){
                 imageView.setImageBitmap(message.getImage());
                 imageView.setVisibility(View.VISIBLE);
                 messageText.setVisibility(View.GONE);
+                button.setVisibility(View.GONE);
+            } else if (message.getFilePath() != null){
+                imageView.setVisibility(View.GONE);
+                messageText.setVisibility(View.GONE);
+                button.setVisibility(View.VISIBLE);
+                audioHandler = new AudioHandler();
+                audioHandler.setFileName(message.getFilePath());
             }
         }
     }

@@ -12,6 +12,7 @@ class Basic_Connection
 protected:
     int mSock;
     void handle_error(const char *msg);
+    bool mConnected;
 public:
     Basic_Connection();
 
@@ -20,6 +21,8 @@ public:
     virtual void load(int &headerLen, int &fileLen, std::string& resultStr);
     virtual void write(std::string request);
     virtual int readNum();
+
+    bool isConnected() const;
 };
 
 

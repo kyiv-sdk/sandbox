@@ -36,6 +36,8 @@ public:
     MessageHandler(const char *t_hostname, int t_port, bool isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter);
     void send(int len, const char* message);
     ~MessageHandler();
+
+    bool isMNeedOneMoreLoop() const;
 };
 
 

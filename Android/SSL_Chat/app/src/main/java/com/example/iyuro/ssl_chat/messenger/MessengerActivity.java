@@ -15,11 +15,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.example.iyuro.ssl_chat.R;
-import com.example.mynetworklibrary.messenger.ChatManager;
-import com.example.mynetworklibrary.messenger.UI_Interface;
-import com.example.mynetworklibrary.messenger.UserMessage;
 
+import com.example.chatlibrary.messenger.chat.ChatManager;
+import com.example.chatlibrary.messenger.chat.UI_Interface;
+import com.example.chatlibrary.messenger.chat.UserMessage;
+import com.example.iyuro.ssl_chat.R;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class MessengerActivity extends AppCompatActivity implements UI_Interface {
@@ -31,6 +35,14 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
 
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
+
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private String mFileName = null;
+    private boolean mStartRecording = true;
+    private boolean mStartPlaying = true;
+
+    AudioHandler audioHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +63,13 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA},
                     MY_CAMERA_PERMISSION_CODE);
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO},
+                    REQUEST_RECORD_AUDIO_PERMISSION);
         }
 
         EditText editText = findViewById(R.id.edittext_chatbox);
@@ -99,12 +118,74 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
                 mMessageRecycler.smoothScrollToPosition(messageList.size());
             }
         }
+
+        mFileName = getExternalCacheDir().getAbsolutePath();
+        mFileName += "/audiorecordtest" + "test" + ".3gp";
+
+        ChatManager.getInstance().setCurrentAbsolutePath(getExternalCacheDir().getAbsolutePath());
+
+        audioHandler = new AudioHandler();
+        audioHandler.setFileName(mFileName);
+
+        Button btnAudioRecording = findViewById(R.id.button_audio_record);
+        btnAudioRecording.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                audioHandler.onRecord(mStartRecording);
+                if (mStartRecording) {
+                    btnAudioRecording.setText("Stop recording");
+                } else {
+                    btnAudioRecording.setText("Start recording");
+                }
+                mStartRecording = !mStartRecording;
+            }
+        });
+
+        Button btnAudioListening = findViewById(R.id.button_audio_listen);
+        btnAudioListening.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                audioHandler.onPlay(mStartPlaying);
+                if (mStartPlaying) {
+                    btnAudioListening.setText("Stop playing");
+                } else {
+                    btnAudioListening.setText("Start playing");
+                }
+                mStartPlaying = !mStartPlaying;
+            }
+        });
+
+        Button btnSendAudio = findViewById(R.id.button_audio_send);
+        btnSendAudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String newFilePath = getExternalCacheDir().getAbsolutePath() + "/audiorecordtest" + String.valueOf(ChatManager.getNextFileID()) + ".3gp";
+
+
+                if (copyFile(mFileName,  newFilePath)) {
+                    messageList.add(new UserMessage(false, newFilePath));
+                    mMessageAdapter.notifyDataSetChanged();
+                    mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
+
+                    ChatManager.getInstance().sendAudio(dstId, newFilePath);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error copying files", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         ChatManager.getInstance().setUIInterface(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        audioHandler.close();
     }
 
     @Override
@@ -136,6 +217,22 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     }
 
     @Override
+    public void onNewAudioMessage(String srcID, String filePath) {
+        if (srcID.equals(this.dstId)){
+            mMessageAdapter.notifyDataSetChanged();
+            mMessageRecycler.scrollToPosition(messageList.size() - 1);
+            ChatManager.getInstance().resetUnreadMessagesByUserID(dstId);
+        } else {
+            Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onConnectionClosed() {
+        Toast.makeText(this, "Connection was closed. Restart your app.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             try {
@@ -156,18 +253,48 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case MY_CAMERA_PERMISSION_CODE: {
+            case MY_CAMERA_PERMISSION_CODE:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
-                    Intent cameraIntent = new
-                            Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
                 } else {
                     Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
                 }
-                return;
-            }
+                break;
+
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "audio permission granted", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, "audio permission denied", Toast.LENGTH_LONG).show();
+                }
+                break;
         }
+    }
+
+    public boolean copyFile(String fromFileName, String toFileName){
+        final File file = new File(fromFileName);
+        if (file.length() <= 0){
+            return false;
+        }
+
+        FileInputStream fis = null;
+        byte[] bytesArray = new byte[(int) file.length()];
+        try {
+            fis = new FileInputStream(file);
+            fis.read(bytesArray);
+            fis.close();
+
+            File newfile = new File(toFileName);
+            FileOutputStream fos = new FileOutputStream(newfile);
+            fos.write(bytesArray);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 }

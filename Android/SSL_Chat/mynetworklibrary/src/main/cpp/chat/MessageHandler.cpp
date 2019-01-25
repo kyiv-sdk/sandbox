@@ -4,8 +4,8 @@
 
 #include "MessageHandler.h"
 
-#include <Logger.h>
-#include <SSL_Connection.h>
+#include "../logger/Logger.h"
+#include "../connection/SSL_Connection.h"
 
 MessageHandler::MessageHandler(const char *t_hostname, int t_port, bool t_isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter)
 {
@@ -22,6 +22,7 @@ MessageHandler::MessageHandler(const char *t_hostname, int t_port, bool t_isSSLE
 
 MessageHandler::~MessageHandler()
 {
+    Logger::log("~NetworkHandler() called!");
     mConnection->close_connection();
     mNeedOneMoreLoop = false;
     mCv.notify_all();
@@ -32,13 +33,7 @@ MessageHandler::~MessageHandler()
             mManagerThread.join();
             Logger::log("mManagerThread.join();");
         }
-        if (mReaderThread.joinable())
-        {
-            mReaderThread.join();
-            Logger::log("readerThread.join();");
-        }
         delete mMessageHandlerAdapter;
-        Logger::log("~NetworkHandler() called!");
     }
     catch (const std::exception& e)
     {
@@ -69,6 +64,11 @@ void MessageHandler::managerFn()
 
     mConnection->open_connection(m_hostname, m_port);
 
+    if (!mConnection->isConnected())
+    {
+        mNeedOneMoreLoop = false;
+    }
+
     Logger::log("Manager created");
 
     mReaderThread = std::thread(&MessageHandler::readerFn, this);
@@ -98,6 +98,12 @@ void MessageHandler::managerFn()
             }
         }
     }
+
+    if (mReaderThread.joinable())
+    {
+        mReaderThread.join();
+        Logger::log("readerThread.join();");
+    }
 }
 
 void MessageHandler::readerFn()
@@ -107,19 +113,27 @@ void MessageHandler::readerFn()
 
     while (mNeedOneMoreLoop)
     {
-//        Logger::log("reader: waiting for load...");
+        Logger::log("reader: waiting for load...");
         int headerLen = 0, fileLen = 0;
         mConnection->load(headerLen, fileLen, resultStr);
         RawMessage rawMessage(headerLen, fileLen, true, resultStr);
-        if (!resultStr.empty())
-        {
-            Logger::log("reader: try to lock...");
-            std::unique_lock<std::mutex> lck(mMtx);
-            Logger::log("reader: locked!");
-            mMessagesToSend.push(rawMessage);
-            mCv.notify_all();
-            Logger::log("readerFn");
-            Logger::log(resultStr.c_str());
+
+        Logger::log("reader: try to lock...");
+        std::unique_lock<std::mutex> lck(mMtx);
+        Logger::log("reader: locked!");
+        mMessagesToSend.push(rawMessage);
+        mCv.notify_all();
+        Logger::log("readerFn");
+        Logger::log(resultStr.c_str());
+
+        if (resultStr.empty()){
+            Logger::log("Reader broke");
+            mNeedOneMoreLoop = false;
+            break;
         }
     }
+}
+
+bool MessageHandler::isMNeedOneMoreLoop() const {
+    return mNeedOneMoreLoop;
 }

@@ -20,19 +20,18 @@ LOCAL_SRC_FILES := ../cpp/jni_helpers/com_example_iyuro_ssl_chat_network_Network
                    ../cpp/jni_helpers/JNI_Helper.cpp \
                    ../cpp/connection/Basic_Connection.cpp \
                    ../cpp/connection/SSL_Connection.cpp \
+                   ../cpp/logger/Logger.cpp \
                    ../cpp/chat/MessageHandlerAdapter.cpp \
                    ../cpp/chat/MessageHandler.cpp \
-                   ../cpp/logger/Logger.cpp \
                    ../cpp/chat/RawMessage.cpp
 
 LOCAL_STATIC_LIBRARIES := ssl_prebuilt crypto_prebuilt
 
-LOCAL_CPPFLAGS += -std=c++11 -fexceptions -pthread -lssl -lcrypto
+LOCAL_CPPFLAGS += -std=c++11 -fexceptions -lssl -lcrypto
 
-
-INC = -I$(LOCAL_PATH)/../cpp/jni_helpers
+INC = -I$(LOCAL_PATH)/../cpp/chat
+INC += -I$(LOCAL_PATH)/../cpp/jni_helpers
 INC += -I$(LOCAL_PATH)/../cpp/connection
-INC += -I$(LOCAL_PATH)/../cpp/chat
 INC += -I$(LOCAL_PATH)/../cpp/logger
 LOCAL_CFLAGS := $(INC)
 

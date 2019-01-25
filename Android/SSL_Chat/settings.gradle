@@ -1,1 +1,1 @@
-include ':app', ':mynetworklibrary'
+include ':app', ':mynetworklibrary', ':chatlibrary', ':browser'

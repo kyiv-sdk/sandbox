@@ -9,11 +9,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.example.chatlibrary.messenger.chat.ChatManager;
+import com.example.chatlibrary.messenger.chat.ChatUser;
+import com.example.chatlibrary.messenger.chat.UI_Interface;
 import com.example.iyuro.ssl_chat.MainActivity;
 import com.example.iyuro.ssl_chat.R;
-import com.example.mynetworklibrary.messenger.ChatManager;
-import com.example.mynetworklibrary.messenger.ChatUser;
-import com.example.mynetworklibrary.messenger.UI_Interface;
 
 import java.util.ArrayList;
 
@@ -90,8 +90,19 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
     }
 
     @Override
+    public void onConnectionClosed() {
+        Toast.makeText(this, "Connection was closed. Restart your app.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onNewPhotoMessage(String srcID, Bitmap bitmap) {
         mAdapter.notifyDataSetChanged();
         Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNewAudioMessage(String srcID, String filePath) {
+        mAdapter.notifyDataSetChanged();
+        Toast.makeText(this, "From " + srcID + " : " + "audio", Toast.LENGTH_SHORT).show();
     }
 }

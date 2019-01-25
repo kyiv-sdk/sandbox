@@ -19,8 +19,11 @@ void Basic_Connection::open_connection(const char *hostname, int port)
     struct hostent *host;
     struct sockaddr_in addr;
 
+    mConnected = true;
+
     if ( (host = gethostbyname(hostname)) == NULL )
     {
+        mConnected = false;
         perror(hostname);
         exit(1);
     }
@@ -36,11 +39,13 @@ void Basic_Connection::open_connection(const char *hostname, int port)
         handle_error("connection failed");
         close(mSock);
         perror(hostname);
+        mConnected = false;
     }
 }
 
 void Basic_Connection::close_connection()
 {
+    mConnected = false;
     close(mSock);
 }
 
@@ -66,7 +71,8 @@ void Basic_Connection::load(int &headerLen, int &fileLen, std::string& resultStr
 
         if (len < 0)
         {
-            handle_error ("Failed reading response data");
+            handle_error ("Connection: Failed reading data");
+            resultStr = "";
             break;
         }
 
@@ -120,7 +126,7 @@ void Basic_Connection::write(std::string request)
 
 void Basic_Connection::handle_error (const char *msg)
 {
-    Logger::log("error");
+    Logger::log("connection error");
     Logger::log(msg);
 }
 
@@ -143,4 +149,8 @@ int Basic_Connection::readNum()
     }
 
     return atoi(strNum.c_str());
+}
+
+bool Basic_Connection::isConnected() const {
+    return mConnected;
 }
