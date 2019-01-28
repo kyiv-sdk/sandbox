@@ -1,6 +1,10 @@
 package com.example.fingerprint;
 
-import java.net.NetworkInterface;
+
+import com.example.mynetworklibrary.chat.ChatMessage;
+import com.example.mynetworklibrary.chat.MessageProtocol;
+import com.example.mynetworklibrary.chat.NetworkInterface;
+import com.example.mynetworklibrary.chat.NetworkManager;
 
 public class LoginManager implements NetworkInterface {
 

@@ -1,4 +1,4 @@
-package com.example.chatlibrary.chat;
+package com.example.mynetworklibrary.chat;
 
 public class RawMessage {
     int headerLen, fileLen;

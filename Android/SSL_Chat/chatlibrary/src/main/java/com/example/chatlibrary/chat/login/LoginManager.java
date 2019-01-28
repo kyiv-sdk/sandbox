@@ -1,9 +1,9 @@
 package com.example.chatlibrary.chat.login;
 
-import com.example.chatlibrary.chat.ChatMessage;
-import com.example.chatlibrary.chat.MessageProtocol;
-import com.example.chatlibrary.network.NetworkInterface;
-import com.example.chatlibrary.network.NetworkManager;
+import com.example.mynetworklibrary.chat.ChatMessage;
+import com.example.mynetworklibrary.chat.MessageProtocol;
+import com.example.mynetworklibrary.chat.NetworkInterface;
+import com.example.mynetworklibrary.chat.NetworkManager;
 
 public class LoginManager implements NetworkInterface {
 

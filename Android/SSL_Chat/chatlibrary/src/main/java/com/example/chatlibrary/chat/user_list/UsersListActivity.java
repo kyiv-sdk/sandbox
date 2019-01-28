@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.example.chatlibrary.chat.ChatManager;
-import com.example.chatlibrary.chat.ChatUser;
+import com.example.mynetworklibrary.chat.ChatUser;
 import com.example.chatlibrary.chat.UI_Interface;
 import com.example.chatlibrary.R;
 

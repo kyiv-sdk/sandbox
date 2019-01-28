@@ -4,8 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.example.chatlibrary.network.NetworkInterface;
-import com.example.chatlibrary.network.NetworkManager;
+import com.example.mynetworklibrary.chat.ChatMessage;
+import com.example.mynetworklibrary.chat.ChatUser;
+import com.example.mynetworklibrary.chat.MessageProtocol;
+import com.example.mynetworklibrary.chat.NetworkInterface;
+import com.example.mynetworklibrary.chat.NetworkManager;
+import com.example.mynetworklibrary.chat.UserMessage;
 
 import java.io.File;
 import java.io.FileOutputStream;

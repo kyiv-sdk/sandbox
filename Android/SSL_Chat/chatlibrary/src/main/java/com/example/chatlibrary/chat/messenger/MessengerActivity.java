@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.example.chatlibrary.R;
 import com.example.chatlibrary.chat.ChatManager;
 import com.example.chatlibrary.chat.UI_Interface;
-import com.example.chatlibrary.chat.UserMessage;
+import com.example.mynetworklibrary.chat.UserMessage;
 
 import java.io.File;
 import java.io.FileInputStream;

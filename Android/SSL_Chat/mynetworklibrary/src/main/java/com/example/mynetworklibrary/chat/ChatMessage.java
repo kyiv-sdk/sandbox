@@ -1,4 +1,4 @@
-package com.example.chatlibrary.chat;
+package com.example.mynetworklibrary.chat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
