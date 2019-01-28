@@ -9,7 +9,7 @@
 
 MessageHandler::MessageHandler(const char *t_hostname, int t_port, bool t_isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter)
 {
-    Logger::log("NetworkHandler() called!");
+    Logger::getInstance()->log("NetworkHandler() called!");
     mMessageHandlerAdapter = new_messageHandlerAdapter;
 
     m_hostname = t_hostname;
@@ -22,7 +22,7 @@ MessageHandler::MessageHandler(const char *t_hostname, int t_port, bool t_isSSLE
 
 MessageHandler::~MessageHandler()
 {
-    Logger::log("~NetworkHandler() called!");
+    Logger::getInstance()->log("~NetworkHandler() called!");
     mConnection->close_connection();
     mNeedOneMoreLoop = false;
     mCv.notify_all();
@@ -31,7 +31,7 @@ MessageHandler::~MessageHandler()
         if (mManagerThread.joinable())
         {
             mManagerThread.join();
-            Logger::log("mManagerThread.join();");
+            Logger::getInstance()->log("mManagerThread.join();");
         }
         delete mMessageHandlerAdapter;
     }
@@ -46,8 +46,8 @@ void MessageHandler::send(int len, const char* message)
     std::unique_lock<std::mutex> lck(mMtx);
     std::string s_message = std::string(message, len);
     int msgLen = s_message.length();
-    Logger::log("cpp send");
-    Logger::log(s_message);
+    Logger::getInstance()->log("cpp send");
+    Logger::getInstance()->log(s_message);
 
     RawMessage rawMessage(msgLen, 0, false, s_message);
     mMessagesToSend.push(rawMessage);
@@ -69,7 +69,7 @@ void MessageHandler::managerFn()
         mNeedOneMoreLoop = false;
     }
 
-    Logger::log("Manager created");
+    Logger::getInstance()->log("Manager created");
 
     mReaderThread = std::thread(&MessageHandler::readerFn, this);
 
@@ -78,7 +78,7 @@ void MessageHandler::managerFn()
     while (mNeedOneMoreLoop)
     {
         mCv.wait(lck);
-        Logger::log("cpp Manager notified");
+        Logger::getInstance()->log("cpp Manager notified");
 
         while (!mMessagesToSend.empty())
         {
@@ -90,8 +90,8 @@ void MessageHandler::managerFn()
             mMessagesToSend.pop();
             if (fromServer)
             {
-                Logger::log("cpp Manager managing with");
-                Logger::log(strToProcess);
+                Logger::getInstance()->log("cpp Manager managing with");
+                Logger::getInstance()->log(strToProcess);
                 mMessageHandlerAdapter->runCallback(headerLen, fileLen, &strToProcess);
             } else {
                 mConnection->write(strToProcess);
@@ -102,34 +102,34 @@ void MessageHandler::managerFn()
     if (mReaderThread.joinable())
     {
         mReaderThread.join();
-        Logger::log("readerThread.join();");
+        Logger::getInstance()->log("readerThread.join();");
     }
 }
 
 void MessageHandler::readerFn()
 {
-    Logger::log("Reader created");
+    Logger::getInstance()->log("Reader created");
     std::string resultStr;
 
     while (mNeedOneMoreLoop)
     {
-        Logger::log("reader: waiting for load...");
+        Logger::getInstance()->log("reader: waiting for load...");
         int headerLen = 0, fileLen = 0;
         headerLen = mConnection->readNum();
         fileLen = mConnection->readNum();
         mConnection->load(headerLen, fileLen, resultStr);
         RawMessage rawMessage(headerLen, fileLen, true, resultStr);
 
-        Logger::log("reader: try to lock...");
+        Logger::getInstance()->log("reader: try to lock...");
         std::unique_lock<std::mutex> lck(mMtx);
-        Logger::log("reader: locked!");
+        Logger::getInstance()->log("reader: locked!");
         mMessagesToSend.push(rawMessage);
         mCv.notify_all();
-        Logger::log("readerFn");
-        Logger::log(resultStr.c_str());
+        Logger::getInstance()->log("readerFn");
+        Logger::getInstance()->log(resultStr.c_str());
 
         if (resultStr.empty()){
-            Logger::log("Reader broke");
+            Logger::getInstance()->log("Reader broke");
             mNeedOneMoreLoop = false;
             break;
         }

@@ -154,8 +154,8 @@ void Basic_Connection::write(std::string request)
 
 void Basic_Connection::handle_error (const char *msg)
 {
-    Logger::log("connection error");
-    Logger::log(msg);
+    Logger::getInstance()->log("connection error");
+    Logger::getInstance()->log(msg);
 }
 
 int Basic_Connection::readNum()

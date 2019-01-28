@@ -6,14 +6,22 @@
 #define SOCKETSTEST_LOGGER_H
 
 #include <string>
+#include <mutex>
 
 class Logger
 {
 private:
-    Logger(){}
+    static Logger *instance;
+    static std::mutex mMutex;
+
+    Logger() = default;
+    ~Logger()= default;
+
 public:
-    static void log(const char* logThis);
-    static void log(std::string logThis);
+    static Logger* getInstance();
+
+    void log(const char* logThis);
+    void log(std::string logThis);
 };
 
 

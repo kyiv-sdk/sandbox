@@ -22,7 +22,7 @@ NetworkExecutor::~NetworkExecutor()
             mThread.join();
         }
         delete mNetworkExecutorAdapter;
-        Logger::log("~NetworkExecutor() called!");
+        Logger::getInstance()->log("~NetworkExecutor() called!");
     }
     catch (const std::exception& e)
     {

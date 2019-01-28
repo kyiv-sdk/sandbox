@@ -42,15 +42,15 @@ void SSL_Connection::open_connection(const char *hostname, int port)
         handle_error("Connection failed");
     }
 
-    Logger::log("ssl cipher");
-    Logger::log(SSL_get_cipher (mSSL));
+    Logger::getInstance()->log("ssl cipher");
+    Logger::getInstance()->log(SSL_get_cipher (mSSL));
 
 
 
     X509* server_cert;
     server_cert = SSL_get_peer_certificate(mSSL);
-    Logger::log("ssl certificate");
-    Logger::log(server_cert->name);
+    Logger::getInstance()->log("ssl certificate");
+    Logger::getInstance()->log(server_cert->name);
 
     if (server_cert)
     {
@@ -62,7 +62,7 @@ void SSL_Connection::open_connection(const char *hostname, int port)
     {
         handle_error("certificate is not safe");
     } else {
-        Logger::log("ssl certificate is safe");
+        Logger::getInstance()->log("ssl certificate is safe");
     }
 
     EVP_PKEY * pubkey;
