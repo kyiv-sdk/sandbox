@@ -1,6 +1,6 @@
 package main.ssl_server;
 
-import main.UserHandler;
+import main.common.UserHandler;
 import main.basic_server.BasicServer;
 
 import javax.net.ServerSocketFactory;

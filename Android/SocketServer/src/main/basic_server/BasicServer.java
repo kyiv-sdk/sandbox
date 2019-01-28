@@ -1,7 +1,7 @@
 package main.basic_server;
 
-import main.ServerInterface;
-import main.UserHandler;
+import main.common.ServerInterface;
+import main.common.UserHandler;
 import org.json.JSONObject;
 
 import java.io.*;

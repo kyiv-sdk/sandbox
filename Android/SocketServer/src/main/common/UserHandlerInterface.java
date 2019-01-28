@@ -1,4 +1,4 @@
-package main;
+package main.common;
 
 public interface UserHandlerInterface {
     void onLoginSuccess(byte[] bytesData, String userName);

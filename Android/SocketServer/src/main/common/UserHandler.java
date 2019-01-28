@@ -1,4 +1,4 @@
-package main;
+package main.common;
 
 import main.basic_server.BasicServer;
 
@@ -146,7 +146,7 @@ public class UserHandler implements UserHandlerInterface {
 
     @Override
     public String toString() {
-        return "main.UserHandler{" +
+        return "main.common.UserHandler{" +
                 "userName='" + userName + '\'' +
                 ", uniqueUserId='" + uniqueUserId + '\'' +
                 ", out=" + out +

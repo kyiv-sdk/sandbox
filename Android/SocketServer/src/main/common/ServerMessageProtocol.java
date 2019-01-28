@@ -1,4 +1,4 @@
-package main;
+package main.common;
 
 import org.json.JSONException;
 import org.json.JSONObject;
