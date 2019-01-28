@@ -17,7 +17,7 @@ include $(CLEAR_VARS)
 LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
 LOCAL_MODULE    := native-lib
 LOCAL_SRC_FILES := ../cpp/jni_helpers/com_example_iyuro_ssl_chat_network_NetworkManager.cpp \
-                   ../cpp/jni_helpers/com_example_iyuro_socketstest_url_NetworkExecutor.cpp \
+                   ../cpp/jni_helpers/com_example_browser_url_NetworkExecutor.cpp \
                    ../cpp/jni_helpers/JNI_Helper.cpp \
                    ../cpp/connection/Basic_Connection.cpp \
                    ../cpp/connection/SSL_Connection.cpp \

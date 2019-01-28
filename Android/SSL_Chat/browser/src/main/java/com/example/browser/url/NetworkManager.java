@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.url;
+package com.example.browser.url;
 import android.os.Handler;
 
 import java.util.ArrayList;

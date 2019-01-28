@@ -54,7 +54,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
         return -1;
     }
 
-    jclass networkSingleton = env->FindClass("com/example/iyuro/socketstest/url/NetworkExecutor");
+    jclass networkSingleton = env->FindClass("com/example/browser/url/NetworkExecutor");
     jmethodID globalMethodIdNetworkSingleton = nullptr;
     if (networkSingleton != nullptr)
     {

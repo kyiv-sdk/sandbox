@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.url;
+package com.example.browser.url;
 
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +13,8 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.iyuro.socketstest.R;
+import com.example.browser.R;
+
 
 public class URL_DownloadActivity extends AppCompatActivity implements NetworkDataListener {
     static {

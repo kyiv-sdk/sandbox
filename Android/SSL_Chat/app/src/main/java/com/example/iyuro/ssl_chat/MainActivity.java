@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 
-import com.example.iyuro.socketstest.url.URL_DownloadActivity;
+import com.example.browser.url.URL_DownloadActivity;
 import com.example.iyuro.ssl_chat.register.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {

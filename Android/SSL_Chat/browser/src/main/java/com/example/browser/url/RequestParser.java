@@ -1,4 +1,4 @@
-package com.example.iyuro.socketstest.url;
+package com.example.browser.url;
 
 import java.net.URL;
 
