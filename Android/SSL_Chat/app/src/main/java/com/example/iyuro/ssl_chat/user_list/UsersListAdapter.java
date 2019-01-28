@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.chatlibrary.messenger.chat.ChatUser;
+import com.example.chatlibrary.chat.ChatUser;
 import com.example.iyuro.ssl_chat.messenger.MessengerActivity;
 import com.example.iyuro.ssl_chat.R;
 

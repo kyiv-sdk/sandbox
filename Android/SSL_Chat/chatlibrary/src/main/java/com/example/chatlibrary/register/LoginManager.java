@@ -1,9 +1,9 @@
-package com.example.chatlibrary.messenger.register;
+package com.example.chatlibrary.register;
 
-import com.example.chatlibrary.messenger.chat.ChatMessage;
-import com.example.chatlibrary.messenger.chat.MessageProtocol;
-import com.example.chatlibrary.messenger.network.NetworkInterface;
-import com.example.chatlibrary.messenger.network.NetworkManager;
+import com.example.chatlibrary.chat.ChatMessage;
+import com.example.chatlibrary.chat.MessageProtocol;
+import com.example.chatlibrary.network.NetworkInterface;
+import com.example.chatlibrary.network.NetworkManager;
 
 public class LoginManager implements NetworkInterface {
 

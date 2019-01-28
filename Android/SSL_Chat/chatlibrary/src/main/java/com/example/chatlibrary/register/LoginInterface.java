@@ -1,4 +1,4 @@
-package com.example.chatlibrary.messenger.register;
+package com.example.chatlibrary.register;
 
 public interface LoginInterface {
     void onLoginSuccess();

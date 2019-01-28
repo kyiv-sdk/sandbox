@@ -1,11 +1,11 @@
-package com.example.chatlibrary.messenger.chat;
+package com.example.chatlibrary.chat;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.example.chatlibrary.messenger.network.NetworkInterface;
-import com.example.chatlibrary.messenger.network.NetworkManager;
+import com.example.chatlibrary.network.NetworkInterface;
+import com.example.chatlibrary.network.NetworkManager;
 
 import java.io.File;
 import java.io.FileOutputStream;

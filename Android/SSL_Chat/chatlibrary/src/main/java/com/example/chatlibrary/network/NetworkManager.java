@@ -1,11 +1,9 @@
-package com.example.chatlibrary.messenger.network;
+package com.example.chatlibrary.network;
 
 import android.os.Handler;
 import android.util.Log;
 
-import com.example.chatlibrary.messenger.chat.MessageProtocol;
-import com.example.mynetworklibrary.network.NativeNetworkInterface;
-import com.example.mynetworklibrary.network.NativeNetworkManager;
+import com.example.chatlibrary.chat.MessageProtocol;
 
 
 public class NetworkManager implements NativeNetworkInterface {

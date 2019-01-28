@@ -10,13 +10,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.chatlibrary.messenger.chat.ChatManager;
-import com.example.chatlibrary.messenger.register.LoginManager;
+import com.example.chatlibrary.chat.ChatManager;
+import com.example.chatlibrary.register.LoginManager;
 import com.example.iyuro.ssl_chat.MainActivity;
 import com.example.iyuro.ssl_chat.R;
 import com.example.iyuro.ssl_chat.user_list.UsersListActivity;
 
-import com.example.chatlibrary.messenger.register.LoginInterface;
+import com.example.chatlibrary.register.LoginInterface;
 
 /**
  * A login screen that offers login via email/password.

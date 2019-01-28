@@ -1,4 +1,4 @@
-package com.example.mynetworklibrary.network;
+package com.example.chatlibrary.network;
 
 public class NativeNetworkManager implements RawNetworkInterface {
     static {

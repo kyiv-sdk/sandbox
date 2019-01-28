@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.chatlibrary.messenger.chat.UserMessage;
+import com.example.chatlibrary.chat.UserMessage;
 import com.example.iyuro.ssl_chat.R;
 
 import java.util.ArrayList;

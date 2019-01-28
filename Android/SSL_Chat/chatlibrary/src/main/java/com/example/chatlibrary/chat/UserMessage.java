@@ -1,4 +1,4 @@
-package com.example.chatlibrary.messenger.chat;
+package com.example.chatlibrary.chat;
 
 import android.graphics.Bitmap;
 
