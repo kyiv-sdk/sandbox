@@ -32,8 +32,11 @@ class MessageHandler
 
     std::mutex mMtx;
     std::condition_variable mCv;
+
+    enum ProtocolType {MyProtocol, HTTP, HTTPS};
+    ProtocolType mProtocolType;
 public:
-    MessageHandler(const char *t_hostname, int t_port, bool isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter);
+    MessageHandler(const char* protocol, const char *t_hostname, int t_port, bool isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter);
     void send(int len, const char* message);
     ~MessageHandler();
 

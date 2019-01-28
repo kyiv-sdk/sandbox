@@ -1,6 +1,5 @@
 package com.example.browser.url;
 
-import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -16,7 +15,7 @@ import android.widget.EditText;
 import com.example.browser.R;
 
 
-public class URL_DownloadActivity extends AppCompatActivity implements NetworkDataInterface {
+public class URL_DownloadActivity extends AppCompatActivity implements URL_NetworkDataInterface {
     static {
         System.loadLibrary("native-lib");
     }
@@ -42,7 +41,7 @@ public class URL_DownloadActivity extends AppCompatActivity implements NetworkDa
             }
         });
 
-        NetworkManager.getInstance().setNetworkDataInterface(this);
+        URL_NetworkManager.getInstance().setURLNetworkDataInterface(this);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,15 +69,15 @@ public class URL_DownloadActivity extends AppCompatActivity implements NetworkDa
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NetworkManager.getInstance().setNetworkDataInterface(null);
+        URL_NetworkManager.getInstance().setURLNetworkDataInterface(null);
     }
 
     private void makeRequest(String request){
-        NetworkManager.getInstance().download(request);
+        URL_NetworkManager.getInstance().download(request);
 
         InputMethodManager inputMethodManager =
                 (InputMethodManager) getSystemService(
-                        Activity.INPUT_METHOD_SERVICE);
+                        INPUT_METHOD_SERVICE);
         if (getCurrentFocus() != null) {
             inputMethodManager.hideSoftInputFromWindow(
                     getCurrentFocus().getWindowToken(), 0);

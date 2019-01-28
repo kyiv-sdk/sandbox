@@ -62,20 +62,27 @@ void jni_sendMessageToJava(jobject instance, int headerLen, int fileLen, std::st
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_example_chatlibrary_network_NativeNetworkManager_cppCreateMessageHandler(
-        JNIEnv *env, jobject instance, jstring t_host, jint t_port, jboolean isSSLEnabled)
+Java_com_example_mynetworklibrary_chat_NativeNetworkManager_cppCreateMessageHandler(
+        JNIEnv *env, jobject instance, jstring t_protocolType, jstring t_host, jint t_port, jboolean isSSLEnabled)
 {
-    const char* m_host = env->GetStringUTFChars(t_host, 0);
+    const char* c_host = env->GetStringUTFChars(t_host, 0);
     jobject globalInstance = env->NewGlobalRef(instance);
     MessageAdapterImplementation *messageAdapterImplementation = new MessageAdapterImplementation(env, globalInstance, jni_sendMessageToJava);
-    MessageHandler *messageHandler = new MessageHandler(m_host, (int)t_port, (bool)isSSLEnabled, messageAdapterImplementation);
+
+
+    const char *c_ProtocolType = env->GetStringUTFChars(t_protocolType, 0);
+
+    MessageHandler *messageHandler = new MessageHandler(c_ProtocolType, c_host, (int)t_port, (bool)isSSLEnabled, messageAdapterImplementation);
+
+//    env->ReleaseStringUTFChars(t_protocolType, c_ProtocolType);
+//    env->ReleaseStringUTFChars(t_host, c_host);
 
     return (jlong)messageHandler;
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_chatlibrary_network_NativeNetworkManager_cppSendMessage(
+Java_com_example_mynetworklibrary_chat_NativeNetworkManager_cppSendMessage(
         JNIEnv *env, jobject instance, jlong t_messageHandler, jbyteArray t_jByteArray)
 {
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
@@ -99,7 +106,7 @@ Java_com_example_chatlibrary_network_NativeNetworkManager_cppSendMessage(
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_chatlibrary_network_NativeNetworkManager_cppDeleteMessageHandler(
+Java_com_example_mynetworklibrary_chat_NativeNetworkManager_cppDeleteMessageHandler(
         JNIEnv *env, jobject instance, jlong t_messageHandler)
 {
     MessageHandler* messageHandler = (MessageHandler*) t_messageHandler;
@@ -108,10 +115,10 @@ Java_com_example_chatlibrary_network_NativeNetworkManager_cppDeleteMessageHandle
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_example_chatlibrary_network_NativeNetworkManager_cppIsConnectionClosed(JNIEnv *env,
+Java_com_example_mynetworklibrary_chat_NativeNetworkManager_cppIsConnectionClosed(JNIEnv *env,
                                                                                      jobject instance,
-                                                                                     jlong obj) {
-
+                                                                                     jlong obj)
+{
     MessageHandler* messageHandler = (MessageHandler*) obj;
     return static_cast<jboolean>(!messageHandler->isMNeedOneMoreLoop());
 }

@@ -54,7 +54,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
         return -1;
     }
 
-    jclass networkSingleton = env->FindClass("com/example/browser/url/NetworkExecutor");
+    jclass networkSingleton = env->FindClass("com/example/mynetworklibrary/url/URL_NetworkExecutor");
     jmethodID globalMethodIdNetworkSingleton = nullptr;
     if (networkSingleton != nullptr)
     {
@@ -70,7 +70,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
 
     JNI_Helper::mNetworkExecutorOnSuccessMethodId = globalMethodIdNetworkSingleton;
 
-    jclass messageHandlerSingleton = env->FindClass("com/example/chatlibrary/network/NativeNetworkManager");
+    jclass messageHandlerSingleton = env->FindClass("com/example/mynetworklibrary/chat/NativeNetworkManager");
     jmethodID globalMethodIdMessageHandler = nullptr;
     if (messageHandlerSingleton != nullptr)
     {

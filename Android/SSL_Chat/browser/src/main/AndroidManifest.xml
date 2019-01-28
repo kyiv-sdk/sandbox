@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-        <activity android:name=".url.URL_DownloadActivity" />
+        <activity android:name="com.example.browser.url.URL_DownloadActivity" />
     </application>
 
 </manifest>

@@ -7,9 +7,9 @@
 #include "../logger/Logger.h"
 #include "../connection/SSL_Connection.h"
 
-MessageHandler::MessageHandler(const char *t_hostname, int t_port, bool t_isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter)
+MessageHandler::MessageHandler(const char* protocol, const char *t_hostname, int t_port, bool t_isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter)
 {
-    Logger::getInstance()->log("NetworkHandler() called!");
+    Logger::getInstance()->log("MessageHandler() called!");
     mMessageHandlerAdapter = new_messageHandlerAdapter;
 
     m_hostname = t_hostname;
@@ -17,12 +17,29 @@ MessageHandler::MessageHandler(const char *t_hostname, int t_port, bool t_isSSLE
     this->mNeedOneMoreLoop = true;
     this->m_isSSLEnabled = t_isSSLEnabled;
 
+    if (strcmp(protocol, "HTTP") == 0)
+    {
+        mProtocolType = HTTP;
+    }
+    else if (strcmp(protocol, "HTTPS") == 0)
+    {
+        mProtocolType = HTTPS;
+    }
+    else if (strcmp(protocol, "MyProtocol") == 0)
+    {
+        mProtocolType = MyProtocol;
+    }
+
+    Logger::getInstance()->log("MessageHandler() almost end!");
+
     mManagerThread = std::thread(&MessageHandler::managerFn, this);
+
+    Logger::getInstance()->log("MessageHandler() end!");
 }
 
 MessageHandler::~MessageHandler()
 {
-    Logger::getInstance()->log("~NetworkHandler() called!");
+    Logger::getInstance()->log("~MessageHandler() called!");
     mConnection->close_connection();
     mNeedOneMoreLoop = false;
     mCv.notify_all();
@@ -56,6 +73,7 @@ void MessageHandler::send(int len, const char* message)
 
 void MessageHandler::managerFn()
 {
+    Logger::getInstance()->log("managerFn() started!");
     if (m_isSSLEnabled){
         mConnection = new SSL_Connection();
     } else {
@@ -111,13 +129,20 @@ void MessageHandler::readerFn()
     Logger::getInstance()->log("Reader created");
     std::string resultStr;
 
-    while (mNeedOneMoreLoop)
-    {
+    while (mNeedOneMoreLoop) {
         Logger::getInstance()->log("reader: waiting for load...");
         int headerLen = 0, fileLen = 0;
-        headerLen = mConnection->readNum();
-        fileLen = mConnection->readNum();
-        mConnection->load(headerLen, fileLen, resultStr);
+        if (mProtocolType == MyProtocol)
+        {
+            headerLen = mConnection->readNum();
+            fileLen = mConnection->readNum();
+            mConnection->load(headerLen, fileLen, resultStr);
+        }
+        else
+        {
+            mConnection->load(resultStr);
+            headerLen = resultStr.length();
+        }
         RawMessage rawMessage(headerLen, fileLen, true, resultStr);
 
         Logger::getInstance()->log("reader: try to lock...");

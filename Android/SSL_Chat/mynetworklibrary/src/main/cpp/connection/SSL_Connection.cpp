@@ -152,7 +152,7 @@ void SSL_Connection::load(int &headerLen, int &fileLen, std::string &resultStr)
         resultStr.append(sbuf.c_str(), len);
 
         memset(buf, 0, len);
-        if (remainedLen == 0)
+        if (remainedLen <= 0)
         {
             break;
         } else {
@@ -172,6 +172,7 @@ void SSL_Connection::load(std::string &resultStr)
     int bufLen = MAX_BUF_SIZE;
     char buf[MAX_BUF_SIZE];
 
+    resultStr = "";
     for (;;)
     {
         int len = SSL_read(mSSL, buf, bufLen);

@@ -1,13 +1,13 @@
-package com.example.browser.url;
+package com.example.mynetworklibrary.url;
 
-public class NetworkExecutor {
+public class URL_NetworkExecutor {
     private int id;
-    private NetworkExecutorInterface networkExecutorInterface;
+    private URL_NetworkExecutorInterface URLNetworkExecutorInterface;
     private long cppNetworkManager = 0;
 
-    public NetworkExecutor(int id, NetworkExecutorInterface networkExecutorInterface) {
+    public URL_NetworkExecutor(int id, URL_NetworkExecutorInterface URLNetworkExecutorInterface) {
         this.id = id;
-        this.networkExecutorInterface = networkExecutorInterface;
+        this.URLNetworkExecutorInterface = URLNetworkExecutorInterface;
     }
 
     public int getId() {
@@ -15,7 +15,7 @@ public class NetworkExecutor {
     }
 
     public void onSuccessDownload(final byte[] bytesData) {
-        networkExecutorInterface.onDataReceive(id, bytesData);
+        URLNetworkExecutorInterface.onDataReceive(id, bytesData);
     }
 
     public void startDownloading(String protocol, String host, int port){

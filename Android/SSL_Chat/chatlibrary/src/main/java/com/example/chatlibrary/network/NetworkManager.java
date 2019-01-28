@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.example.chatlibrary.chat.MessageProtocol;
+import com.example.mynetworklibrary.chat.NativeNetworkInterface;
+import com.example.mynetworklibrary.chat.NativeNetworkManager;
 
 
 public class NetworkManager implements NativeNetworkInterface {

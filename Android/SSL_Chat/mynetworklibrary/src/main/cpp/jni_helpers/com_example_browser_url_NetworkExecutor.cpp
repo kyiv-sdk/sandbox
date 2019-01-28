@@ -64,7 +64,7 @@ void jni_sendDataToJava(jobject instance, std::string *resultData)
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_example_browser_url_NetworkExecutor_cppStartDownloading(JNIEnv *env, jobject instance,
+Java_com_example_mynetworklibrary_url_URL_1NetworkExecutor_cppStartDownloading(JNIEnv *env, jobject instance,
                                                                 jstring t_protocol, jstring t_host, jint t_port)
 {
     jobject globalInstance = env->NewGlobalRef(instance);
@@ -82,7 +82,7 @@ Java_com_example_browser_url_NetworkExecutor_cppStartDownloading(JNIEnv *env, jo
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_browser_url_NetworkExecutor_cppCloseDownloading(JNIEnv *env, jobject instance, jlong obj)
+Java_com_example_mynetworklibrary_url_URL_1NetworkExecutor_cppCloseDownloading(JNIEnv *env, jobject instance, jlong obj)
 {
     NetworkExecutor* networkExecutor = (NetworkExecutor*) obj;
     delete networkExecutor;

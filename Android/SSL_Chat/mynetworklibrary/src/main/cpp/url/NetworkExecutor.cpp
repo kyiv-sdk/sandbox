@@ -11,6 +11,7 @@
 NetworkExecutor::NetworkExecutor(NetworkExecutorAdapter *new_networkExecutorAdapter)
 {
     mNetworkExecutorAdapter = new_networkExecutorAdapter;
+    Logger::getInstance()->log("NetworkExecutor() created!");
 }
 
 NetworkExecutor::~NetworkExecutor()
@@ -22,7 +23,7 @@ NetworkExecutor::~NetworkExecutor()
             mThread.join();
         }
         delete mNetworkExecutorAdapter;
-        Logger::getInstance()->log("~NetworkExecutor() called!");
+        Logger::getInstance()->log("~NetworkExecutor() deleted!");
     }
     catch (const std::exception& e)
     {
