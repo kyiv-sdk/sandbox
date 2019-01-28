@@ -63,19 +63,13 @@ void jni_sendMessageToJava(jobject instance, int headerLen, int fileLen, std::st
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_com_example_mynetworklibrary_chat_NativeNetworkManager_cppCreateMessageHandler(
-        JNIEnv *env, jobject instance, jstring t_protocolType, jstring t_host, jint t_port, jboolean isSSLEnabled)
+        JNIEnv *env, jobject instance, jstring t_host, jint t_port, jboolean isSSLEnabled)
 {
     const char* c_host = env->GetStringUTFChars(t_host, 0);
     jobject globalInstance = env->NewGlobalRef(instance);
     MessageAdapterImplementation *messageAdapterImplementation = new MessageAdapterImplementation(env, globalInstance, jni_sendMessageToJava);
 
-
-    const char *c_ProtocolType = env->GetStringUTFChars(t_protocolType, 0);
-
-    MessageHandler *messageHandler = new MessageHandler(c_ProtocolType, c_host, (int)t_port, (bool)isSSLEnabled, messageAdapterImplementation);
-
-//    env->ReleaseStringUTFChars(t_protocolType, c_ProtocolType);
-//    env->ReleaseStringUTFChars(t_host, c_host);
+    MessageHandler *messageHandler = new MessageHandler(c_host, (int)t_port, (bool)isSSLEnabled, messageAdapterImplementation);
 
     return (jlong)messageHandler;
 }

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">fingerprint</string>
+    <string name="prompt_username">Username</string>
+    <string name="current_username_entry_key">current_username_entry_key</string>
+</resources>

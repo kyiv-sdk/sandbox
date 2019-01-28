@@ -25,9 +25,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".register.LoginActivity" />
-        <activity android:name=".messenger.MessengerActivity" />
-        <activity android:name=".user_list.UsersListActivity" />
+        <activity android:name="com.example.chatlibrary.chat.login.LoginActivity" />
+        <activity android:name="com.example.chatlibrary.chat.messenger.MessengerActivity" />
+        <activity android:name="com.example.chatlibrary.chat.user_list.UsersListActivity" />
     </application>
 
 </manifest>

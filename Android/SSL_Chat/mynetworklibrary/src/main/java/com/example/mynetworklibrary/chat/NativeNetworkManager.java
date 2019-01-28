@@ -48,13 +48,7 @@ public class NativeNetworkManager implements RawNetworkInterface {
 
     public void openConnection(boolean isSSLEnabled){
         if (cppMessageHandler == -1) {
-            this.cppMessageHandler = cppCreateMessageHandler("MyProtocol", "10.129.171.8", isSSLEnabled? SSL_PORT : BASIC_PORT, isSSLEnabled);
-        }
-    }
-
-    public void openConnection(String protocol, String hostName, int port,  boolean isSSLEnabled){
-        if (cppMessageHandler == -1) {
-            this.cppMessageHandler = cppCreateMessageHandler(protocol, hostName, port, isSSLEnabled);
+            this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", isSSLEnabled? SSL_PORT : BASIC_PORT, isSSLEnabled);
         }
     }
 
@@ -80,7 +74,7 @@ public class NativeNetworkManager implements RawNetworkInterface {
         }
     }
 
-    private native long cppCreateMessageHandler(String protocolType,  String host, int port, boolean isSSLEnabled);
+    private native long cppCreateMessageHandler(String host, int port, boolean isSSLEnabled);
     private native void cppSendMessage(long connection, byte[] bytesData);
     private native void cppDeleteMessageHandler(long obj);
     private native boolean cppIsConnectionClosed(long obj);

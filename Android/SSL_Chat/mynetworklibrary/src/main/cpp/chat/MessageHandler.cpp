@@ -7,7 +7,7 @@
 #include "../logger/Logger.h"
 #include "../connection/SSL_Connection.h"
 
-MessageHandler::MessageHandler(const char* protocol, const char *t_hostname, int t_port, bool t_isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter)
+MessageHandler::MessageHandler(const char *t_hostname, int t_port, bool t_isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter)
 {
     Logger::getInstance()->log("MessageHandler() called!");
     mMessageHandlerAdapter = new_messageHandlerAdapter;
@@ -16,19 +16,6 @@ MessageHandler::MessageHandler(const char* protocol, const char *t_hostname, int
     m_port = t_port;
     this->mNeedOneMoreLoop = true;
     this->m_isSSLEnabled = t_isSSLEnabled;
-
-    if (strcmp(protocol, "HTTP") == 0)
-    {
-        mProtocolType = HTTP;
-    }
-    else if (strcmp(protocol, "HTTPS") == 0)
-    {
-        mProtocolType = HTTPS;
-    }
-    else if (strcmp(protocol, "MyProtocol") == 0)
-    {
-        mProtocolType = MyProtocol;
-    }
 
     Logger::getInstance()->log("MessageHandler() almost end!");
 
@@ -132,17 +119,9 @@ void MessageHandler::readerFn()
     while (mNeedOneMoreLoop) {
         Logger::getInstance()->log("reader: waiting for load...");
         int headerLen = 0, fileLen = 0;
-        if (mProtocolType == MyProtocol)
-        {
-            headerLen = mConnection->readNum();
-            fileLen = mConnection->readNum();
-            mConnection->load(headerLen, fileLen, resultStr);
-        }
-        else
-        {
-            mConnection->load(resultStr);
-            headerLen = resultStr.length();
-        }
+        headerLen = mConnection->readNum();
+        fileLen = mConnection->readNum();
+        mConnection->load(headerLen, fileLen, resultStr);
         RawMessage rawMessage(headerLen, fileLen, true, resultStr);
 
         Logger::getInstance()->log("reader: try to lock...");
