@@ -42,6 +42,9 @@ public class Reader implements Runnable{
             int headerLen = readNum();
             int fileLen = readNum();
 
+            System.out.println("Reader: header len:" + headerLen);
+            System.out.println("Reader: file len:" + fileLen);
+
             int allLen = headerLen + fileLen;
 
             int MAX_BUF_SIZE = 1024;
@@ -59,8 +62,7 @@ public class Reader implements Runnable{
                 }
 
                 if ((bytesRead = in.read(buf, 0, lenToRead)) > 0) {
-                    System.out.println("Reader: header len:" + headerLen);
-                    System.out.println("Reader: file len:" + fileLen);
+
                     outputStream.write(buf, 0, bytesRead);
                 } else {
                     throw new Exception("Reader: error while reading");
