@@ -55,4 +55,13 @@ public class RequestParser {
     public boolean isValidRequest() {
         return isValidRequest;
     }
+
+    @Override
+    public String toString() {
+        String result = "";
+
+        result =  "GET / HTTP/1.1\r\nHost: " + this.host + "\r\nConnection: close\r\n\r\n";
+
+        return result;
+    }
 }

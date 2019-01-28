@@ -13,6 +13,7 @@ class JNI_Helper
 public:
     JNI_Helper();
     static jmethodID mMessageHandlerOnSuccessMethodId;
+    static jmethodID mNetworkExecutorOnSuccessMethodId;
 
     JNIEnv *getEnv();
     JNIEnv *attachEnv();

@@ -82,7 +82,7 @@ Java_com_example_iyuro_socketstest_url_NetworkExecutor_cppStartDownloading(JNIEn
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_iyuro_socketstest_URL_NetworkExecutor_cppCloseDownloading(JNIEnv *env, jobject instance, jlong obj)
+Java_com_example_iyuro_socketstest_url_NetworkExecutor_cppCloseDownloading(JNIEnv *env, jobject instance, jlong obj)
 {
     NetworkExecutor* networkExecutor = (NetworkExecutor*) obj;
     delete networkExecutor;

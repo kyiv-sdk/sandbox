@@ -8,6 +8,7 @@
 
 static JavaVM* gJvm = nullptr;
 jmethodID JNI_Helper::mMessageHandlerOnSuccessMethodId;
+jmethodID JNI_Helper::mNetworkExecutorOnSuccessMethodId;
 
 JNI_Helper::JNI_Helper()
 {
@@ -52,6 +53,22 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved)
     {
         return -1;
     }
+
+    jclass networkSingleton = env->FindClass("com/example/iyuro/socketstest/url/NetworkExecutor");
+    jmethodID globalMethodIdNetworkSingleton = nullptr;
+    if (networkSingleton != nullptr)
+    {
+        globalMethodIdNetworkSingleton = env->GetMethodID(networkSingleton, "onSuccessDownload", "([B)V");
+    } else {
+        Logger::log("Failed to find NetworkManager class");
+    }
+
+    if (globalMethodIdNetworkSingleton == nullptr)
+    {
+        Logger::log("Failed to get method id");
+    }
+
+    JNI_Helper::mNetworkExecutorOnSuccessMethodId = globalMethodIdNetworkSingleton;
 
     jclass messageHandlerSingleton = env->FindClass("com/example/mynetworklibrary/network/NativeNetworkManager");
     jmethodID globalMethodIdMessageHandler = nullptr;

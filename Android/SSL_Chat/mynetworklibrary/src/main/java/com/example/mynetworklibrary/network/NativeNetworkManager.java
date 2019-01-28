@@ -11,7 +11,6 @@ public class NativeNetworkManager implements RawNetworkInterface {
     private static final NativeNetworkManager ourInstance = new NativeNetworkManager();
     private NativeNetworkInterface nativeNetworkInterface;
     private long cppMessageHandler;
-    private NetworkProtocol networkProtocol;
 
     public NativeNetworkManager() {
         this.cppMessageHandler = -1;
@@ -25,16 +24,20 @@ public class NativeNetworkManager implements RawNetworkInterface {
         this.nativeNetworkInterface = nativeNetworkInterface;
     }
 
-    public NetworkProtocol getNetworkProtocol() {
-        return networkProtocol;
+    public int getBASIC_PORT() {
+        return BASIC_PORT;
     }
 
-    public void setNetworkProtocol(NetworkProtocol networkProtocol) {
-        this.networkProtocol = networkProtocol;
-        if (networkProtocol != NetworkProtocol.MY_PROTOCOL){
-            BASIC_PORT = 80;
-            SSL_PORT = 443;
-        }
+    public void setBASIC_PORT(int BASIC_PORT) {
+        this.BASIC_PORT = BASIC_PORT;
+    }
+
+    public int getSSL_PORT() {
+        return SSL_PORT;
+    }
+
+    public void setSSL_PORT(int SSL_PORT) {
+        this.SSL_PORT = SSL_PORT;
     }
 
     public void send(final byte[] bytesData){
