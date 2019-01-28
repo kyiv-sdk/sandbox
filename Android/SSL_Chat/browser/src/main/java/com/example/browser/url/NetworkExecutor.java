@@ -2,12 +2,12 @@ package com.example.browser.url;
 
 public class NetworkExecutor {
     private int id;
-    private NetworkExecutorListener networkExecutorListener;
+    private NetworkExecutorInterface networkExecutorInterface;
     private long cppNetworkManager = 0;
 
-    public NetworkExecutor(int id, NetworkExecutorListener networkExecutorListener) {
+    public NetworkExecutor(int id, NetworkExecutorInterface networkExecutorInterface) {
         this.id = id;
-        this.networkExecutorListener = networkExecutorListener;
+        this.networkExecutorInterface = networkExecutorInterface;
     }
 
     public int getId() {
@@ -15,7 +15,7 @@ public class NetworkExecutor {
     }
 
     public void onSuccessDownload(final byte[] bytesData) {
-        networkExecutorListener.onDataReceive(id, bytesData);
+        networkExecutorInterface.onDataReceive(id, bytesData);
     }
 
     public void startDownloading(String protocol, String host, int port){

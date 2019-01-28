@@ -1,5 +1,5 @@
 package com.example.browser.url;
 
-public interface NetworkDataListener {
+public interface NetworkDataInterface {
     void onDataReceive(final int id, final String data);
 }

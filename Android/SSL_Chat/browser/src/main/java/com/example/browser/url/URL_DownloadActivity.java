@@ -16,7 +16,7 @@ import android.widget.EditText;
 import com.example.browser.R;
 
 
-public class URL_DownloadActivity extends AppCompatActivity implements NetworkDataListener {
+public class URL_DownloadActivity extends AppCompatActivity implements NetworkDataInterface {
     static {
         System.loadLibrary("native-lib");
     }
@@ -42,7 +42,7 @@ public class URL_DownloadActivity extends AppCompatActivity implements NetworkDa
             }
         });
 
-        NetworkManager.getInstance().setNetworkDataListener(this);
+        NetworkManager.getInstance().setNetworkDataInterface(this);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +70,7 @@ public class URL_DownloadActivity extends AppCompatActivity implements NetworkDa
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NetworkManager.getInstance().setNetworkDataListener(null);
+        NetworkManager.getInstance().setNetworkDataInterface(null);
     }
 
     private void makeRequest(String request){

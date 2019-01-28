@@ -1,5 +1,5 @@
 package com.example.browser.url;
 
-public interface NetworkExecutorListener {
+public interface NetworkExecutorInterface {
     void onDataReceive(int NetworkExecutorId, final byte[] bytesData);
 }

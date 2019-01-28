@@ -1,18 +1,21 @@
 package com.example.browser.url;
 import android.os.Handler;
 
+import com.example.browser.parser.RequestParser;
+import com.example.browser.parser.ResponseParser;
+
 import java.util.ArrayList;
 
-public class NetworkManager implements NetworkExecutorListener {
+public class NetworkManager implements NetworkExecutorInterface {
     private static final NetworkManager ourInstance = new NetworkManager();
-    private NetworkDataListener networkDataListener;
+    private NetworkDataInterface networkDataInterface;
     private Handler handler;
 
     private static int nextExecutorId = 0;
     private static ArrayList<NetworkExecutor> networkExecutorsList = new ArrayList<>();
 
-    public void setNetworkDataListener(NetworkDataListener networkDataListener) {
-        this.networkDataListener = networkDataListener;
+    public void setNetworkDataInterface(NetworkDataInterface networkDataInterface) {
+        this.networkDataInterface = networkDataInterface;
     }
 
     public static NetworkManager getInstance() {
@@ -32,7 +35,7 @@ public class NetworkManager implements NetworkExecutorListener {
             networkExecutor.startDownloading(requestParser.getProtocol(), requestParser.getHost(), requestParser.getPort());
         } else {
             String response = "Wrong request";
-            networkDataListener.onDataReceive(networkExecutor.getId(), response);
+            networkDataInterface.onDataReceive(networkExecutor.getId(), response);
         }
         networkExecutorsList.add(networkExecutor);
     }
@@ -69,7 +72,7 @@ public class NetworkManager implements NetworkExecutorListener {
                     String newRequest = data.substring(locationIndex + 10, contentTypeIndex - 2);
                     download(newRequest);
                 } else {
-                    networkDataListener.onDataReceive(id, data);
+                    networkDataInterface.onDataReceive(id, data);
                     closeNetworkExecutor(id);
                 }
             }

@@ -1,4 +1,4 @@
-package com.example.browser.url;
+package com.example.browser.parser;
 
 import java.net.URL;
 
