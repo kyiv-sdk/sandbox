@@ -8,8 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.widget.Toast;
 
-public class FingerprintUtils {
-    private FingerprintUtils() {
+public class FingerprintHelper {
+    private FingerprintHelper() {
     }
 
     public enum mSensorState {

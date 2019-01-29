@@ -2,6 +2,7 @@ package com.example.fingerprint;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.KeyguardManager;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
@@ -34,10 +35,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 
-public class CryptoUtils {
-    private static final String TAG = CryptoUtils.class.getSimpleName();
-
-    private static final String KEY_ALIAS = "key_for_pin";
+public class CryptoManager {
+    private static final String KEY_ALIAS = "key_for_password";
     private static final String KEY_STORE = "AndroidKeyStore";
     private static final String TRANSFORMATION = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
 
@@ -45,7 +44,7 @@ public class CryptoUtils {
     private static KeyPairGenerator sKeyPairGenerator;
     private static Cipher sCipher;
 
-    private CryptoUtils() {
+    private CryptoManager() {
     }
 
     public static String encode(String inputString) {
@@ -126,7 +125,6 @@ public class CryptoUtils {
     private static boolean generateNewKey() {
 
         if (getKeyPairGenerator()) {
-
             try {
                 sKeyPairGenerator.initialize(
                         new KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
@@ -157,7 +155,7 @@ public class CryptoUtils {
                     initDecodeCipher(mode);
                     break;
                 default:
-                    return false; //this cipher is only for encode\decode
+                    return false;
             }
             return true;
 
@@ -179,10 +177,7 @@ public class CryptoUtils {
     private static void initEncodeCipher(int mode) throws KeyStoreException, InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException {
         PublicKey key = sKeyStore.getCertificate(KEY_ALIAS).getPublicKey();
 
-        // workaround for using public key
-        // from https://developer.android.com/reference/android/security/keystore/KeyGenParameterSpec.html
         PublicKey unrestricted = KeyFactory.getInstance(key.getAlgorithm()).generatePublic(new X509EncodedKeySpec(key.getEncoded()));
-        // from https://code.google.com/p/android/issues/detail?id=197719
         OAEPParameterSpec spec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
 
         sCipher.init(mode, unrestricted, spec);
@@ -203,6 +198,21 @@ public class CryptoUtils {
         if (prepare() && initCipher(Cipher.DECRYPT_MODE)) {
             return new FingerprintManagerCompat.CryptoObject(sCipher);
         }
+        return null;
+    }
+
+    public static String decryptData(String encoded){
+        try {
+            if (prepare() && initCipher(Cipher.DECRYPT_MODE)) {
+                Cipher cipher = sCipher;
+                String decoded = decode(encoded, cipher);
+
+                return decoded;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 }
