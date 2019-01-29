@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.chatlibrary.R;
-import com.example.mynetworklibrary.chat.ChatUser;
+import com.example.chatlibrary.chat.ChatUser;
 import com.example.chatlibrary.chat.messenger.MessengerActivity;
 
 import java.util.ArrayList;

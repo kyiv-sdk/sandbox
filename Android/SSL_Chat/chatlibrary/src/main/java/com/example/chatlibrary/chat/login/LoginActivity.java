@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                 Settings.Secure.ANDROID_ID);
 
         Bundle bundle = getIntent().getExtras();
-        boolean isSSLEnabled = false;
+        isSSLEnabled = false;
         if (bundle != null){
             isSSLEnabled = bundle.getBoolean("isSSLEnabled");
         }

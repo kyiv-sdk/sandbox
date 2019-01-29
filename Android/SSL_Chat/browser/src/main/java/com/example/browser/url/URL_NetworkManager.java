@@ -41,10 +41,6 @@ public class URL_NetworkManager implements URL_NetworkExecutorInterface, NativeN
             URLNetworkDataInterface.onDataReceive(URLNetworkExecutor.getId(), response);
         }
         URLNetworkExecutorsList.add(URLNetworkExecutor);
-
-//        NativeNetworkManager.getInstance().setNativeNetworkInterface(this);
-//        NativeNetworkManager.getInstance().openConnection(requestParser.getProtocol(), requestParser.getHost(), requestParser.getPort(), requestParser.getProtocol().equals("HTTPS"));
-//        NativeNetworkManager.getInstance().send(requestParser.toString().getBytes());
     }
 
     private void closeNetworkExecutor(int id){

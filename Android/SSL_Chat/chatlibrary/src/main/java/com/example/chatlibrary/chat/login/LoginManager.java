@@ -1,17 +1,21 @@
 package com.example.chatlibrary.chat.login;
 
-import com.example.mynetworklibrary.chat.ChatMessage;
-import com.example.mynetworklibrary.chat.MessageProtocol;
-import com.example.mynetworklibrary.chat.NetworkInterface;
-import com.example.mynetworklibrary.chat.NetworkManager;
+import android.os.Handler;
+
+import com.example.chatlibrary.chat.network.ChatMessage;
+import com.example.chatlibrary.chat.network.MessageProtocol;
+import com.example.chatlibrary.chat.network.NetworkInterface;
+import com.example.chatlibrary.chat.network.NetworkManager;
 
 public class LoginManager implements NetworkInterface {
 
     private LoginInterface loginInterface;
+    private Handler handler;
 
     public LoginManager(LoginInterface loginInterface) {
         this.loginInterface = loginInterface;
         NetworkManager.getInstance().setNetworkInterface(this);
+        this.handler = new Handler();
     }
 
     public void logIn(String username){
@@ -24,12 +28,17 @@ public class LoginManager implements NetworkInterface {
     }
 
     @Override
-    public void onMessageReceive(int headerLen, int fileLen, byte[] data) {
-        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(headerLen, fileLen, data);
-        if (chatMessage.getMessage().equals("ok")){
-            loginInterface.onLoginSuccess();
-        } else {
-            loginInterface.onLoginFailed();
-        }
+    public void onMessageReceive(final ChatMessage chatMessage) {
+//        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(headerLen, fileLen, data);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (chatMessage.getMessage().equals("ok")){
+                    loginInterface.onLoginSuccess();
+                } else {
+                    loginInterface.onLoginFailed();
+                }
+            }
+        });
     }
 }

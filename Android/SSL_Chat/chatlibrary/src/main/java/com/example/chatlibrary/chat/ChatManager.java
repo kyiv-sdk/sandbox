@@ -2,14 +2,13 @@ package com.example.chatlibrary.chat;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.util.Log;
 
-import com.example.mynetworklibrary.chat.ChatMessage;
-import com.example.mynetworklibrary.chat.ChatUser;
-import com.example.mynetworklibrary.chat.MessageProtocol;
-import com.example.mynetworklibrary.chat.NetworkInterface;
-import com.example.mynetworklibrary.chat.NetworkManager;
-import com.example.mynetworklibrary.chat.UserMessage;
+import com.example.chatlibrary.chat.network.ChatMessage;
+import com.example.chatlibrary.chat.network.MessageProtocol;
+import com.example.chatlibrary.chat.network.NetworkInterface;
+import com.example.chatlibrary.chat.network.NetworkManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,6 +22,7 @@ public class ChatManager implements NetworkInterface, ChatInterface{
 
     private static int nextFileID = 0;
     private String currentAbsolutePath;
+    private Handler handler;
 
     public static ChatManager getInstance() {
         return ourInstance;
@@ -34,6 +34,7 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         UIInterface = null;
         currentUserID = null;
         currentAbsolutePath = null;
+        this.handler = new Handler();
     }
 
     public String getCurrentUserID() {
@@ -69,16 +70,20 @@ public class ChatManager implements NetworkInterface, ChatInterface{
     }
 
     @Override
-    public void onMessageReceive(int headerLen, int fileLen, byte[] data) {
+    public void onMessageReceive(final ChatMessage chatMessage) {
         Log.i("--------MY_LOG--------", "chat manager onMessageReceive");
-        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(headerLen, fileLen, data);
-        if (chatMessage.getKeyAction().equals("msg")){
-            onNewMessage(chatMessage.getSrcID(), chatMessage.getMessage());
-        } else if (chatMessage.getKeyAction().equals("loggedUsersList")){
-            onUsersListRefresh(chatMessage.getAllLoggedUsersList());
-        } else if (chatMessage.getKeyAction().equals("file")){
-            onNewFile(chatMessage);
-        }
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (chatMessage.getKeyAction().equals("msg")){
+                    onNewMessage(chatMessage.getSrcID(), chatMessage.getMessage());
+                } else if (chatMessage.getKeyAction().equals("loggedUsersList")){
+                    onUsersListRefresh(chatMessage.getAllLoggedUsersList());
+                } else if (chatMessage.getKeyAction().equals("file")){
+                    onNewFile(chatMessage);
+                }
+            }
+        });
     }
 
     public void onNewFile(ChatMessage chatMessage){

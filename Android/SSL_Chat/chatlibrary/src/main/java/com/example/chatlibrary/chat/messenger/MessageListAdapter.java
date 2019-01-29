@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.chatlibrary.R;
-import com.example.mynetworklibrary.chat.UserMessage;
+import com.example.chatlibrary.chat.UserMessage;
 
 import java.util.ArrayList;
 
