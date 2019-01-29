@@ -1,1 +1,1 @@
-include ':app', ':mynetworklibrary', ':chatlibrary', ':browser', ':fingerprint', ':fingerprint_test'
+include ':app', ':mynetworklibrary', ':chatlibrary', ':browser', ':fingerprint'

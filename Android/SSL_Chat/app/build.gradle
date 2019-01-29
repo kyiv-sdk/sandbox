@@ -31,5 +31,4 @@ dependencies {
     implementation project(':chatlibrary')
     implementation project(':browser')
     implementation project(':fingerprint')
-    implementation project(':fingerprint_test')
 }
