@@ -42,6 +42,10 @@ public class LoginManager {
     }
 
     public void prepareLogin(final String password) {
+        if (!isUserAuthenticated()){
+            loginInterface.onExplainingNeed("User is not authenticated.\nYou should set password on your phone to work with this application");
+            return;
+        }
         if (password.length() > 0) {
             if (!mPreferences.contains(PASSWORD)){
                 if (isNewPasswordCorrect(password)){
@@ -61,6 +65,10 @@ public class LoginManager {
         } else {
             loginInterface.onExplainingNeed("password is empty");
         }
+    }
+
+    public boolean isAlreadySignedUp(){
+        return mPreferences.contains(PASSWORD);
     }
 
     public boolean isPasswordCorrect(String password){

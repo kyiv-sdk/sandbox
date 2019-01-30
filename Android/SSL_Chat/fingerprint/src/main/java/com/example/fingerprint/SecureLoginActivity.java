@@ -36,15 +36,11 @@ public class SecureLoginActivity extends AppCompatActivity implements LoginInter
         enter_password_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!loginManager.isUserAuthenticated()){
-                    onExplainingNeed("User is not authenticated.\nYou should set password on your phone to work with this application");
-                } else {
-                    loginManager.prepareLogin(mPasswordEditText.getText().toString());
-                }
+                loginManager.prepareLogin(mPasswordEditText.getText().toString());
             }
         });
 
-        if (!sharedPreferences.contains(loginManager.getPasswordKeyword())){
+        if (!loginManager.isAlreadySignedUp()){
             enter_password_button.setText("sign up");
         }
     }
