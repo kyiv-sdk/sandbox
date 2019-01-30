@@ -73,6 +73,6 @@ public class SecureLoginActivity extends AppCompatActivity implements LoginInter
 
     @Override
     public void onExplainingNeed(String explaining) {
-        Toast.makeText(this, explaining, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, explaining, Toast.LENGTH_LONG).show();
     }
 }
