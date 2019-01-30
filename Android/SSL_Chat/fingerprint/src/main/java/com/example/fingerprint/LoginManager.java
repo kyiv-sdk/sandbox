@@ -3,7 +3,6 @@ package com.example.fingerprint;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v4.os.CancellationSignal;
 
@@ -11,17 +10,20 @@ import javax.crypto.Cipher;
 
 public class LoginManager {
 
-    private static final String PASSWORD = "password";
+    private final String PASSWORD = "password";
     private SharedPreferences mPreferences;
     private FingerprintManager mFingerprintHelper;
     private Context mContext;
 
     private LoginInterface loginInterface;
+    private CryptoManager cryptoManager;
 
     public LoginManager(Context context, SharedPreferences mPreferences, LoginInterface loginInterface) {
         this.mContext = context;
         this.mPreferences = mPreferences;
         this.loginInterface = loginInterface;
+
+        this.cryptoManager = CryptoManager.getInstance();
 
         if (mPreferences.contains(getPasswordKeyword())){
             prepareSensor();
@@ -63,7 +65,7 @@ public class LoginManager {
     public boolean isPasswordCorrect(String password){
         try {
             String encoded = mPreferences.getString(PASSWORD, null);
-            String decoded = CryptoManager.decryptData(encoded);
+            String decoded = cryptoManager.decryptData(encoded);
 
             if (decoded != null && decoded.equals(password)){
                 return true;
@@ -79,7 +81,7 @@ public class LoginManager {
     }
 
     public void savePassword(String password) {
-        String encoded = CryptoManager.encode(password);
+        String encoded = cryptoManager.encode(password);
         mPreferences.edit().putString(PASSWORD, encoded).apply();
 
         loginInterface.onExplainingNeed("password saved");
@@ -87,7 +89,7 @@ public class LoginManager {
 
     public void prepareSensor() {
         if (com.example.fingerprint.FingerprintHelper.isSensorStateAt(FingerprintHelper.mSensorState.READY, mContext)) {
-            FingerprintManagerCompat.CryptoObject cryptoObject = CryptoManager.getCryptoObject();
+            FingerprintManagerCompat.CryptoObject cryptoObject = cryptoManager.getCryptoObject();
             if (cryptoObject != null) {
                 loginInterface.onExplainingNeed("use fingerprint to login");
                 mFingerprintHelper = new FingerprintManager(mContext);
@@ -146,7 +148,7 @@ public class LoginManager {
         public void onAuthenticationSucceeded(FingerprintManagerCompat.AuthenticationResult result) {
             Cipher cipher = result.getCryptoObject().getCipher();
             String encoded = mPreferences.getString(PASSWORD, null);
-            String decoded = CryptoManager.decode(encoded, cipher);
+            String decoded = cryptoManager.decode(encoded, cipher);
             if (decoded != null) {
                 loginInterface.onExplainingNeed("fingerprint success");
             } else {

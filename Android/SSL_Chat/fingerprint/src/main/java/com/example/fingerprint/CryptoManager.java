@@ -1,13 +1,7 @@
 package com.example.fingerprint;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.KeyguardManager;
-import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
-import android.support.annotation.Nullable;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.util.Base64;
 
@@ -36,103 +30,92 @@ import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 
 public class CryptoManager {
-    private static final String KEY_ALIAS = "key_for_password";
-    private static final String KEY_STORE = "AndroidKeyStore";
-    private static final String TRANSFORMATION = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+    private static final CryptoManager ourInstance = new CryptoManager();
+    private final String KEY_ALIAS = "key_for_password";
+    private final String KEY_STORE = "AndroidKeyStore";
+    private final String TRANSFORMATION = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
 
-    private static KeyStore sKeyStore;
-    private static KeyPairGenerator sKeyPairGenerator;
-    private static Cipher sCipher;
+    private KeyStore mKeyStore;
+    private KeyPairGenerator mKeyPairGenerator;
+    private Cipher mCipher;
+
+    public static CryptoManager getInstance() {
+        return ourInstance;
+    }
 
     private CryptoManager() {
+        this.mKeyStore = null;
+        this.mKeyPairGenerator = null;
+        this.mCipher = null;
+        prepare();
     }
 
-    public static String encode(String inputString) {
-        try {
-            if (prepare() && initCipher(Cipher.ENCRYPT_MODE)) {
-                byte[] bytes = sCipher.doFinal(inputString.getBytes());
-                return Base64.encodeToString(bytes, Base64.NO_WRAP);
-            }
-        } catch (IllegalBlockSizeException | BadPaddingException exception) {
-            exception.printStackTrace();
-        }
-        return null;
-    }
-
-
-    public static String decode(String encodedString, Cipher cipher) {
-        try {
-            byte[] bytes = Base64.decode(encodedString, Base64.NO_WRAP);
-            return new String(cipher.doFinal(bytes));
-        } catch (IllegalBlockSizeException | BadPaddingException exception) {
-            exception.printStackTrace();
-        }
-        return null;
-    }
-
-    private static boolean prepare() {
+    private boolean prepare(){
         return getKeyStore() && getCipher() && getKey();
     }
 
-
-    private static boolean getKeyStore() {
+    private boolean getKeyStore(){
+        if (mKeyStore != null) return true;
         try {
-            sKeyStore = KeyStore.getInstance(KEY_STORE);
-            sKeyStore.load(null);
+            mKeyStore = KeyStore.getInstance(KEY_STORE);
+            mKeyStore.load(null);
             return true;
-        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private static boolean getKeyPairGenerator() {
+    private boolean getCipher(){
+        if (mCipher != null) return true;
         try {
-            sKeyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, KEY_STORE);
+            mCipher = Cipher.getInstance(TRANSFORMATION);
             return true;
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-
-    @SuppressLint("GetInstance")
-    private static boolean getCipher() {
+    private boolean getKey(){
         try {
-            sCipher = Cipher.getInstance(TRANSFORMATION);
-            return true;
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private static boolean getKey() {
-        try {
-            return sKeyStore.containsAlias(KEY_ALIAS) || generateNewKey();
+            return mKeyStore.containsAlias(KEY_ALIAS) || generateNewKey();
         } catch (KeyStoreException e) {
             e.printStackTrace();
         }
         return false;
-
     }
 
+    private boolean getKeyPairGenerator(){
+        if (mKeyPairGenerator != null) return true;
+        try {
+            mKeyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, KEY_STORE);
+            return true;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private static boolean generateNewKey() {
-
-        if (getKeyPairGenerator()) {
+    private boolean generateNewKey(){
+        if (getKeyPairGenerator()){
             try {
-                sKeyPairGenerator.initialize(
-                        new KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                                .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-                                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_OAEP)
-//                                .setUserAuthenticationRequired(true)
-                                .build());
-                sKeyPairGenerator.generateKeyPair();
+                mKeyPairGenerator.initialize(new KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_OAEP)
+    //                                .setUserAuthenticationRequired(true)
+                        .build());
+                mKeyPairGenerator.generateKeyPair();
                 return true;
             } catch (InvalidAlgorithmParameterException e) {
                 e.printStackTrace();
@@ -141,70 +124,65 @@ public class CryptoManager {
         return false;
     }
 
-
-    private static boolean initCipher(int mode) {
+    private boolean initCipher(int mode){
         try {
-            sKeyStore.load(null);
-
+            mKeyStore.load(null);
             switch (mode) {
                 case Cipher.ENCRYPT_MODE:
-                    initEncodeCipher(mode);
+                    initEncodeCipher();
                     break;
-
                 case Cipher.DECRYPT_MODE:
-                    initDecodeCipher(mode);
+                    initDecodeCipher();
                     break;
                 default:
                     return false;
             }
             return true;
-
-        } catch (KeyPermanentlyInvalidatedException exception) {
-            deleteInvalidKey();
-
-        } catch (KeyStoreException | CertificateException | UnrecoverableKeyException | IOException |
-                NoSuchAlgorithmException | InvalidKeyException | InvalidKeySpecException | InvalidAlgorithmParameterException e) {
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    private static void initDecodeCipher(int mode) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException {
-        PrivateKey key = (PrivateKey) sKeyStore.getKey(KEY_ALIAS, null);
-        sCipher.init(mode, key);
+    private void initDecodeCipher() throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, InvalidKeyException {
+        PrivateKey key = (PrivateKey) mKeyStore.getKey(KEY_ALIAS, null);
+        mCipher.init(Cipher.DECRYPT_MODE, key);
     }
 
-    private static void initEncodeCipher(int mode) throws KeyStoreException, InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException {
-        PublicKey key = sKeyStore.getCertificate(KEY_ALIAS).getPublicKey();
+    protected void initEncodeCipher() throws KeyStoreException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException {
+        PublicKey key = mKeyStore.getCertificate(KEY_ALIAS).getPublicKey();
 
         PublicKey unrestricted = KeyFactory.getInstance(key.getAlgorithm()).generatePublic(new X509EncodedKeySpec(key.getEncoded()));
         OAEPParameterSpec spec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT);
 
-        sCipher.init(mode, unrestricted, spec);
+        mCipher.init(Cipher.ENCRYPT_MODE, unrestricted, spec);
     }
 
-    public static void deleteInvalidKey() {
-        if (getKeyStore()) {
-            try {
-                sKeyStore.deleteEntry(KEY_ALIAS);
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Nullable
-    public static FingerprintManagerCompat.CryptoObject getCryptoObject() {
-        if (prepare() && initCipher(Cipher.DECRYPT_MODE)) {
-            return new FingerprintManagerCompat.CryptoObject(sCipher);
+    public FingerprintManagerCompat.CryptoObject getCryptoObject() {
+        if (initCipher(Cipher.DECRYPT_MODE)) {
+            return new FingerprintManagerCompat.CryptoObject(mCipher);
         }
         return null;
     }
 
-    public static String decryptData(String encoded){
+    public String decryptData(String encoded){
         try {
-            if (prepare() && initCipher(Cipher.DECRYPT_MODE)) {
-                Cipher cipher = sCipher;
+            if (initCipher(Cipher.DECRYPT_MODE)) {
+                Cipher cipher = mCipher;
                 String decoded = decode(encoded, cipher);
 
                 return decoded;
@@ -213,6 +191,28 @@ public class CryptoManager {
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    public String encode(String inputString) {
+        try {
+            if (initCipher(Cipher.ENCRYPT_MODE)) {
+                byte[] bytes = mCipher.doFinal(inputString.getBytes());
+                return Base64.encodeToString(bytes, Base64.NO_WRAP);
+            }
+        } catch (IllegalBlockSizeException | BadPaddingException exception) {
+            exception.printStackTrace();
+        }
+        return null;
+    }
+
+    public String decode(String encodedString, Cipher cipher) {
+        try {
+            byte[] bytes = Base64.decode(encodedString, Base64.NO_WRAP);
+            return new String(cipher.doFinal(bytes));
+        } catch (IllegalBlockSizeException | BadPaddingException exception) {
+            exception.printStackTrace();
+        }
         return null;
     }
 }

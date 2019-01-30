@@ -1,13 +1,8 @@
 package com.example.fingerprint;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,7 +14,7 @@ public class SecureLoginActivity extends AppCompatActivity implements LoginInter
 
     private EditText mPasswordEditText;
 
-    LoginManager loginManager;
+    private LoginManager loginManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +28,7 @@ public class SecureLoginActivity extends AppCompatActivity implements LoginInter
         loginManager = new LoginManager(this, sharedPreferences, this);
 
         if (!loginManager.isUserAuthenticated()){
-            onExplainingNeed("user not authenticated");
-            onExplainingNeed("you should set password on your phone to work with this application");
+            onExplainingNeed("User is not authenticated.\nYou should set password on your phone to work with this application");
         }
 
         Button enter_password_button = findViewById(R.id.secure_activity_enter_password_button);
@@ -43,15 +37,9 @@ public class SecureLoginActivity extends AppCompatActivity implements LoginInter
             @Override
             public void onClick(View view) {
                 if (!loginManager.isUserAuthenticated()){
-                    onExplainingNeed("user not authenticated");
-                    onExplainingNeed("you should set password on your phone to work with this application");
+                    onExplainingNeed("User is not authenticated.\nYou should set password on your phone to work with this application");
                 } else {
-//                    AsyncTask.execute(new Runnable() {
-//                        @Override
-//                        public void run() {
-                            loginManager.prepareLogin(mPasswordEditText.getText().toString());
-//                        }
-//                    });
+                    loginManager.prepareLogin(mPasswordEditText.getText().toString());
                 }
             }
         });
