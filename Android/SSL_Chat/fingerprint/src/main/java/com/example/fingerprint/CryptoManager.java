@@ -4,6 +4,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -51,10 +52,10 @@ public class CryptoManager {
     }
 
     private boolean prepare(){
-        return getKeyStore() && getCipher() && getKey();
+        return initKeyStore() && initCipher() && initKey();
     }
 
-    private boolean getKeyStore(){
+    private boolean initKeyStore(){
         if (mKeyStore != null) return true;
         try {
             mKeyStore = KeyStore.getInstance(KEY_STORE);
@@ -72,7 +73,7 @@ public class CryptoManager {
         return false;
     }
 
-    private boolean getCipher(){
+    private boolean initCipher(){
         if (mCipher != null) return true;
         try {
             mCipher = Cipher.getInstance(TRANSFORMATION);
@@ -85,7 +86,7 @@ public class CryptoManager {
         return false;
     }
 
-    private boolean getKey(){
+    private boolean initKey(){
         try {
             return mKeyStore.containsAlias(KEY_ALIAS) || generateNewKey();
         } catch (KeyStoreException e) {
@@ -110,10 +111,12 @@ public class CryptoManager {
     private boolean generateNewKey(){
         if (getKeyPairGenerator()){
             try {
+                Log.i("--------MY_LOG--------", "generating new key");
                 mKeyPairGenerator.initialize(new KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                         .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_OAEP)
-    //                                .setUserAuthenticationRequired(true)
+                        .setUserAuthenticationRequired(true)
+                        .setUserAuthenticationValidityDurationSeconds(30)
                         .build());
                 mKeyPairGenerator.generateKeyPair();
                 return true;
@@ -138,15 +141,16 @@ public class CryptoManager {
                     return false;
             }
             return true;
+        } catch (InvalidKeyException e) {
+            Log.i("--------MY_LOG--------", "invalid key detected");
+            e.printStackTrace();
         } catch (CertificateException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
+        }  catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
@@ -158,7 +162,7 @@ public class CryptoManager {
         return false;
     }
 
-    private void initDecodeCipher() throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, InvalidKeyException {
+    private void initDecodeCipher() throws InvalidKeyException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         PrivateKey key = (PrivateKey) mKeyStore.getKey(KEY_ALIAS, null);
         mCipher.init(Cipher.DECRYPT_MODE, key);
     }
@@ -173,7 +177,7 @@ public class CryptoManager {
     }
 
     public FingerprintManagerCompat.CryptoObject getCryptoObject() {
-        if (initCipher(Cipher.DECRYPT_MODE)) {
+        if (prepare() && initCipher(Cipher.DECRYPT_MODE)) {
             return new FingerprintManagerCompat.CryptoObject(mCipher);
         }
         return null;
@@ -196,7 +200,7 @@ public class CryptoManager {
 
     public String encode(String inputString) {
         try {
-            if (initCipher(Cipher.ENCRYPT_MODE)) {
+            if (prepare() && initCipher(Cipher.ENCRYPT_MODE)) {
                 byte[] bytes = mCipher.doFinal(inputString.getBytes());
                 return Base64.encodeToString(bytes, Base64.NO_WRAP);
             }
