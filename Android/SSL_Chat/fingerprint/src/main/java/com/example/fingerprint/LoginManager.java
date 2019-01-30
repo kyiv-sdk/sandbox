@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v4.os.CancellationSignal;
+import android.util.Log;
 
 import javax.crypto.Cipher;
 
@@ -95,8 +96,7 @@ public class LoginManager {
                 mFingerprintHelper = new FingerprintManager(mContext);
                 mFingerprintHelper.startAuth(cryptoObject);
             } else {
-                mPreferences.edit().remove(PASSWORD).apply();
-                loginInterface.onExplainingNeed("new fingerprint enrolled. enter password again");
+                loginInterface.onExplainingNeed("user is not authenticated. be sure that you enter password within 30 second after phone unlocked");
             }
 
         } else {
