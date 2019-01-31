@@ -131,6 +131,7 @@ public class UserHandler implements UserHandlerInterface {
             this.socket.close();
             serverInterface.notifyAllUsersChanges();
             serverInterface.onUserHandlerClose(this.uniqueUserId);
+            serverInterface = null;
         } catch (IOException e) {
             e.printStackTrace();
         }
