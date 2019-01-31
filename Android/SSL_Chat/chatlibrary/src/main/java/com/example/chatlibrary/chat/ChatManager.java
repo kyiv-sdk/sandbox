@@ -158,8 +158,8 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         UIInterface.onUsersListRefresh();
     }
 
-    public void openConnection(boolean isSSLEnabled, String uniqueID){
-        NetworkManager.getInstance().openConnection(isSSLEnabled, uniqueID);
+    public void openConnection(String ip, int port, boolean isSSLEnabled, String uniqueID){
+        NetworkManager.getInstance().openConnection(ip, port, isSSLEnabled, uniqueID);
         checkConnection();
     }
 

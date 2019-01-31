@@ -35,11 +35,14 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
         }
 
         try {
+            String title = "";
             if (isSSLEnabled) {
-                getSupportActionBar().setTitle("SECURE");
+                title += "SECURE";
             } else {
-                getSupportActionBar().setTitle("NOT SECURE");
+                title += "NOT SECURE";
             }
+            title += " | " + ChatManager.getInstance().getCurrentUserID();
+            getSupportActionBar().setTitle(title);
         } catch (Exception e){
             e.printStackTrace();
         }

@@ -29,7 +29,6 @@ public class LoginManager implements NetworkInterface {
 
     @Override
     public void onMessageReceive(final ChatMessage chatMessage) {
-//        ChatMessage chatMessage = MessageProtocol.getInstance().processReceivedMessage(headerLen, fileLen, data);
         handler.post(new Runnable() {
             @Override
             public void run() {

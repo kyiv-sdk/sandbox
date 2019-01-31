@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,10 +32,10 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     private ArrayList<UserMessage> messageList;
     private String dstId;
 
-    private static final int ALL_REQUESTS = 1888;
-
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private final int REQUEST_RECORD_AUDIO_PERMISSION = 2;
+    private final int REQUEST_PLAY_AUDIO_PERMISSION = 3;
+    private final int REQUEST_CAMERA_PERMISSION = 1;
+    private final int REQUEST_CAMERA = 4;
     private String mFileName = null;
     private boolean mStartRecording = true;
     private boolean mStartPlaying = true;
@@ -46,11 +45,6 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     private Button btnAudioListening;
 
     private EditText editText;
-
-    String[] PERMISSIONS = {
-            android.Manifest.permission.CAMERA,
-            android.Manifest.permission.RECORD_AUDIO
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +58,6 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             getSupportActionBar().setTitle(dstId);
         } catch (Exception e){
             e.printStackTrace();
-        }
-
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) ||
-                (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)){
-            requestPermissions(PERMISSIONS,
-                    ALL_REQUESTS);
         }
 
         editText = findViewById(R.id.edittext_chatbox);
@@ -95,8 +83,7 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             @Override
             public void onClick(View v) {
                 if (checkCameraPermission()){
-                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(cameraIntent, ALL_REQUESTS);
+                    makePhoto();
                 }
             }
         });
@@ -127,14 +114,8 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         btnAudioRecording.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkAudioPermission()) {
-                    audioHandler.onRecord(mStartRecording);
-                    if (mStartRecording) {
-                        btnAudioRecording.setText("Stop recording");
-                    } else {
-                        btnAudioRecording.setText("Start recording");
-                    }
-                    mStartRecording = !mStartRecording;
+                if (checkAudioPermission(REQUEST_RECORD_AUDIO_PERMISSION)) {
+                    recordAudio();
                 }
             }
         });
@@ -143,13 +124,9 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         btnAudioListening.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                audioHandler.onPlay(mStartPlaying);
-                if (mStartPlaying) {
-                    btnAudioListening.setText("Stop playing");
-                } else {
-                    btnAudioListening.setText("Start playing");
+                if (checkAudioPermission(REQUEST_PLAY_AUDIO_PERMISSION)) {
+                    playAudio();
                 }
-                mStartPlaying = !mStartPlaying;
             }
         });
 
@@ -160,7 +137,6 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
 
                 String newFilePath = getExternalCacheDir().getAbsolutePath() + "/audiorecordtest" + String.valueOf(ChatManager.getNextFileID()) + ".3gp";
 
-
                 if (copyFile(mFileName,  newFilePath)) {
                     messageList.add(new UserMessage(false, newFilePath));
                     mMessageAdapter.notifyDataSetChanged();
@@ -168,7 +144,7 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
 
                     ChatManager.getInstance().sendAudio(dstId, newFilePath);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Error copying files", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "No audio file yet", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -178,17 +154,17 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         if (checkSelfPermission(Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA},
-                    ALL_REQUESTS);
+                    REQUEST_CAMERA_PERMISSION);
             return false;
         }
         return true;
     }
 
-    private boolean checkAudioPermission(){
+    private boolean checkAudioPermission(int request){
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO},
-                    ALL_REQUESTS);
+                    request);
             return false;
         }
         return true;
@@ -252,7 +228,7 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ALL_REQUESTS && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
             try {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
                 Toast.makeText(this, "photo success", Toast.LENGTH_SHORT).show();
@@ -271,15 +247,33 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case ALL_REQUESTS:
+            case REQUEST_CAMERA_PERMISSION:
                 if (grantResults.length > 0) {
-                    int i = 0;
-                    for (String permission : permissions) {
-                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                            Toast.makeText(this, "permission " + permission + " granted", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(this, "permission " + permission + " denied", Toast.LENGTH_LONG).show();
-                        }
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this, "permission " + "REQUEST_CAMERA_PERMISSION" + " granted", Toast.LENGTH_LONG).show();
+                        makePhoto();
+                    } else {
+                        Toast.makeText(this, "permission " + "REQUEST_CAMERA_PERMISSION" + " denied", Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                if (grantResults.length > 0) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        recordAudio();
+                        Toast.makeText(this, "permission " + "REQUEST_AUDIO_PERMISSION" + " granted", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, "permission " + "REQUEST_AUDIO_PERMISSION" + " denied", Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+            case REQUEST_PLAY_AUDIO_PERMISSION:
+                if (grantResults.length > 0) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        playAudio();
+                        Toast.makeText(this, "permission " + "REQUEST_AUDIO_PERMISSION" + " granted", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, "permission " + "REQUEST_AUDIO_PERMISSION" + " denied", Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
@@ -309,5 +303,30 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         }
 
         return true;
+    }
+
+    private void recordAudio(){
+        audioHandler.onRecord(mStartRecording);
+        if (mStartRecording) {
+            btnAudioRecording.setText("Stop recording");
+        } else {
+            btnAudioRecording.setText("Start recording");
+        }
+        mStartRecording = !mStartRecording;
+    }
+
+    private void playAudio(){
+        audioHandler.onPlay(mStartPlaying);
+        if (mStartPlaying) {
+            btnAudioListening.setText("Stop playing");
+        } else {
+            btnAudioListening.setText("Start playing");
+        }
+        mStartPlaying = !mStartPlaying;
+    }
+
+    private void makePhoto(){
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, REQUEST_CAMERA);
     }
 }

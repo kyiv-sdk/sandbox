@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
             isSSLEnabled = bundle.getBoolean("isSSLEnabled");
         }
 
-        ChatManager.getInstance().openConnection(isSSLEnabled, android_id);
+        ChatManager.getInstance().openConnection("10.129.171.8", 5454, isSSLEnabled, android_id);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,10 +58,10 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     }
 
     private void saveUsername(String username){
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.current_username_key), username);
-        editor.apply();
+//        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putString(getString(R.string.current_username_key), username);
+//        editor.apply();
         ChatManager.getInstance().setCurrentUserID(username);
     }
 

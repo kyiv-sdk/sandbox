@@ -116,6 +116,10 @@ void MessageHandler::readerFn()
     Logger::getInstance()->log("Reader created");
     std::string resultStr;
 
+    if (mMessagesToSend.size() > 0){
+        mCv.notify_all();
+    }
+
     while (mNeedOneMoreLoop) {
         Logger::getInstance()->log("reader: waiting for load...");
         int headerLen = 0, fileLen = 0;

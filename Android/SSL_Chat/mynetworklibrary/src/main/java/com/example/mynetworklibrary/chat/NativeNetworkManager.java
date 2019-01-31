@@ -5,9 +5,6 @@ public class NativeNetworkManager implements RawNetworkInterface {
         System.loadLibrary("native-lib");
     }
 
-    private int BASIC_PORT = 4545;
-    private int SSL_PORT = 5454;
-
     private static final NativeNetworkManager ourInstance = new NativeNetworkManager();
     private NativeNetworkInterface nativeNetworkInterface;
     private long cppMessageHandler;
@@ -24,31 +21,15 @@ public class NativeNetworkManager implements RawNetworkInterface {
         this.nativeNetworkInterface = nativeNetworkInterface;
     }
 
-    public int getBASIC_PORT() {
-        return BASIC_PORT;
-    }
-
-    public void setBASIC_PORT(int BASIC_PORT) {
-        this.BASIC_PORT = BASIC_PORT;
-    }
-
-    public int getSSL_PORT() {
-        return SSL_PORT;
-    }
-
-    public void setSSL_PORT(int SSL_PORT) {
-        this.SSL_PORT = SSL_PORT;
-    }
-
     public void send(final byte[] bytesData){
         if (cppMessageHandler != -1) {
             cppSendMessage(cppMessageHandler, bytesData);
         }
     }
 
-    public void openConnection(boolean isSSLEnabled){
+    public void openConnection(String ip, int port, boolean isSSLEnabled){
         if (cppMessageHandler == -1) {
-            this.cppMessageHandler = cppCreateMessageHandler("10.129.171.8", isSSLEnabled? SSL_PORT : BASIC_PORT, isSSLEnabled);
+            this.cppMessageHandler = cppCreateMessageHandler(ip, port, isSSLEnabled);
         }
     }
 

@@ -52,10 +52,10 @@ public class CryptoManager {
     }
 
     private boolean prepare(){
-        return initKeyStore() && initCipher() && initKey();
+        return getKeyStore() && getCipher() && getKey();
     }
 
-    private boolean initKeyStore(){
+    private boolean getKeyStore(){
         if (mKeyStore != null) return true;
         try {
             mKeyStore = KeyStore.getInstance(KEY_STORE);
@@ -73,7 +73,7 @@ public class CryptoManager {
         return false;
     }
 
-    private boolean initCipher(){
+    private boolean getCipher(){
         if (mCipher != null) return true;
         try {
             mCipher = Cipher.getInstance(TRANSFORMATION);
@@ -86,7 +86,7 @@ public class CryptoManager {
         return false;
     }
 
-    private boolean initKey(){
+    private boolean getKey(){
         try {
             return mKeyStore.containsAlias(KEY_ALIAS) || generateNewKey();
         } catch (KeyStoreException e) {
@@ -116,7 +116,7 @@ public class CryptoManager {
                         .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_OAEP)
                         .setUserAuthenticationRequired(true)
-                        .setUserAuthenticationValidityDurationSeconds(30)
+                        .setUserAuthenticationValidityDurationSeconds(1)
                         .build());
                 mKeyPairGenerator.generateKeyPair();
                 return true;
@@ -153,6 +153,7 @@ public class CryptoManager {
         }  catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (UnrecoverableKeyException e) {
+            deleteInvalidKey();
             e.printStackTrace();
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
@@ -160,6 +161,16 @@ public class CryptoManager {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public void deleteInvalidKey() {
+        if (getKeyStore()) {
+            try {
+                mKeyStore.deleteEntry(KEY_ALIAS);
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void initDecodeCipher() throws InvalidKeyException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
@@ -183,21 +194,6 @@ public class CryptoManager {
         return null;
     }
 
-    public String decryptData(String encoded){
-        try {
-            if (initCipher(Cipher.DECRYPT_MODE)) {
-                Cipher cipher = mCipher;
-                String decoded = decode(encoded, cipher);
-
-                return decoded;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     public String encode(String inputString) {
         try {
             if (prepare() && initCipher(Cipher.ENCRYPT_MODE)) {
@@ -216,6 +212,27 @@ public class CryptoManager {
             return new String(cipher.doFinal(bytes));
         } catch (IllegalBlockSizeException | BadPaddingException exception) {
             exception.printStackTrace();
+        }
+        return null;
+    }
+
+    public String decode(String encodedString) {
+        try {
+            prepare();
+            initDecodeCipher();
+            byte[] bytes = Base64.decode(encodedString, Base64.NO_WRAP);
+            return new String(mCipher.doFinal(bytes));
+        } catch (IllegalBlockSizeException | BadPaddingException exception) {
+            exception.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            deleteInvalidKey();
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
         }
         return null;
     }

@@ -28,8 +28,8 @@ public class NetworkManager implements NativeNetworkInterface {
         NativeNetworkManager.getInstance().send(bytesData);
     }
 
-    public void openConnection(boolean isSSLEnabled, String uniqueID){
-        NativeNetworkManager.getInstance().openConnection(isSSLEnabled);
+    public void openConnection(String ip, int port, boolean isSSLEnabled, String uniqueID){
+        NativeNetworkManager.getInstance().openConnection(ip, port, isSSLEnabled);
         byte[] uniquIdRequest = MessageProtocol.getInstance().createUniqueIDRequest(uniqueID).getBytes();
         NativeNetworkManager.getInstance().send(uniquIdRequest);
     }

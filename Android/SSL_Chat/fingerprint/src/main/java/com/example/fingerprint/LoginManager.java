@@ -2,37 +2,33 @@ package com.example.fingerprint;
 
 import android.app.KeyguardManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v4.os.CancellationSignal;
-import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.crypto.Cipher;
 
 public class LoginManager {
+    private final String USER_CREDENTIALS_FILENAME = "SUPER_SECRET_FILE";
 
-    private final String PASSWORD = "password";
-    private SharedPreferences mPreferences;
-    private FingerprintManager mFingerprintHelper;
     private Context mContext;
 
+    private FingerprintManager mFingerprintHelper;
     private LoginInterface loginInterface;
     private CryptoManager cryptoManager;
 
-    public LoginManager(Context context, SharedPreferences mPreferences, LoginInterface loginInterface) {
+    private boolean alreadySignedUp;
+
+    public LoginManager(Context context, LoginInterface loginInterface) {
         this.mContext = context;
-        this.mPreferences = mPreferences;
         this.loginInterface = loginInterface;
-
         this.cryptoManager = CryptoManager.getInstance();
-
-        if (mPreferences.contains(getPasswordKeyword())){
-            prepareSensor();
+        this.alreadySignedUp = FileUtils.fileExists(mContext, USER_CREDENTIALS_FILENAME);
+        if (alreadySignedUp){
+//            prepareSensor();
         }
-    }
-
-    public String getPasswordKeyword() {
-        return PASSWORD;
     }
 
     public boolean isUserAuthenticated(){
@@ -41,59 +37,28 @@ public class LoginManager {
         return keyguardManager.isKeyguardSecure();
     }
 
-    public void prepareLogin(final String password) {
+    public void prepareSignUp(final String ip, final String socket, final String username) {
         if (!isUserAuthenticated()){
             loginInterface.onExplainingNeed("User is not authenticated.\nYou should set password on your phone to work with this application");
             return;
         }
-        if (password.length() > 0) {
-            if (!mPreferences.contains(PASSWORD)){
-                if (isNewPasswordCorrect(password)){
-                    savePassword(password);
 
-                    loginInterface.onLoginSuccess();
-                } else {
-                    loginInterface.onExplainingNeed("password is incorrect. Be sure that it has more than 5 symbols");
-                }
+        if (ip.length() > 0 && socket.length() > 0 && username.length() > 0) {
+
+            UserCredentials userCredentials = new UserCredentials(ip, socket, username);
+
+            String encoded = cryptoManager.encode(userCredentials.toJSON().toString());
+
+            if (FileUtils.writeToFile(mContext, USER_CREDENTIALS_FILENAME, encoded.getBytes())){
+                loginInterface.onLoginSuccess(ip, socket ,username);
             } else {
-                if (isPasswordCorrect(password)){
-                    loginInterface.onLoginSuccess();
-                } else {
-                    loginInterface.onExplainingNeed("password is incorrect");
-                }
+                loginInterface.onExplainingNeed("Some issue with internal file system");
             }
-        } else {
-            loginInterface.onExplainingNeed("password is empty");
         }
     }
 
     public boolean isAlreadySignedUp(){
-        return mPreferences.contains(PASSWORD);
-    }
-
-    public boolean isPasswordCorrect(String password){
-        try {
-            String encoded = mPreferences.getString(PASSWORD, null);
-            String decoded = cryptoManager.decryptData(encoded);
-
-            if (decoded != null && decoded.equals(password)){
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public boolean isNewPasswordCorrect(String password){
-        return password.length() >= 5;
-    }
-
-    public void savePassword(String password) {
-        String encoded = cryptoManager.encode(password);
-        mPreferences.edit().putString(PASSWORD, encoded).apply();
-
-        loginInterface.onExplainingNeed("password saved");
+        return alreadySignedUp;
     }
 
     public void prepareSensor() {
@@ -106,7 +71,6 @@ public class LoginManager {
             } else {
                 loginInterface.onExplainingNeed("user is not authenticated. be sure that you enter password within 30 second after phone unlocked");
             }
-
         } else {
             loginInterface.onExplainingNeed("sensor is not ready");
         }
@@ -119,6 +83,54 @@ public class LoginManager {
     private void cancelFingerprint(){
         if (mFingerprintHelper != null) {
             mFingerprintHelper.cancel();
+        }
+    }
+
+    public void onAuthSucceeded(){
+        byte[] encodedFile = FileUtils.readFile(mContext, USER_CREDENTIALS_FILENAME);
+        String decodedFile = cryptoManager.decode(new String(encodedFile));
+
+        if (decodedFile == null){
+            loginInterface.onExplainingNeed("Key is invalid. Restart Your app.");
+            loginInterface.onLoginFailed();
+            return;
+        }
+
+        try {
+            JSONObject jsonObject = new JSONObject(decodedFile);
+            UserCredentials userCredentials = new UserCredentials(jsonObject);
+
+            if (userCredentials.valid()){
+                loginInterface.onLoginSuccess(userCredentials.getIp(), userCredentials.getSocket(), userCredentials.getUsername());
+            } else {
+                loginInterface.onExplainingNeed("decode failed");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onAuthSucceeded(Cipher cipher){
+        byte[] encodedFile = FileUtils.readFile(mContext, USER_CREDENTIALS_FILENAME);
+        String decodedFile = cryptoManager.decode(new String(encodedFile), cipher);
+
+        if (decodedFile == null){
+            loginInterface.onExplainingNeed("Key is invalid. Restart Your app.");
+            loginInterface.onLoginFailed();
+            return;
+        }
+
+        try {
+            JSONObject jsonObject = new JSONObject(decodedFile);
+            UserCredentials userCredentials = new UserCredentials(jsonObject);
+
+            if (userCredentials.valid()){
+                loginInterface.onLoginSuccess(userCredentials.getIp(), userCredentials.getSocket(), userCredentials.getUsername());
+            } else {
+                loginInterface.onExplainingNeed("decode failed");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -155,14 +167,7 @@ public class LoginManager {
         @Override
         public void onAuthenticationSucceeded(FingerprintManagerCompat.AuthenticationResult result) {
             Cipher cipher = result.getCryptoObject().getCipher();
-            String encoded = mPreferences.getString(PASSWORD, null);
-            String decoded = cryptoManager.decode(encoded, cipher);
-            if (decoded != null) {
-                loginInterface.onExplainingNeed("fingerprint success");
-            } else {
-                loginInterface.onExplainingNeed("decoding failed");
-            }
-            loginInterface.onAuthSucceeded(decoded);
+            onAuthSucceeded(cipher);
         }
 
         @Override
