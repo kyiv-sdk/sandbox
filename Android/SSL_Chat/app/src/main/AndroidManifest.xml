@@ -3,12 +3,11 @@
     package="com.example.iyuro.ssl_chat">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.CAMERA"/>
-
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
 
     <application
@@ -18,16 +17,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.chatlibrary.chat.login.LoginActivity" />
-        <activity android:name="com.example.chatlibrary.chat.messenger.MessengerActivity" />
-        <activity android:name="com.example.chatlibrary.chat.user_list.UsersListActivity" />
+        <activity android:name=".messenger.MessengerActivity" />
+        <activity android:name=".user_list.UsersListActivity" />
     </application>
 
 </manifest>

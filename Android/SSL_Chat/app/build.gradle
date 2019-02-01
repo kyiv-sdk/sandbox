@@ -19,6 +19,16 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+//    configurations.all {
+//        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//            def requested = details.requested
+//            if (requested.group == "com.android.support") {
+//                if (!requested.name.startsWith("multidex")) {
+//                    details.useVersion "26.+"
+//                }
+//            }
+//        }
+//    }
 }
 
 dependencies {
@@ -28,7 +38,9 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:support-compat:28.0.0'
-    implementation project(':chatlibrary')
-    implementation project(':browser')
-    implementation project(':fingerprint')
+
+    implementation project(":mynetworklibrary")
+    implementation project(':crypto')
+    implementation project(':authentication')
+    implementation project(':storage')
 }
