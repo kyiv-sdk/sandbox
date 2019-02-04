@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class URL_NetworkManager implements URL_NetworkExecutorInterface, NativeNetworkInterface {
     private static final URL_NetworkManager ourInstance = new URL_NetworkManager();
     private URL_NetworkDataInterface URLNetworkDataInterface;
-    private Handler handler;
 
     private static int nextExecutorId = 0;
     private static ArrayList<URL_NetworkExecutor> URLNetworkExecutorsList = new ArrayList<>();
@@ -25,13 +24,11 @@ public class URL_NetworkManager implements URL_NetworkExecutorInterface, NativeN
         return ourInstance;
     }
 
-    private URL_NetworkManager() {
-        handler = new Handler();
-    }
+    private URL_NetworkManager() {}
 
     public void download(String request){
         URL_NetworkExecutor URLNetworkExecutor = new URL_NetworkExecutor(nextExecutorId++, this);
-//
+
         RequestParser requestParser = new RequestParser();
         requestParser.parse(request);
         if (requestParser.isValidRequest()) {
@@ -60,49 +57,39 @@ public class URL_NetworkManager implements URL_NetworkExecutorInterface, NativeN
 
     @Override
     public void onDataReceive(final int id, final byte[] bytesData) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                ResponseParser responseParser = new ResponseParser();
-                responseParser.parse(bytesData);
-                String data = responseParser.getData();
+        ResponseParser responseParser = new ResponseParser();
+        responseParser.parse(bytesData);
+        String data = responseParser.getData();
 
-                int responseCode = responseParser.getResponseCode();
-                if (responseCode == 301) {
-                    int locationIndex = data.indexOf("Location:");
-                    int contentTypeIndex = data.indexOf("Content-Type:");
+        int responseCode = responseParser.getResponseCode();
+        if (responseCode == 301) {
+            int locationIndex = data.indexOf("Location:");
+            int contentTypeIndex = data.indexOf("Content-Type:");
 
-                    String newRequest = data.substring(locationIndex + 10, contentTypeIndex - 2);
-                    download(newRequest);
-                } else {
-                    URLNetworkDataInterface.onDataReceive(id, data);
-                    closeNetworkExecutor(id);
-                }
-            }
-        });
+            String newRequest = data.substring(locationIndex + 10, contentTypeIndex - 2);
+            download(newRequest);
+        } else {
+            URLNetworkDataInterface.onDataReceive(id, data);
+            closeNetworkExecutor(id);
+        }
     }
 
     @Override
-    public void onMessageReceive(int headerLen, int fileLen, byte[] data) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                ResponseParser responseParser = new ResponseParser();
-                responseParser.parse(data);
-                String data = responseParser.getData();
+    public void onMessageReceive(int headerLen, int fileLen, byte[] bytesData) {
+        ResponseParser responseParser = new ResponseParser();
+        responseParser.parse(bytesData);
+        String data = responseParser.getData();
 
-                int responseCode = responseParser.getResponseCode();
-                if (responseCode == 301) {
-                    int locationIndex = data.indexOf("Location:");
-                    int contentTypeIndex = data.indexOf("Content-Type:");
+        int responseCode = responseParser.getResponseCode();
+        if (responseCode == 301) {
+            int locationIndex = data.indexOf("Location:");
+            int contentTypeIndex = data.indexOf("Content-Type:");
 
-                    String newRequest = data.substring(locationIndex + 10, contentTypeIndex - 2);
-                    download(newRequest);
-                } else {
-                    URLNetworkDataInterface.onDataReceive(0, data);
-                    closeNetworkExecutor(0);
-                }
-            }
-        });
+            String newRequest = data.substring(locationIndex + 10, contentTypeIndex - 2);
+            download(newRequest);
+        } else {
+            URLNetworkDataInterface.onDataReceive(0, data);
+            closeNetworkExecutor(0);
+        }
     }
 }

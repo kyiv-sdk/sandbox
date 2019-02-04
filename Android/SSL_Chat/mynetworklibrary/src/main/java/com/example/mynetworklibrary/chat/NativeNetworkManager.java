@@ -1,5 +1,7 @@
 package com.example.mynetworklibrary.chat;
 
+import android.os.Handler;
+
 public class NativeNetworkManager implements RawNetworkInterface {
     static {
         System.loadLibrary("native-lib");
@@ -8,9 +10,11 @@ public class NativeNetworkManager implements RawNetworkInterface {
     private static final NativeNetworkManager ourInstance = new NativeNetworkManager();
     private NativeNetworkInterface nativeNetworkInterface;
     private long cppMessageHandler;
+    private Handler handler;
 
     public NativeNetworkManager() {
         this.cppMessageHandler = -1;
+        this.handler = new Handler();
     }
 
     public static NativeNetworkManager getInstance() {
@@ -50,7 +54,12 @@ public class NativeNetworkManager implements RawNetworkInterface {
             cppMessageHandler = -1;
         } else {
             if (bytesData.length > 0) {
-                nativeNetworkInterface.onMessageReceive(headerLen, fileLen, bytesData);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        nativeNetworkInterface.onMessageReceive(headerLen, fileLen, bytesData);
+                    }
+                });
             }
         }
     }

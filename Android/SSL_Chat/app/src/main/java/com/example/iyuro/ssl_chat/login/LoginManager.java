@@ -2,7 +2,7 @@ package com.example.iyuro.ssl_chat.login;
 
 import android.app.KeyguardManager;
 import android.content.Context;
-import android.widget.Toast;
+import android.provider.Settings;
 
 import com.example.crypto.CryptoManager;
 import com.example.internal_storage_utils.InternalStorageUtils;
@@ -27,8 +27,6 @@ public class LoginManager implements NetworkInterface {
 
     private boolean alreadySignedUp;
 
-    private String android_id;
-
     public LoginManager(Context context, LoginInterface loginInterface) {
         this.loginInterface = loginInterface;
         this.mContext = context;
@@ -37,12 +35,29 @@ public class LoginManager implements NetworkInterface {
         this.alreadySignedUp = InternalStorageUtils.fileExists(mContext, USER_CREDENTIALS_FILENAME);
     }
 
-    private void logIn(String username){
+    public void prepareLogIn(){
+        if (!isDeviceSecure()){
+            loginInterface.onDeviceNotSecure();
+            return;
+        }
+
+        if (!isAlreadySignedUp()){
+            loginInterface.showSignUpScreen();
+        } else {
+            loginInterface.showAuthScreen();
+        }
+    }
+
+    private void logIn(UserCredentials userCredentials){
+        String android_id = Settings.Secure.getString(mContext.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
+        ChatManager.getInstance().setCurrentUserID(userCredentials.getUsername());
+        ChatManager.getInstance().openConnection(userCredentials.getIp(), Integer.parseInt(userCredentials.getPort()), true, android_id);
+
         NetworkManager.getInstance().setNetworkInterface(this);
 
-//        ChatManager.getInstance().openConnection(userCredentials.getIp(), Integer.parseInt(userCredentials.getPort()), true, android_id);
-        
-        byte[] request = MessageProtocol.getInstance().createLoginRequest(username).getBytes();
+        byte[] request = MessageProtocol.getInstance().createLoginRequest(userCredentials.getUsername()).getBytes();
         if (NetworkManager.getInstance().isConnectionOpen()) {
             NetworkManager.getInstance().send(request);
         } else {
@@ -50,46 +65,10 @@ public class LoginManager implements NetworkInterface {
         }
     }
 
-    @Override
-    public void onMessageReceive(final ChatMessage chatMessage) {
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-                if (chatMessage.getMessage().equals("ok")){
-                    loginInterface.onLoginSuccess();
-                } else {
-                    loginInterface.onLoginFailed();
-                }
-//            }
-//        });
-    }
-
     private boolean isDeviceSecure(){
         KeyguardManager keyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
 
         return keyguardManager.isKeyguardSecure();
-    }
-
-    private void saveCredentials(String ip, String port, String username) {
-        if (!isDeviceSecure()){
-            loginInterface.onExplainingNeed("User is not authenticated.\nYou should set password on your phone to work with this application");
-            return;
-        }
-
-        if ((ip != null && ip.length() > 0) &&
-                (port != null && port.length() > 0) &&
-                (username != null && username.length() > 0)) {
-
-            UserCredentials userCredentials = new UserCredentials(ip, port, username);
-
-            String encoded = cryptoManager.encode(userCredentials.toJSON().toString());
-
-            if (InternalStorageUtils.writeToFile(mContext, USER_CREDENTIALS_FILENAME, encoded.getBytes())){
-                logIn(username);
-            } else {
-                loginInterface.onExplainingNeed("Some issue with internal file system");
-            }
-        }
     }
 
     private boolean isAlreadySignedUp(){
@@ -121,26 +100,48 @@ public class LoginManager implements NetworkInterface {
     public void signIn(int resultCode){
         if (resultCode == RESULT_OK) {
             UserCredentials userCredentials = getCredentials();
-            logIn(userCredentials.getUsername());
+            if (userCredentials != null) {
+                logIn(userCredentials);
+            } else {
+                loginInterface.onExplainingNeed("bad user credentials");
+            }
         } else {
             loginInterface.showAuthScreen();
         }
     }
 
     public void signUp(String ip, String port, String username){
-
-    }
-
-    public void prepareLogIn(String android_id){
         if (!isDeviceSecure()){
-            loginInterface.onDeviceNotSecure();
+            loginInterface.onExplainingNeed("User is not authenticated.\nYou should set password on your phone to work with this application");
             return;
         }
 
-        if (!isAlreadySignedUp()){
-            loginInterface.showSignUpScreen();
+        if ((ip != null && ip.length() > 0) &&
+                (port != null && port.length() > 0) &&
+                (username != null && username.length() > 0)) {
+
+            UserCredentials userCredentials = new UserCredentials(ip, port, username);
+
+            if (saveCredentials(userCredentials)){
+                logIn(userCredentials);
+            } else {
+                loginInterface.onExplainingNeed("Some issue with internal file system");
+            }
+        }
+    }
+
+    private boolean saveCredentials(UserCredentials userCredentials) {
+        String encoded = cryptoManager.encode(userCredentials.toJSON().toString());
+
+        return InternalStorageUtils.writeToFile(mContext, USER_CREDENTIALS_FILENAME, encoded.getBytes());
+    }
+
+    @Override
+    public void onMessageReceive(final ChatMessage chatMessage) {
+        if (chatMessage.getMessage().equals("ok")){
+            loginInterface.onLoginSuccess();
         } else {
-            loginInterface.showAuthScreen();
+            loginInterface.onLoginFailed();
         }
     }
 }

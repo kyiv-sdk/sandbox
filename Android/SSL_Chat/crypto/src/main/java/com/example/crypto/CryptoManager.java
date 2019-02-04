@@ -201,21 +201,12 @@ public class CryptoManager {
 
     public String decode(String encodedString) {
         try {
-            prepare();
-            initDecodeCipher();
-            byte[] bytes = Base64.decode(encodedString, Base64.NO_WRAP);
-            return new String(mCipher.doFinal(bytes));
+            if (prepare() && initCipher(Cipher.DECRYPT_MODE)) {
+                byte[] bytes = Base64.decode(encodedString, Base64.NO_WRAP);
+                return new String(mCipher.doFinal(bytes));
+            }
         } catch (IllegalBlockSizeException | BadPaddingException exception) {
             exception.printStackTrace();
-        } catch (UnrecoverableKeyException e) {
-            deleteInvalidKey();
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
         }
         return null;
     }

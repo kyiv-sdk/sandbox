@@ -3,7 +3,6 @@ package com.example.iyuro.ssl_chat.login;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,8 +20,8 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
     private final int DEVICE_CREDENTIAL_REQUEST_ID = 1;
 
-    private EditText mIpEditText, mPortEditText,mUsernameEditText;
-    private Button signUpBtn, usePasswordBtn;
+    private EditText mIpEditText, mPortEditText, mUsernameEditText;
+    private Button signUpBtn;
     private LinearLayout fingerprint_layout;
     private TextView hintText;
 
@@ -32,11 +31,8 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String android_id = Settings.Secure.getString(this.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-
         loginManager = new LoginManager(this, this);
-        loginManager.prepareLogIn(android_id);
+        loginManager.prepareLogIn();
     }
 
     @Override
@@ -80,18 +76,10 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         mPortEditText = findViewById(R.id.secure_activity_port_edittext);
         mUsernameEditText = findViewById(R.id.secure_activity_username_edittext);
 
-        usePasswordBtn = findViewById(R.id.secure_activity_use_password_button);
-        signUpBtn = findViewById(R.id.secure_activity_sign_up_button);
-
         fingerprint_layout = findViewById(R.id.fingerprint_layout);
         hintText = findViewById(R.id.hint_text);
 
-        usePasswordBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAuthScreen();
-            }
-        });
+        signUpBtn = findViewById(R.id.secure_activity_sign_up_button);
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,7 +95,6 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         mUsernameEditText.setVisibility(View.VISIBLE);
         signUpBtn.setVisibility(View.VISIBLE);
         hintText.setVisibility(View.VISIBLE);
-        usePasswordBtn.setVisibility(View.GONE);
         fingerprint_layout.setVisibility(View.GONE);
     }
 
@@ -117,20 +104,6 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         Intent intent = keyguardManager.createConfirmDeviceCredentialIntent("Please, log in", "You can use password or fingerprint");
         startActivityForResult(intent, DEVICE_CREDENTIAL_REQUEST_ID);
     }
-
-//    @Override
-//    public void onAuthSuccess(UserCredentials userCredentials) {
-//
-//
-//        ChatManager.getInstance().setCurrentUserID(userCredentials.getUsername());
-//        ChatManager.getInstance().openConnection(userCredentials.getIp(), Integer.parseInt(userCredentials.getPort()), true, android_id);
-//        loginManager.logIn(userCredentials.getUsername());
-//    }
-//
-//    @Override
-//    public void onAuthFailed() {
-//        Toast.makeText(this, "Auth failed", Toast.LENGTH_SHORT).show();
-//    }
 
     @Override
     public void onExplainingNeed(String explaining) {
