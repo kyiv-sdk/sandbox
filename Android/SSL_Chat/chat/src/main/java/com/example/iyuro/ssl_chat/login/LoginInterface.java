@@ -2,7 +2,7 @@ package com.example.iyuro.ssl_chat.login;
 
 public interface LoginInterface {
     void onLoginSuccess();
-    void onLoginFailed();
+    void onSignUpFailed();
     void onConnectionClosed();
     void onDeviceNotSecure();
 

@@ -52,12 +52,6 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     }
 
     @Override
-    public void onLoginFailed() {
-        showSignUpScreen();
-        Toast.makeText(this, "Wrong log in", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void onConnectionClosed() {
         Toast.makeText(this, "Connection was closed. Restart your app.", Toast.LENGTH_SHORT).show();
     }
@@ -93,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                 String port = mPortEditText.getText().toString();
                 String username = mUsernameEditText.getText().toString();
                 loginManager.signUp(ip, port, username);
+                signUpBtn.setEnabled(false);
             }
         });
 
@@ -102,6 +97,11 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         signUpBtn.setVisibility(View.VISIBLE);
         hintText.setVisibility(View.VISIBLE);
         fingerprint_layout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onSignUpFailed() {
+        signUpBtn.setEnabled(true);
     }
 
     @Override
