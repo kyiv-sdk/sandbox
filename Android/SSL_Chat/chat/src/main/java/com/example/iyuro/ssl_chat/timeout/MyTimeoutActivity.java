@@ -1,9 +1,9 @@
 package com.example.iyuro.ssl_chat.timeout;
 
-import android.app.Activity;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 
-public class MyTimeoutActivity extends Activity {
+public class MyTimeoutActivity extends AppCompatActivity {
 
     private static int TIMEOUT = 5; // seconds
 
@@ -12,7 +12,7 @@ public class MyTimeoutActivity extends Activity {
     private static Runnable timeoutCallback = new Runnable() {
         @Override
         public void run() {
-
+            startAuth();
         }
     };
 
@@ -40,5 +40,9 @@ public class MyTimeoutActivity extends Activity {
     public void onStop() {
         super.onStop();
         stopTimer();
+    }
+
+    public static void startAuth(){
+
     }
 }
