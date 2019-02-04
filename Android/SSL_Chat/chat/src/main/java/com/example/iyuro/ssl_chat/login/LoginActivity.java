@@ -64,6 +64,12 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
     @Override
     public void onDeviceNotSecure() {
+        setContentView(R.layout.activity_login);
+
+        fingerprint_layout = findViewById(R.id.fingerprint_layout);
+        fingerprint_layout.setVisibility(View.VISIBLE);
+
+        hintText = findViewById(R.id.hint_text);
         hintText.setVisibility(View.VISIBLE);
         hintText.setText("User is not authenticated.\nYou should set password on your phone to work with this application");
     }
