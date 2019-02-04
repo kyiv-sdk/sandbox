@@ -43,4 +43,5 @@ dependencies {
     implementation project(':crypto')
     implementation project(':storage')
     implementation project(':authentication')
+    implementation project(':timeout')
 }
