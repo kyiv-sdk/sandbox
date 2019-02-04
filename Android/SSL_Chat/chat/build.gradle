@@ -41,6 +41,5 @@ dependencies {
 
     implementation project(":mynetworklibrary")
     implementation project(':crypto')
-    implementation project(':authentication')
     implementation project(':storage')
 }

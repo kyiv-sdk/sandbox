@@ -1,1 +1,1 @@
-include ':app', ':mynetworklibrary', ':browser', ':crypto', ':authentication', ':storage'
+include ':chat', ':mynetworklibrary', ':browser', ':crypto', ':storage'
