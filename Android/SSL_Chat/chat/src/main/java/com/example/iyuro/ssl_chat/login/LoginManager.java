@@ -125,6 +125,9 @@ public class LoginManager implements NetworkInterface {
 
             this.userCredentialsForLogin = new UserCredentials(ip, port, username);
 
+            InternalStorageUtils.deleteFile(mContext, USER_CREDENTIALS_FILENAME);
+            this.alreadySignedUp = false;
+
             logIn(this.userCredentialsForLogin);
         }
     }

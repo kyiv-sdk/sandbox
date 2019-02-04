@@ -50,4 +50,10 @@ public class InternalStorageUtils {
         File file = new File(path, filename);
         return file.exists();
     }
+
+    public static boolean deleteFile(Context context, String filename){
+        File path = context.getFilesDir();
+        File file = new File(path, filename);
+        return file.delete();
+    }
 }
