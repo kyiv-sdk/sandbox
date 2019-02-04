@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.authentication.AuthActivity;
 import com.example.iyuro.ssl_chat.R;
 import com.example.iyuro.ssl_chat.user_list.UsersListActivity;
 
@@ -106,8 +107,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
     @Override
     public void showAuthScreen() {
-        KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Context.KEYGUARD_SERVICE);
-        Intent intent = keyguardManager.createConfirmDeviceCredentialIntent("Please, log in", "You can use password or fingerprint");
+        Intent intent = new Intent(this, AuthActivity.class);
         startActivityForResult(intent, DEVICE_CREDENTIAL_REQUEST_ID);
     }
 
