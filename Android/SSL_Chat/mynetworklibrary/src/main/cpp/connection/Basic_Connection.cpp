@@ -51,20 +51,18 @@ void Basic_Connection::close_connection()
 
 void Basic_Connection::load(int &headerLen, int &fileLen, std::string &resultStr)
 {
-//    headerLen = readNum();
-//    fileLen = readNum();
-
-    int remainedLen = headerLen + fileLen;
     resultStr = "";
-    int bufLen = headerLen;
-    const int MAX_BUF_SIZE = 1024;
-    char buf[MAX_BUF_SIZE];
 
-    resultStr.reserve(headerLen + fileLen);
+    int all_len = headerLen + fileLen;
+
+    int remainedLen = all_len;
+    char buf[all_len];
+
+    resultStr.reserve(all_len);
 
     for (;;)
     {
-        int len = read(mSock, buf, bufLen);
+        int len = read(mSock, buf, remainedLen);
 
         if (len == 0)
             break;
@@ -78,22 +76,14 @@ void Basic_Connection::load(int &headerLen, int &fileLen, std::string &resultStr
 
         remainedLen -= len;
 
-        std::string sbuf(buf, len);
+        resultStr.append(buf, len);
 
-        resultStr.append(sbuf.c_str(), len);
-
-        memset(buf, 0, len);
         if (remainedLen <= 0)
         {
             break;
-        } else {
-            if (remainedLen > MAX_BUF_SIZE)
-            {
-                bufLen = MAX_BUF_SIZE;
-            } else {
-                bufLen = remainedLen;
-            }
         }
+
+        memset(buf, 0, len);
     }
 }
 
@@ -126,30 +116,12 @@ void Basic_Connection::load(std::string &resultStr)
     }
 }
 
-void Basic_Connection::write(std::string request)
+void Basic_Connection::write(std::string data)
 {
-    int strLen = request.length();
-    int MAX_BUF_SIZE = 1024;
-
-    int msgToSendLen = 0;
-    int i = 0;
-    while (strLen > 0)
+    int strLen = data.length();
+    if (send(mSock, data.c_str(), strLen, 0) != strLen)
     {
-        if (strLen > MAX_BUF_SIZE)
-        {
-            msgToSendLen = MAX_BUF_SIZE;
-        } else {
-            msgToSendLen = strLen;
-        }
-        strLen -= msgToSendLen;
-
-        std::string toSend = request.substr(i, i + msgToSendLen);
-        if (send(mSock, toSend.c_str(), msgToSendLen, 0) != msgToSendLen)
-        {
-            handle_error("Error sending request.");
-        }
-
-        i+= msgToSendLen;
+        handle_error("Error sending request.");
     }
 }
 

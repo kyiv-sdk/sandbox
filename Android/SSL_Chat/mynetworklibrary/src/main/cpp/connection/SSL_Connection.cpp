@@ -92,77 +92,50 @@ SSL_CTX* SSL_Connection::InitCTX(void)
     return mCtx;
 }
 
-void SSL_Connection::write(std::string request)
+void SSL_Connection::write(std::string data)
 {
-    int strLen = request.length();
-    int MAX_BUF_SIZE = 1024;
-
-    int msgToSendLen = 0;
-    int i = 0;
-    while (strLen > 0)
+    int strLen = data.length();
+    if (SSL_write(mSSL, data.c_str(), strLen) != strLen)
     {
-        if (strLen > MAX_BUF_SIZE)
-        {
-            msgToSendLen = MAX_BUF_SIZE;
-        } else {
-            msgToSendLen = strLen;
-        }
-        strLen -= msgToSendLen;
-
-        std::string toSend = request.substr(i, i + msgToSendLen);
-        if (SSL_write(mSSL, toSend.c_str(), msgToSendLen) != msgToSendLen)
-        {
-            handle_error("Error sending request.");
-        }
-
-        i+= msgToSendLen;
+        handle_error("Error sending request.");
     }
 }
 
 void SSL_Connection::load(int &headerLen, int &fileLen, std::string &resultStr)
 {
-//    headerLen = readNum();
-//    fileLen = readNum();
-
-    int remainedLen = headerLen + fileLen;
     resultStr = "";
-    int bufLen = headerLen;
-    const int MAX_BUF_SIZE = 1024;
-    char buf[MAX_BUF_SIZE];
 
-    resultStr.reserve(headerLen + fileLen);
+    int all_len = headerLen + fileLen;
+
+    int remainedLen = all_len;
+    char buf[all_len];
+
+    resultStr.reserve(all_len);
 
     for (;;)
     {
-        int len = SSL_read(mSSL, buf, bufLen);
+        int len = SSL_read(mSSL, buf, remainedLen);
 
         if (len == 0)
             break;
 
         if (len < 0)
         {
-            handle_error ("Failed reading response data");
+            handle_error ("Connection: Failed reading data");
+            resultStr = "";
             break;
         }
 
         remainedLen -= len;
 
-        std::string sbuf(buf, len);
+        resultStr.append(buf, len);
 
-        resultStr.append(sbuf.c_str(), len);
-
-        memset(buf, 0, len);
         if (remainedLen <= 0)
         {
             break;
-        } else {
-            if (remainedLen > MAX_BUF_SIZE)
-            {
-                bufLen = MAX_BUF_SIZE;
-            } else {
-                bufLen = remainedLen;
-            }
         }
+
+        memset(buf, 0, len);
     }
 }
 
