@@ -3,16 +3,14 @@ package com.example.timeout;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
-
-import java.sql.Time;
-import java.util.concurrent.TimeUnit;
+import android.util.Log;
 
 public class TimeoutService extends Service {
-    // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
 
     private ServiceHandler mServiceHandler;
@@ -20,24 +18,35 @@ public class TimeoutService extends Service {
     public static final String ACTION = "TIMEOUT_SERVICE_ACTION";
     private int time = 5; // seconds
 
-    // Define how the handler will process messages
+    private boolean isTimeOut = false;
+
+    private CountDownTimer mCountDownTimer;
+
     public final class ServiceHandler extends Handler {
-        // Define how to handle any incoming messages here
         @Override
         public void handleMessage(Message message) {
-            // ...
-            // When needed, stop the service with
-            // stopSelf();
         }
     }
 
     public TimeoutService() {
+        mCountDownTimer = new CountDownTimer(time * 1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                Log.i("--------MY_LOG--------", "Timer: seconds remaining: " + millisUntilFinished / 1000 + " " + isTimeOut);
+            }
+
+            public void onFinish() {
+                Intent intent = new Intent(ACTION);
+                intent.putExtra("result", "TimeOut");
+                notifyUser(intent);
+                isTimeOut = true;
+            }
+        };
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        // An Android service handler is a handler running on a specific background thread.
         mServiceHandler = new ServiceHandler();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
@@ -49,33 +58,26 @@ public class TimeoutService extends Service {
 
     public class LocalBinder extends Binder {
         TimeoutService getService() {
-            // Return this instance of LocalService so clients can call public methods
             return TimeoutService.this;
         }
     }
 
-    /** method for clients */
-    public int getRandomNumber() {
-        return 5;
+    public void resetTimer(){
+        mCountDownTimer.cancel();
+        mCountDownTimer.start();
+        isTimeOut = false;
     }
 
-    public void startTimer(){
-        try {
-            TimeUnit.SECONDS.sleep(time);
+    private void notifyUser(final Intent intent){
+        mServiceHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mLocalBroadcastManager.sendBroadcast(intent);
+            }
+        });
+    }
 
-            mServiceHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    // Send broadcast out with action filter and extras
-                    Intent intent = new Intent(ACTION);
-                    intent.putExtra("result", "baz");
-                    mLocalBroadcastManager.sendBroadcast(intent);
-                    // If desired, stop the service
-//                    stopSelf();
-                }
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public boolean isTimeOut() {
+        return isTimeOut;
     }
 }

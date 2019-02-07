@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.iyuro.ssl_chat.ChatManager;
 import com.example.iyuro.ssl_chat.R;
+import com.example.iyuro.ssl_chat.TimeoutActivityAdapter;
 import com.example.iyuro.ssl_chat.UI_Interface;
 import com.example.iyuro.ssl_chat.UserMessage;
 
@@ -25,7 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-public class MessengerActivity extends AppCompatActivity implements UI_Interface {
+public class MessengerActivity extends TimeoutActivityAdapter implements UI_Interface {
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
 
