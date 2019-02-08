@@ -106,6 +106,9 @@ public class LoginManager implements NetworkInterface {
                 logIn(userCredentialsForLogin);
             } else {
                 loginInterface.onExplainingNeed("bad user credentials");
+                InternalStorageUtils.deleteFile(mContext, USER_CREDENTIALS_FILENAME);
+                this.alreadySignedUp = false;
+                prepareLogIn();
             }
         } else {
             loginInterface.showAuthScreen();

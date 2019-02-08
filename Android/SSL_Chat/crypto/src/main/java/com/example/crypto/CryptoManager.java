@@ -1,6 +1,7 @@
 package com.example.crypto;
 
 import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import android.util.Log;
@@ -141,6 +142,9 @@ public class CryptoManager {
                     return false;
             }
             return true;
+        } catch (KeyPermanentlyInvalidatedException e){
+            deleteInvalidKey();
+            e.printStackTrace();
         } catch (InvalidKeyException e) {
             Log.i("--------MY_LOG--------", "invalid key detected");
             e.printStackTrace();
