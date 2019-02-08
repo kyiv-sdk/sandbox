@@ -1,7 +1,5 @@
 package com.example.iyuro.ssl_chat.login;
 
-import android.app.KeyguardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;

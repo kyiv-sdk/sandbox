@@ -1,22 +1,18 @@
 package com.example.iyuro.ssl_chat.user_list;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
-import com.example.authentication.AuthActivity;
 import com.example.iyuro.ssl_chat.ChatManager;
 import com.example.iyuro.ssl_chat.ChatUser;
 import com.example.iyuro.ssl_chat.R;
 import com.example.iyuro.ssl_chat.TimeoutActivityAdapter;
 import com.example.iyuro.ssl_chat.UI_Interface;
-import com.example.timeout.TimeoutActivity;
 
 import java.util.ArrayList;
 

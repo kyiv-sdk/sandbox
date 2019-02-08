@@ -16,7 +16,6 @@ public class AuthActivity extends AppCompatActivity implements AuthInterface{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_auth);
 
         authManager.setAuthInterface(this);
 
