@@ -1,0 +1,193 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@color/blue" >
+
+        <TextView
+            android:id="@+id/introduction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingLeft="5dp"
+            android:gravity="center_horizontal"
+            android:text="@string/login_manual"
+            android:textStyle="bold"
+            android:textColor="@color/white" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp" >
+
+            <RelativeLayout
+                android:id="@+id/usernamelayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <EditText
+                    android:id="@+id/editText1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:hint="Email"
+                    android:textColorHint="@color/grape"
+                    android:inputType="textWebEmailAddress" />
+
+            </RelativeLayout>
+
+           <RelativeLayout
+                android:id="@+id/linearLayout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/usernamelayout"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+               <EditText
+                    android:id="@+id/editText2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:hint="Key"
+                    android:inputType="textVisiblePassword"
+                    android:textColorHint="@color/grape" >
+                </EditText>
+
+           </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/nocAddressLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/linearLayout1"
+                android:layout_alignEnd="@+id/linearLayout1"
+                android:layout_below="@+id/linearLayout1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <com.good.gd.widget.GDAutoCompleteTextView
+                    android:id="@+id/autoCompleteNOCAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:completionThreshold="1"
+                    android:imeOptions="actionDone"
+                    android:inputType="textUri"
+                    android:maxLines="1"
+                    android:text=""
+                    android:hint="NOC address"
+                    android:textColorHint="@color/grape"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/ActivatiomStateLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/linearLayout1"
+                android:layout_alignEnd="@+id/linearLayout1"
+                android:layout_below="@+id/nocAddressLayout"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <com.good.gd.widget.GDAutoCompleteTextView
+                    android:id="@+id/activationState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:completionThreshold="1"
+                    android:imeOptions="actionDone"
+                    android:inputType="textUri"
+                    android:maxLines="1"
+                    android:textColorHint="@color/grape"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/ActivatiomLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/linearLayout1"
+                android:layout_alignEnd="@+id/linearLayout1"
+                android:layout_below="@+id/ActivatiomStateLayout"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <com.good.gd.widget.GDAutoCompleteTextView
+                    android:id="@+id/activationUIUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:completionThreshold="1"
+                    android:imeOptions="actionDone"
+                    android:inputType="textUri"
+                    android:maxLines="1"
+                    android:text=""
+                    android:visibility="gone"
+                    android:textColorHint="@color/grape"/>
+
+            </RelativeLayout>
+                      
+            <LinearLayout 
+                android:id="@+id/buttonLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="10dp">
+            <Button
+                android:id="@+id/login_with_ui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Activate With UI"
+                android:background="@drawable/button_background"
+                android:layout_margin="5dp" />
+
+                <Button
+                    android:id="@+id/login_without_ui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="Activate Without UI"
+                    android:background="@drawable/button_background"
+                    android:layout_margin="5dp" />
+
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Cancel" 
+                android:background="@drawable/button_background"
+                android:layout_margin="5dp" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
