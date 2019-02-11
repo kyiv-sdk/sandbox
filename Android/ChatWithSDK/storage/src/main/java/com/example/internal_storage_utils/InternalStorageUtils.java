@@ -1,7 +1,6 @@
 package com.example.internal_storage_utils;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.good.gd.file.File;
 import com.good.gd.file.FileInputStream;
