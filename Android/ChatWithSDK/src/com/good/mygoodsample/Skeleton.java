@@ -6,9 +6,11 @@
 package com.good.mygoodsample;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.iyuro.ssl_chat.login.LoginActivity;
 import com.good.gd.GDAndroid;
 import com.good.gd.GDStateListener;
 
@@ -27,7 +29,6 @@ public class Skeleton extends Activity implements GDStateListener {
 		super.onCreate(savedInstanceState);
 		
 		GDAndroid.getInstance().activityInit(this);
-		
 	}
 
 	/*
@@ -41,6 +42,9 @@ public class Skeleton extends Activity implements GDStateListener {
 		//If Activity specific GDStateListener is set then its onAuthorized( ) method is called when 
 		//the activity is started if the App is already authorized 
 		Log.i(TAG, "onAuthorized()");
+
+		Intent intent = new Intent(this, LoginActivity.class);
+		startActivity(intent);
 	}
 
 	@Override

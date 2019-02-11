@@ -1,5 +1,6 @@
 //   /Users/iyuro/Library/Android/sdk/extras/blackberry/dynamics_sdk/sdk/libs
-include 'GDLibrary'
+include 'GDLibrary', ':mynetworklibrary', ':storage', ':chat'
+
 project(':GDLibrary').projectDir = new File('/Users/iyuro/Library/Android/sdk/extras/blackberry/dynamics_sdk/sdk/libs/handheld/gd')
 include 'GDLibrary_BackupSupport'
 project(':GDLibrary_BackupSupport').projectDir = new File('/Users/iyuro/Library/Android/sdk/extras/blackberry/dynamics_sdk/sdk/libs/handheld/gd_backup_support')
