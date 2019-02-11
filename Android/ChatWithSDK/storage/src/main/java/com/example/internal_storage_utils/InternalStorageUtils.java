@@ -1,19 +1,23 @@
 package com.example.internal_storage_utils;
 
 import android.content.Context;
+import android.util.Log;
 
-import java.io.File;
-import java.io.FileInputStream;
+import com.good.gd.file.File;
+import com.good.gd.file.FileInputStream;
+import com.good.gd.file.FileOutputStream;
+import com.good.gd.file.GDFileSystem;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class InternalStorageUtils {
-    public static boolean writeToFile(Context context, String fileName, byte[] data){
+    private static final String PATH = "/";
+    private static final String EXTENSION = ".txt";
+    public static boolean writeToFile(String fileName, byte[] data){
         try {
-            File path = context.getFilesDir();
-            File file = new File(path, fileName);
-            FileOutputStream stream = new FileOutputStream(file);
+            FileOutputStream stream = GDFileSystem.openFileOutput(PATH + fileName + EXTENSION, Context.MODE_PRIVATE);
             stream.write(data);
             stream.close();
             return true;
@@ -25,18 +29,28 @@ public class InternalStorageUtils {
         return false;
     }
 
-    public static byte[] readFile(Context context, String fileName){
-        File path = context.getFilesDir();
-        File file = new File(path, fileName);
-        int length = (int) file.length();
-        byte[] bytes = new byte[length];
+    public static byte[] readFile(String fileName){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        FileInputStream in;
         try {
-            in = new FileInputStream(file);
-            in.read(bytes);
+            FileInputStream in = GDFileSystem.openFileInput(PATH + fileName + EXTENSION);
+
+            int i = 0;
+            int offset = 0;
+
+            while (true) {
+                byte[] buf = new byte[1024];
+                i = in.read(buf);
+
+                if (i >= 0) {
+                    outputStream.write(buf, offset, i);
+                } else {
+                    break;
+                }
+            }
+
             in.close();
-            return bytes;
+            return outputStream.toByteArray();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -45,15 +59,13 @@ public class InternalStorageUtils {
         return null;
     }
 
-    public static boolean fileExists(Context context, String filename){
-        File path = context.getFilesDir();
-        File file = new File(path, filename);
+    public static boolean fileExists(String filename){
+        File file = new File(PATH + filename + EXTENSION);
         return file.exists();
     }
 
-    public static boolean deleteFile(Context context, String filename){
-        File path = context.getFilesDir();
-        File file = new File(path, filename);
+    public static boolean deleteFile(String filename){
+        File file = new File(PATH + filename + EXTENSION);
         return file.delete();
     }
 }

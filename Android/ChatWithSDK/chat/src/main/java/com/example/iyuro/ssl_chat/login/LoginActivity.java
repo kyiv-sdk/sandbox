@@ -21,7 +21,6 @@ import java.util.Map;
 
 public class LoginActivity extends Activity implements LoginInterface, GDStateListener {
 
-    private final int DEVICE_CREDENTIAL_REQUEST_ID = 1;
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     private EditText mIpEditText, mPortEditText, mUsernameEditText;
@@ -43,8 +42,12 @@ public class LoginActivity extends Activity implements LoginInterface, GDStateLi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        if (requestCode == DEVICE_CREDENTIAL_REQUEST_ID) {
-//            loginManager.signIn(resultCode);
+//        if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {
+////            loginManager.signIn(resultCode);
+//            if (resultCode == RESULT_OK){
+//                loginManager = new LoginManager(this, this);
+//                loginManager.prepareLogIn();
+//            }
 //        }
     }
 

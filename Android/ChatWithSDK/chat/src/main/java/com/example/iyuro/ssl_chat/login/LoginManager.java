@@ -18,26 +18,19 @@ public class LoginManager implements NetworkInterface {
 
     private Context mContext;
 
-//    private CryptoManager cryptoManager;
-    private LoginInterface loginInterface;
-
     private boolean alreadySignedUp;
+    private LoginInterface loginInterface;
     private UserCredentials userCredentialsForLogin;
 
     public LoginManager(Context context, LoginInterface loginInterface) {
         this.loginInterface = loginInterface;
         this.mContext = context;
-//        this.cryptoManager = CryptoManager.getInstance();
 
-        this.alreadySignedUp = InternalStorageUtils.fileExists(mContext, USER_CREDENTIALS_FILENAME);
+        this.alreadySignedUp = InternalStorageUtils.fileExists(USER_CREDENTIALS_FILENAME);
         this.userCredentialsForLogin = null;
     }
 
     public void prepareLogIn(){
-//        if (!isDeviceSecure()){
-//            loginInterface.onDeviceNotSecure();
-//            return;
-//        }
 
         if (!isAlreadySignedUp()){
             loginInterface.showSignUpScreen();
@@ -63,23 +56,12 @@ public class LoginManager implements NetworkInterface {
         }
     }
 
-//    private boolean isDeviceSecure(){
-//        KeyguardManager keyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
-//
-//        return keyguardManager.isKeyguardSecure();
-//    }
-
     private boolean isAlreadySignedUp(){
         return alreadySignedUp;
     }
 
     private UserCredentials getCredentials(){
-        byte[] file = InternalStorageUtils.readFile(mContext, USER_CREDENTIALS_FILENAME);
-//        String decodedFile = cryptoManager.decode(new String(encodedFile));
-
-//        if (decodedFile == null){
-//            return null;
-//        }
+        byte[] file = InternalStorageUtils.readFile(USER_CREDENTIALS_FILENAME);
 
         try {
             JSONObject jsonObject = new JSONObject(new String(file));
@@ -101,26 +83,20 @@ public class LoginManager implements NetworkInterface {
             logIn(userCredentialsForLogin);
         } else {
             loginInterface.onExplainingNeed("bad user credentials");
-            InternalStorageUtils.deleteFile(mContext, USER_CREDENTIALS_FILENAME);
+            InternalStorageUtils.deleteFile(USER_CREDENTIALS_FILENAME);
             this.alreadySignedUp = false;
             prepareLogIn();
         }
     }
 
     public void signUp(String ip, String port, String username){
-//        if (!isDeviceSecure()){
-//            loginInterface.onExplainingNeed("User is not authenticated.\nY" +
-//                    "ou should set password on your phone to work with this application");
-//            return;
-//        }
-
         if ((ip != null && ip.length() > 0) &&
                 (port != null && port.length() > 0) &&
                 (username != null && username.length() > 0)) {
 
             this.userCredentialsForLogin = new UserCredentials(ip, port, username);
 
-            InternalStorageUtils.deleteFile(mContext, USER_CREDENTIALS_FILENAME);
+            InternalStorageUtils.deleteFile(USER_CREDENTIALS_FILENAME);
             this.alreadySignedUp = false;
 
             logIn(this.userCredentialsForLogin);
@@ -128,9 +104,7 @@ public class LoginManager implements NetworkInterface {
     }
 
     private boolean saveCredentials(UserCredentials userCredentials) {
-//        String encoded = cryptoManager.encode(userCredentials.toJSON().toString());
-
-        return InternalStorageUtils.writeToFile(mContext, USER_CREDENTIALS_FILENAME, userCredentials.toJSON().toString().getBytes());
+        return InternalStorageUtils.writeToFile(USER_CREDENTIALS_FILENAME, userCredentials.toJSON().toString().getBytes());
     }
 
     @Override
