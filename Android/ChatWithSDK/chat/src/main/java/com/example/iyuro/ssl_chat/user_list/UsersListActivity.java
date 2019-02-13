@@ -15,6 +15,7 @@ import com.example.iyuro.ssl_chat.ChatUser;
 import com.example.iyuro.ssl_chat.R;
 import com.example.iyuro.ssl_chat.UI_Interface;
 import com.good.gd.GDAndroid;
+import com.good.gd.GDAppEventListener;
 import com.good.gd.GDStateListener;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 public class UsersListActivity extends AppCompatActivity implements UI_Interface, GDStateListener {
 
     private static final String TAG = UsersListActivity.class.getSimpleName();
+
+    private boolean mLocked = true;
 
     private RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -100,9 +103,12 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
     }
 
     @Override
-    public void onNewMessage(String srcID, String message) {
+    public void onNewChatMessage(String srcID, String message) {
         mAdapter.notifyDataSetChanged();
-        Toast.makeText(this, "From " + srcID + " : " + message, Toast.LENGTH_SHORT).show();
+
+        if (!this.mLocked) {
+            Toast.makeText(this, "From " + srcID + " : " + message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -113,13 +119,17 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
     @Override
     public void onNewPhotoMessage(String srcID, Bitmap bitmap) {
         mAdapter.notifyDataSetChanged();
-        Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
+        if (!this.mLocked) {
+            Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onNewAudioMessage(String srcID, String filePath) {
         mAdapter.notifyDataSetChanged();
-        Toast.makeText(this, "From " + srcID + " : " + "audio", Toast.LENGTH_SHORT).show();
+        if (!this.mLocked) {
+            Toast.makeText(this, "From " + srcID + " : " + "audio", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -127,11 +137,15 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
         //If Activity specific GDStateListener is set then its onAuthorized( ) method is called when
         //the activity is started if the App is already authorized
         Log.i(TAG, "onAuthorized()");
+
+        this.mLocked = false;
     }
 
     @Override
     public void onLocked() {
         Log.i(TAG, "onLocked()");
+
+        this.mLocked = true;
     }
 
     @Override
