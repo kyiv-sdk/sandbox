@@ -23,15 +23,14 @@ import com.example.iyuro.ssl_chat.UserMessage;
 import com.good.gd.GDAndroid;
 import com.good.gd.GDStateListener;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class MessengerActivity extends AppCompatActivity implements UI_Interface, GDStateListener {
+public class MessengerActivity extends AppCompatActivity implements UI_Interface, GDStateListener, MessengerViewInterface {
 
     private static final String TAG = MessengerActivity.class.getSimpleName();
+
+    private boolean mLocked = true;
 
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
@@ -43,22 +42,32 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     private final int REQUEST_PLAY_AUDIO_PERMISSION = 3;
     private final int REQUEST_CAMERA_PERMISSION = 1;
     private final int REQUEST_CAMERA = 4;
-    private String mFileName = null;
-    private boolean mStartRecording = true;
-    private boolean mStartPlaying = true;
 
-    private AudioHandler audioHandler;
     private Button btnAudioRecording;
     private Button btnAudioListening;
 
     private EditText editText;
+
+    private MessengerPresenterInterface messengerPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        init();
+    }
+
+    private void init(){
         GDAndroid.getInstance().activityInit(this);
+
+        editText = findViewById(R.id.edittext_chatbox);
+        mMessageRecycler = findViewById(R.id.reyclerview_message_list);
+        btnAudioRecording = findViewById(R.id.button_audio_record);
+        btnAudioListening = findViewById(R.id.button_audio_listen);
+        Button btnSendAudio = findViewById(R.id.button_audio_send);
+        Button btnSendPhoto = findViewById(R.id.button_photo_send);
+        Button btnSendMessage = findViewById(R.id.button_chatbox_send);
 
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
@@ -69,35 +78,6 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             e.printStackTrace();
         }
 
-        editText = findViewById(R.id.edittext_chatbox);
-
-        Button btnMessage = findViewById(R.id.button_chatbox_send);
-        btnMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String msg = editText.getText().toString();
-                if (msg.length() > 0) {
-                    messageList.add(new UserMessage(msg, false));
-                    mMessageAdapter.notifyDataSetChanged();
-                    mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
-
-                    ChatManager.getInstance().sendMessage(dstId, msg);
-                }
-            }
-        });
-
-        Button btnPhoto = findViewById(R.id.button_photo_send);
-        btnPhoto.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (checkCameraPermission()){
-                    makePhoto();
-                }
-            }
-        });
-
-        mMessageRecycler = findViewById(R.id.reyclerview_message_list);
         messageList = ChatManager.getInstance().getUserMessagesByID(dstId);
         if (messageList == null) {
             Toast.makeText(this, "Message list in ChatManager is null", Toast.LENGTH_SHORT).show();
@@ -111,55 +91,54 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             }
         }
 
-        mFileName = getExternalCacheDir().getAbsolutePath();
-        mFileName += "/audiorecordtest" + "test" + ".3gp";
+        messengerPresenter = new MessengerPresenter(this, messageList, dstId,
+                getExternalCacheDir().getAbsolutePath() + "/");
+
+        btnSendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                messengerPresenter.sendMessage(editText.getText().toString());
+            }
+        });
+
+        btnSendPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkCameraPermission()){
+                    messengerPresenter.makePhoto();
+                }
+            }
+        });
 
         ChatManager.getInstance().setCurrentAbsolutePath(getExternalCacheDir().getAbsolutePath());
 
-        audioHandler = new AudioHandler();
-        audioHandler.setFileName(mFileName);
-
-        btnAudioRecording = findViewById(R.id.button_audio_record);
         btnAudioRecording.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (checkAudioPermission(REQUEST_RECORD_AUDIO_PERMISSION)) {
-                    recordAudio();
+                    messengerPresenter.recordAudio();
                 }
             }
         });
 
-        btnAudioListening = findViewById(R.id.button_audio_listen);
         btnAudioListening.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (checkAudioPermission(REQUEST_PLAY_AUDIO_PERMISSION)) {
-                    playAudio();
+                    messengerPresenter.playAudio();
                 }
             }
         });
 
-        Button btnSendAudio = findViewById(R.id.button_audio_send);
         btnSendAudio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String newFilePath = getExternalCacheDir().getAbsolutePath() + "/audiorecordtest" + String.valueOf(ChatManager.getNextFileID()) + ".3gp";
-
-                if (copyFile(mFileName,  newFilePath)) {
-                    messageList.add(new UserMessage(false, newFilePath));
-                    mMessageAdapter.notifyDataSetChanged();
-                    mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
-
-                    ChatManager.getInstance().sendAudio(dstId, newFilePath);
-                } else {
-                    Toast.makeText(getApplicationContext(), "No audio file yet", Toast.LENGTH_SHORT).show();
-                }
+                messengerPresenter.sendAudio();
             }
         });
     }
 
-    private boolean checkCameraPermission(){
+    public boolean checkCameraPermission(){
         if (checkSelfPermission(Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA},
@@ -188,7 +167,7 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     @Override
     public void onStop() {
         super.onStop();
-        audioHandler.close();
+        messengerPresenter.close();
     }
 
     @Override
@@ -198,13 +177,15 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     }
 
     @Override
-    public void onNewMessage(String srcID, String message) {
+    public void onNewChatMessage(String srcID, String message) {
         if (srcID.equals(this.dstId)){
             mMessageAdapter.notifyDataSetChanged();
             mMessageRecycler.scrollToPosition(messageList.size() - 1);
             ChatManager.getInstance().resetUnreadMessagesByUserID(dstId);
         } else {
-            Toast.makeText(this, "From " + srcID + " : " + message, Toast.LENGTH_SHORT).show();
+            if (!this.mLocked) {
+                Toast.makeText(this, "From " + srcID + " : " + message, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -215,7 +196,9 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             mMessageRecycler.scrollToPosition(messageList.size() - 1);
             ChatManager.getInstance().resetUnreadMessagesByUserID(dstId);
         } else {
-            Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
+            if (!this.mLocked) {
+                Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -226,7 +209,9 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             mMessageRecycler.scrollToPosition(messageList.size() - 1);
             ChatManager.getInstance().resetUnreadMessagesByUserID(dstId);
         } else {
-            Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
+            if (!this.mLocked) {
+                Toast.makeText(this, "From " + srcID + " : " + "photo", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -240,12 +225,9 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
             try {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
-                Toast.makeText(this, "photo success", Toast.LENGTH_SHORT).show();
+                messengerPresenter.sendPhoto(photo);
 
-                messageList.add(new UserMessage(photo, false));
-                mMessageAdapter.notifyDataSetChanged();
-                mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
-                ChatManager.getInstance().sendPhoto(dstId, photo);
+                Toast.makeText(this, "photo success", Toast.LENGTH_SHORT).show();
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -260,7 +242,7 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
                 if (grantResults.length > 0) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         Toast.makeText(this, "permission " + "REQUEST_CAMERA_PERMISSION" + " granted", Toast.LENGTH_LONG).show();
-                        makePhoto();
+                        messengerPresenter.makePhoto();
                     } else {
                         Toast.makeText(this, "permission " + "REQUEST_CAMERA_PERMISSION" + " denied", Toast.LENGTH_LONG).show();
                     }
@@ -269,7 +251,7 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             case REQUEST_RECORD_AUDIO_PERMISSION:
                 if (grantResults.length > 0) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        recordAudio();
+                        messengerPresenter.recordAudio();
                         Toast.makeText(this, "permission " + "REQUEST_AUDIO_PERMISSION" + " granted", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(this, "permission " + "REQUEST_AUDIO_PERMISSION" + " denied", Toast.LENGTH_LONG).show();
@@ -279,7 +261,7 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
             case REQUEST_PLAY_AUDIO_PERMISSION:
                 if (grantResults.length > 0) {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        playAudio();
+                        messengerPresenter.playAudio();
                         Toast.makeText(this, "permission " + "REQUEST_AUDIO_PERMISSION" + " granted", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(this, "permission " + "REQUEST_AUDIO_PERMISSION" + " denied", Toast.LENGTH_LONG).show();
@@ -289,54 +271,31 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         }
     }
 
-    public boolean copyFile(String fromFileName, String toFileName){
-        final File file = new File(fromFileName);
-        if (file.length() <= 0){
-            return false;
-        }
-
-        FileInputStream fis = null;
-        byte[] bytesArray = new byte[(int) file.length()];
-        try {
-            fis = new FileInputStream(file);
-            fis.read(bytesArray);
-            fis.close();
-
-            File newfile = new File(toFileName);
-            FileOutputStream fos = new FileOutputStream(newfile);
-            fos.write(bytesArray);
-            fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return true;
-    }
-
-    private void recordAudio(){
-        audioHandler.onRecord(mStartRecording);
-        if (mStartRecording) {
-            btnAudioRecording.setText("Stop recording");
-        } else {
-            btnAudioRecording.setText("Start recording");
-        }
-        mStartRecording = !mStartRecording;
-    }
-
-    private void playAudio(){
-        audioHandler.onPlay(mStartPlaying);
-        if (mStartPlaying) {
-            btnAudioListening.setText("Stop playing");
-        } else {
-            btnAudioListening.setText("Start playing");
-        }
-        mStartPlaying = !mStartPlaying;
-    }
-
-    private void makePhoto(){
+    @Override
+    public void startCameraActivity(){
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, REQUEST_CAMERA);
+    }
+
+    @Override
+    public void onMessagesListUpdate() {
+        mMessageAdapter.notifyDataSetChanged();
+        mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
+    }
+
+    @Override
+    public void showToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setBtnAudioListeningText(String text) {
+        btnAudioListening.setText(text);
+    }
+
+    @Override
+    public void setBtnAudioRecordingText(String text) {
+        btnAudioRecording.setText(text);
     }
 
     @Override
@@ -344,11 +303,15 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
         //If Activity specific GDStateListener is set then its onAuthorized( ) method is called when
         //the activity is started if the App is already authorized
         Log.i(TAG, "onAuthorized()");
+
+        this.mLocked = false;
     }
 
     @Override
     public void onLocked() {
         Log.i(TAG, "onLocked()");
+
+        this.mLocked = true;
     }
 
     @Override
