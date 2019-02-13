@@ -14,6 +14,7 @@ import java.io.IOException;
 public class InternalStorageUtils {
     private static final String PATH = "/";
     private static final String EXTENSION = ".txt";
+
     public static boolean writeToFile(String fileName, byte[] data){
         try {
             FileOutputStream stream = GDFileSystem.openFileOutput(PATH + fileName + EXTENSION, Context.MODE_PRIVATE);
@@ -66,5 +67,14 @@ public class InternalStorageUtils {
     public static boolean deleteFile(String filename){
         File file = new File(PATH + filename + EXTENSION);
         return file.delete();
+    }
+
+    public static boolean copyFile(String fromFileName, String toFileName){
+        byte[] fromFileContent = readFile(fromFileName);
+        if (fromFileContent != null){
+            return writeToFile(toFileName, fromFileContent);
+        }
+
+        return false;
     }
 }
