@@ -137,7 +137,7 @@ public class ChatManager implements NetworkInterface, ChatInterface{
             }
         }
 
-        UIInterface.onNewMessage(srcID, message);
+        UIInterface.onNewChatMessage(srcID, message);
     }
 
     @Override

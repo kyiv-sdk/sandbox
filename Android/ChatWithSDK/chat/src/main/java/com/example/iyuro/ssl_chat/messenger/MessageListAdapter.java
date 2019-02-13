@@ -102,10 +102,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                     int dimensionInPixel;
 
                     if(isImageFitToScreen) {
-                        isImageFitToScreen=false;
+                        isImageFitToScreen = false;
                         dimensionInPixel = 150;
-                    }else{
-                        isImageFitToScreen=true;
+                    } else {
+                        isImageFitToScreen = true;
                         dimensionInPixel = 300;
                     }
 
@@ -181,10 +181,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                     int dimensionInPixel;
 
                     if(isImageFitToScreen) {
-                        isImageFitToScreen=false;
+                        isImageFitToScreen = false;
                         dimensionInPixel = 150;
-                    }else{
-                        isImageFitToScreen=true;
+                    } else {
+                        isImageFitToScreen = true;
                         dimensionInPixel = 300;
                     }
 

@@ -10,7 +10,7 @@ import com.good.gd.GDStateListener;
 import java.util.Map;
 
 class GDEventListener implements GDStateListener {
-	
+
 	private static final String TAG = GDEventListener.class.getSimpleName();
 
 	@Override
@@ -20,7 +20,7 @@ class GDEventListener implements GDStateListener {
 
 	@Override
 	public void onLocked() {
-	
+
 	}
 
 	@Override

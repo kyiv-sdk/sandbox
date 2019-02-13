@@ -127,7 +127,7 @@ void Basic_Connection::write(std::string data)
 
 void Basic_Connection::handle_error (const char *msg)
 {
-    Logger::getInstance()->log("connection error");
+    Logger::getInstance()->log("Connection error");
     Logger::getInstance()->log(msg);
 }
 
