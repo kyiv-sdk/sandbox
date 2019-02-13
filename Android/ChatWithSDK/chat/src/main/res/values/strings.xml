@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">SSL_Chat</string>
     <string name="simpleJson">{\"dstID\":\"0\",\"message\":\"t\"}</string>
     <string name="title_activity_login">Sign in</string>
     <!-- Strings related to login -->
