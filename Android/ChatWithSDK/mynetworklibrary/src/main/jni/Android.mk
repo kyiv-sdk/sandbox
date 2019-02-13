@@ -13,11 +13,17 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../include
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE    := libgdndk_prebuilt
+LOCAL_SRC_FILES := $(TARGET_ARCH_ABI)/libgdndk_my.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../include
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
 
 LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
 LOCAL_MODULE    := native-lib
-LOCAL_SRC_FILES := ../cpp/jni_helpers/com_example_iyuro_ssl_chat_network_NetworkManager.cpp \
-                   ../cpp/jni_helpers/com_example_browser_url_NetworkExecutor.cpp \
+LOCAL_SRC_FILES := ../cpp/jni_helpers/com_example_mynetworklibrary_chat_NativeNetworkManager.cpp \
+                   ../cpp/jni_helpers/com_example_mynetworklibrary_url_URL_1NetworkExecutor.cpp \
                    ../cpp/jni_helpers/JNI_Helper.cpp \
                    ../cpp/connection/Basic_Connection.cpp \
                    ../cpp/connection/SSL_Connection.cpp \
@@ -28,9 +34,12 @@ LOCAL_SRC_FILES := ../cpp/jni_helpers/com_example_iyuro_ssl_chat_network_Network
                    ../cpp/url/NetworkExecutor.cpp \
                    ../cpp/url/NetworkExecutorAdapter.cpp \
                    ../cpp/url/HTTP_Client.cpp \
-                   ../cpp/url/HTTPS_Client.cpp
+                   ../cpp/url/HTTPS_Client.cpp \
+                   ../cpp/connection/Dynamics_Connection.cpp \
+                   ../cpp/connection/Dynamics_SSL_Connection.cpp
 
 LOCAL_STATIC_LIBRARIES := ssl_prebuilt crypto_prebuilt
+LOCAL_SHARED_LIBRARIES := libgdndk_prebuilt
 
 LOCAL_CPPFLAGS += -std=c++11 -fexceptions -lssl -lcrypto
 

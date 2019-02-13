@@ -4,8 +4,9 @@
 
 #include "MessageHandler.h"
 
-#include "../logger/Logger.h"
-#include "../connection/SSL_Connection.h"
+#include <Dynamics_Connection.h>
+#include <Dynamics_SSL_Connection.h>
+#include "Logger.h"
 
 MessageHandler::MessageHandler(const char *t_hostname, int t_port, bool t_isSSLEnabled, MessageHandlerAdapter *new_messageHandlerAdapter)
 {
@@ -61,10 +62,11 @@ void MessageHandler::send(int len, const char* message)
 void MessageHandler::managerFn()
 {
     Logger::getInstance()->log("managerFn() started!");
-    if (m_isSSLEnabled){
-        mConnection = new SSL_Connection();
+    if (m_isSSLEnabled)
+    {
+        mConnection = new Dynamics_SSL_Connection();
     } else {
-        mConnection = new Basic_Connection();
+        mConnection = new Dynamics_Connection();
     }
 
     mConnection->open_connection(m_hostname, m_port);
@@ -72,11 +74,10 @@ void MessageHandler::managerFn()
     if (!mConnection->isConnected())
     {
         mNeedOneMoreLoop = false;
+    } else {
+        Logger::getInstance()->log("Manager created");
+        mReaderThread = std::thread(&MessageHandler::readerFn, this);
     }
-
-    Logger::getInstance()->log("Manager created");
-
-    mReaderThread = std::thread(&MessageHandler::readerFn, this);
 
     std::unique_lock<std::mutex> lck(mMtx);
 
@@ -122,17 +123,23 @@ void MessageHandler::readerFn()
 
     while (mNeedOneMoreLoop) {
         Logger::getInstance()->log("reader: waiting for load...");
+
         int headerLen = 0, fileLen = 0;
         headerLen = mConnection->readNum();
         fileLen = mConnection->readNum();
         mConnection->load(headerLen, fileLen, resultStr);
+
         RawMessage rawMessage(headerLen, fileLen, true, resultStr);
 
         Logger::getInstance()->log("reader: try to lock...");
+
         std::unique_lock<std::mutex> lck(mMtx);
+
         Logger::getInstance()->log("reader: locked!");
+
         mMessagesToSend.push(rawMessage);
         mCv.notify_all();
+
         Logger::getInstance()->log("readerFn");
         Logger::getInstance()->log(resultStr.c_str());
 
