@@ -10,3 +10,6 @@ captures
 captures
 out
 META-INF
+*.aar
+libgdndk_my.so
+*.apk
