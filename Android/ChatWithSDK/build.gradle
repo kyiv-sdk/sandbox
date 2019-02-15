@@ -81,5 +81,21 @@ dependencies {
     api project(':GDLibrary_BackupSupport')
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation project(':chat')
+    implementation files('libs/smime.jar')
 }
+
+tasks.whenTaskAdded { currentTask ->
+    def prefix = 'transformClassesAndResourcesWithProguardFor'
+    if (currentTask.name.startsWith(prefix)) {
+        def taskName = currentTask.name.replace(prefix, 'createProguardDictionariesFor')
+        task "$taskName" {
+            doLast {
+                apply from: 'createRandomizedDictonaries.gradle'
+            }
+        }
+
+        currentTask.dependsOn "$taskName"
+    }
+}
+
 

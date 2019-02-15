@@ -12,14 +12,11 @@
 
 ## Rules for GD and its included library components
 
--keepclasseswithmembers class com.good.gd.** { <fields>; native <methods>; }
--keep class com.good.gt.** { *; }
--keep class com.good.gd.database.** { *; }
--keep class com.good.gd.ndkproxy.** {  <methods>;  <fields>; }
--keep class com.good.gd.GDServiceDetail { <methods>; <fields>; }
--keep class com.good.gd.GDAppServer { <methods>; <fields>; }
--keep class com.good.gd.GDServiceProvider { <methods>; <fields>; }
+-keepnames,includedescriptorclasses public class com.good.gd.** { *; }
+-keepnames,includedescriptorclasses public class com.good.gt.** { *; }
+-keepnames,includedescriptorclasses public class com.blackberry.attestation.** { *; }
 
+-keep class **.ndkproxy.** {  *; }
 
 # these appear in the AndroidManifest.xml, so need to retain their proper names
 -keep public class com.good.gd.GDIccReceivingActivity
@@ -27,19 +24,24 @@
 -keep public class com.good.gd.service.GDIccService
 -keep public class com.good.gd.ui.GDInternalActivity
 -keep public class com.good.gd.ui.dialogs.GDDialogActivity
--keep public class com.good.gt.ndkproxy.icc.IccManagerService
--keep public class com.good.gt.ndkproxy.icc.IccActivity
 -keep public class com.good.gd.ui.subcontainer_activationui.GTWearActivationUIActivity
 -keep public class com.good.gd.ui.runtimepermissions_ui.GDRuntimePermissionsControlActivity
 -keep public class com.good.gt.wearsupport.GTWearInterDeviceListenService
+-keep public class com.android.vending.licensing.ILicensingService
 
+-keep public class com.good.gd.ui_control.GDMonitorFragment
 
-## GD SDK makes use of Android Platform APIs which are new in versions of Android above the base supported 
-## API level 10. If running Proguard with a Target SDK below the latest Android API level Proguard may throw
-## warnings on the use of these APIs (because it couldn't find them in the underlying Android Platform JAR which is 
-## being built against). Good Technology have ensured the appropriate run time checks are made before attempting to use
+-keepclassmembers public class com.good.gt.gfe.util.GTServiceDiscovery,
+                               com.good.gd.GDServiceDetail,
+                               com.good.gd.GDServiceProvider { *; }
+
+## GD SDK makes use of Android Platform APIs which are new in versions of Android above the base supported
+## API level 23. If running Proguard with a Target SDK below the latest Android API level Proguard may throw
+## warnings on the use of these APIs (because it couldn't find them in the underlying Android Platform JAR which is
+## being built against). BlackBerry have ensured the appropriate run time checks are made before attempting to use
 ## any such API. Warnings of APIs not being found can therefore be ignored in GD SDK classes
 -dontwarn com.good.gd.**
+-dontwarn com.good.gt.**
 
 
 -dontwarn com.google.android.gms.**
@@ -51,7 +53,7 @@
 }
 -dontwarn com.samsung.android.**
 
-## Recommended Application Proguard settings 
+## Recommended Application Proguard settings
 -optimizationpasses 5
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
@@ -66,9 +68,8 @@
 -keep public class * extends android.content.ContentProvider
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends android.preference.Preference
--keep public class com.android.vending.licensing.ILicensingService
 
--keepclasseswithmembernames class * {
+-keepclasseswithmembers,includedescriptorclasses class * {
     native <methods>;
 }
 
@@ -93,3 +94,9 @@
   public static final android.os.Parcelable$Creator *;
 }
 
+# keep everything in this package from being removed or renamed
+-keep class com.example.mynetworklibrary.** { *; }
+
+-obfuscationdictionary keywords.txt
+-classobfuscationdictionary classkeywords.txt
+-packageobfuscationdictionary packagekeywords.txt
