@@ -21,7 +21,7 @@ include $(PREBUILT_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
-LOCAL_MODULE    := native-lib
+LOCAL_MODULE    := libnative-lib
 LOCAL_SRC_FILES := ../cpp/jni_helpers/com_example_mynetworklibrary_chat_NativeNetworkManager.cpp \
                    ../cpp/jni_helpers/com_example_mynetworklibrary_url_URL_1NetworkExecutor.cpp \
                    ../cpp/jni_helpers/JNI_Helper.cpp \

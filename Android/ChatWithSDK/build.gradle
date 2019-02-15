@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+apply from: 'createRandomizedDictonaries.gradle'
+
 buildscript {
 
     dependencies {
@@ -56,6 +58,14 @@ android {
         minSdkVersion 24
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
+
+        externalNativeBuild {
+            ndk {
+                cFlags "-std=c++11 -fexceptions"
+                ldLibs "log"
+                abiFilters 'x86', 'armeabi-v7a'
+            }
+        }
     }
     defaultPublishConfig "AppDebug"
     publishNonDefault true
@@ -79,9 +89,15 @@ android {
 dependencies {
     api project(':GDLibrary')
     api project(':GDLibrary_BackupSupport')
+
     implementation 'com.android.support:appcompat-v7:28.0.0'
+
     implementation project(':chat')
     implementation files('libs/smime.jar')
+
+//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+//    androidTestImplementation 'junit:junit:4.12'
 }
 
 tasks.whenTaskAdded { currentTask ->
@@ -90,10 +106,9 @@ tasks.whenTaskAdded { currentTask ->
         def taskName = currentTask.name.replace(prefix, 'createProguardDictionariesFor')
         task "$taskName" {
             doLast {
-                apply from: 'createRandomizedDictonaries.gradle'
+                tasks.getByName('createRandomizedDictonaries').execute()
             }
         }
-
         currentTask.dependsOn "$taskName"
     }
 }
