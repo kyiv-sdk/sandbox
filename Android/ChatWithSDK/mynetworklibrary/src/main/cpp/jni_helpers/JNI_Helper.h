@@ -11,14 +11,18 @@
 class JNI_Helper
 {
 public:
-    JNI_Helper();
     static jmethodID mMessageHandlerOnSuccessMethodId;
     static jmethodID mNetworkExecutorOnSuccessMethodId;
+
+    static JavaVM* getJVM();
+    static jmethodID getGlobalMethodIdNetworkSingleton(JNIEnv *env);
+    static jmethodID getGlobalMethodIdMessageHandler(JNIEnv *env);
+
+    JNI_Helper();
 
     JNIEnv *getEnv();
     JNIEnv *attachEnv();
     void detachMyThread();
-    static JavaVM* getJVM();
     void checkPendingExceptions(JNIEnv *env, std::string s);
 private:
     JNIEnv *mEnv;
