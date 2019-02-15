@@ -1,7 +1,6 @@
 package com.example.iyuro.ssl_chat;
 
 import android.content.Context;
-
 import android.content.Intent;
 
 import org.junit.Before;
@@ -26,7 +25,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
-public class ExampleInstrumentedTest {
+public class MyExampleInstrumentedTest {
 
     private static final String BASIC_SAMPLE_PACKAGE
             = "com.good.mygoodsample.Skeleton";
