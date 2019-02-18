@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.iyuro.ssl_chat.ChatManager;
@@ -22,6 +21,7 @@ import com.example.iyuro.ssl_chat.UI_Interface;
 import com.example.iyuro.ssl_chat.UserMessage;
 import com.good.gd.GDAndroid;
 import com.good.gd.GDStateListener;
+import com.good.gd.widget.GDEditText;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -46,14 +46,14 @@ public class MessengerActivity extends AppCompatActivity implements UI_Interface
     private Button btnAudioRecording;
     private Button btnAudioListening;
 
-    private EditText editText;
+    private GDEditText editText;
 
     private MessengerPresenterInterface messengerPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_messenger);
 
         init();
     }

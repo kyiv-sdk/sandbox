@@ -4,10 +4,8 @@ public interface LoginInterface {
     void onLoginSuccess();
     void onSignUpFailed();
     void onConnectionClosed();
-    void onDeviceNotSecure();
 
     void showSignUpScreen();
-    void showAuthScreen();
 
     void onExplainingNeed(String explaining);
 }
