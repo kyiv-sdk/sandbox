@@ -1,6 +1,6 @@
-//tasks.register("createRandomizedDictonaries")  {
-//    doLast {
-        println 'It works!!!!!'
+tasks.register("createRandomizedDictonaries")  {
+    doLast {
+        println 'createRandomizedDictonaries works!!!!!'
         final int LEFT_CHAR_LIMIT = 97
         final int RIGHT_CHAR_LIMIT = 122
 
@@ -36,5 +36,5 @@
         packageKeysFile.close()
         classKeysFile.close()
         mainKeysFile.close()
-//    }
-//}
+    }
+}
