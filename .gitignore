@@ -14,3 +14,4 @@ META-INF
 libgdndk_my.so
 *.apk
 Android/libs
+smime.jar
