@@ -19,14 +19,6 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
-
-    useLibrary 'android.test.runner'
-    useLibrary 'android.test.base'
-    useLibrary 'android.test.mock'
-
-    packagingOptions {
-        exclude 'META-INF/proguard/androidx-annotations.pro'
-    }
 }
 
 allprojects {
@@ -48,10 +40,4 @@ dependencies {
 
     implementation project(":mynetworklibrary")
     implementation project(':storage')
-
-//    implementation 'androidx.annotation:annotation:1.0.0'
-    implementation 'androidx.test:runner:1.1.0'
-    implementation 'androidx.test.espresso:espresso-core:3.1.0'
-    implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-    implementation 'androidx.test.ext:junit:1.1.0'
 }
