@@ -13,3 +13,4 @@ META-INF
 *.aar
 libgdndk_my.so
 *.apk
+Android/libs
