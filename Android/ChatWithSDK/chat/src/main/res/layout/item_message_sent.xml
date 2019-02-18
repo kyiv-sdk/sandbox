@@ -5,10 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:id="@+id/sent_message">
 
     <TextView
-        android:id="@+id/text_message_body"
+        android:id="@+id/text_message_body_sent"
         android:text="hello, hello!"
         android:background="@drawable/rounded_rectangle_green"
         android:layout_width="wrap_content"
@@ -20,15 +21,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageViewSent"
+        android:id="@+id/image_view_sent"
         android:layout_height="150dp"
         android:layout_width="150dp"
-        app:layout_constraintRight_toLeftOf="@id/text_message_body"
+        app:layout_constraintRight_toLeftOf="@id/text_message_body_sent"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"/>
 
     <Button
-        android:id="@+id/button_sent_audio_listen"
+        android:id="@+id/button_audio_listen_sent"
         android:text="Start playing"
         android:textSize="11dp"
         android:background="@drawable/rounded_rectangle_blue"
@@ -36,7 +37,7 @@
         android:layout_width="64dp"
         android:layout_height="48dp"
         android:textColor="#ffffff"
-        app:layout_constraintRight_toLeftOf="@id/text_message_body"
+        app:layout_constraintRight_toLeftOf="@id/text_message_body_sent"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone" />
 

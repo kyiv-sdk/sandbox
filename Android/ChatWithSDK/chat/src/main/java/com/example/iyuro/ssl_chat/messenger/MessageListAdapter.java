@@ -86,9 +86,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         SentMessageHolder(final View itemView) {
             super(itemView);
 
-            messageText = itemView.findViewById(R.id.text_message_body);
-            imageView = itemView.findViewById(R.id.imageViewSent);
-            button = itemView.findViewById(R.id.button_sent_audio_listen);
+            messageText = itemView.findViewById(R.id.text_message_body_sent);
+            imageView = itemView.findViewById(R.id.image_view_sent);
+            button = itemView.findViewById(R.id.button_audio_listen_sent);
 
             isImageFitToScreen = false;
 
@@ -165,8 +165,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         ReceivedMessageHolder(final View itemView) {
             super(itemView);
 
-            messageText = itemView.findViewById(R.id.text_message_body);
-            imageView = itemView.findViewById(R.id.imageViewReceived);
+            messageText = itemView.findViewById(R.id.text_message_body_received);
+            imageView = itemView.findViewById(R.id.image_view_received);
             button = itemView.findViewById(R.id.button_sent_audio_received);
 
             isImageFitToScreen = false;
