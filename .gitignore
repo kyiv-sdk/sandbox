@@ -15,3 +15,4 @@ libgdndk_my.so
 *.apk
 Android/libs
 smime.jar
+*key*.txt
