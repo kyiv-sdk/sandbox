@@ -1,1 +1,1 @@
-include ':GDLibrary', ':GDLibrary_BackupSupport', ':mynetworklibrary', ':storage', ':chat'
+include ':GDLibrary', ':GDLibrary_BackupSupport', ':mynetworklibrary', ':storage', ':chat', ':browser'

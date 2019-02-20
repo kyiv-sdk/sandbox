@@ -3,10 +3,10 @@ package com.example.mynetworklibrary.url;
 import android.os.Handler;
 
 public class URL_NetworkExecutor {
-    private int id;
-    private URL_NetworkExecutorInterface URLNetworkExecutorInterface;
-    private long cppNetworkManager = 0;
-    private Handler handler;
+    protected int id;
+    protected URL_NetworkExecutorInterface URLNetworkExecutorInterface;
+    protected long cppNetworkManager = 0;
+    protected Handler handler;
 
     public URL_NetworkExecutor(int id, URL_NetworkExecutorInterface URLNetworkExecutorInterface) {
         this.id = id;
@@ -22,7 +22,7 @@ public class URL_NetworkExecutor {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                URLNetworkExecutorInterface.onDataReceive(id, bytesData);
+                URLNetworkExecutorInterface.onDataReceive(id, bytesData, true);
             }
         });
     }

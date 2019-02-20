@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.good.mygoodsample"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/gd_backup_scheme"
+        android:name="com.good.mygoodsample.SkeletonApplication">
+
+        <meta-data android:name="GDApplicationVersion" android:value ="1.0.0.0" />
+
+
+        <!-- An Activity in the application - this is something the user
+             can launch and interact with.  The "name" attribute is the
+             name of the class within your package that implements this
+             activity.-->
+        <activity
+            android:name="com.good.mygoodsample.Skeleton"
+            android:enabled="true">
+
+            <!-- An IntentFilter tells the system when it should use your
+                 activity.  This allows the user to get to your activity
+                 without someone having to explicitly know to launch your
+                 class "com.examplel.android.skeletonapp.SkeletonActivity". -->
+            <intent-filter>
+                <!-- The MAIN action describes a main entry point into an
+                     activity, without any associated data. -->
+                <action android:name="android.intent.action.MAIN" />
+
+                <!-- This places this activity into the main app list. -->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.good.mygoodsample.url.URL_DownloadActivity"/>
+    </application>
+
+</manifest>
