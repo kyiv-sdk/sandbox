@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('android_handheld_platform-5.0.0.47.aar'))
