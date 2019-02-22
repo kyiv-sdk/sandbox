@@ -173,7 +173,7 @@ public class ChatManager implements NetworkInterface, ChatInterface{
         if (NetworkManager.getInstance().isConnectionOpen()) {
             return true;
         } else {
-            if (UIInterface != null) UIInterface.onConnectionClosed();
+            UIInterface.onConnectionClosed();
         }
         return false;
     }

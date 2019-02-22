@@ -15,6 +15,7 @@ import com.example.iyuro.ssl_chat.ChatUser;
 import com.example.iyuro.ssl_chat.R;
 import com.example.iyuro.ssl_chat.UI_Interface;
 import com.good.gd.GDAndroid;
+import com.good.gd.GDAppEventListener;
 import com.good.gd.GDStateListener;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
     private static final String TAG = UsersListActivity.class.getSimpleName();
 
     private boolean mLocked = true;
+
     private RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -56,7 +58,20 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
             e.printStackTrace();
         }
 
-        initRecyclerView();
+        RecyclerView mRecyclerView = findViewById(R.id.usersListRecyclerView);
+        DividerItemDecoration itemDecor = new DividerItemDecoration(this, HORIZONTAL);
+        mRecyclerView.addItemDecoration(itemDecor);
+
+        mRecyclerView.setHasFixedSize(true);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        ChatManager.getInstance().refreshNetworkInterface();
+        ArrayList<ChatUser> allLoggedUsersList = ChatManager.getInstance().getChatUserArrayList();
+
+        mAdapter = new UsersListAdapter(allLoggedUsersList, this);
+        mRecyclerView.setAdapter(mAdapter);
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshUsersList);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -67,19 +82,6 @@ public class UsersListActivity extends AppCompatActivity implements UI_Interface
         });
 
         requestUsersList();
-    }
-
-    private void initRecyclerView(){
-        RecyclerView mRecyclerView = findViewById(R.id.usersListRecyclerView);
-        DividerItemDecoration itemDecor = new DividerItemDecoration(this, HORIZONTAL);
-        mRecyclerView.addItemDecoration(itemDecor);
-        mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        ChatManager.getInstance().refreshNetworkInterface();
-        ArrayList<ChatUser> allLoggedUsersList = ChatManager.getInstance().getChatUserArrayList();
-        mAdapter = new UsersListAdapter(allLoggedUsersList, this);
-        mRecyclerView.setAdapter(mAdapter);
     }
 
     public void requestUsersList(){

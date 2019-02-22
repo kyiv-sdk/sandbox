@@ -14,8 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LoginManager implements NetworkInterface {
-    private static final String PATH = "/";
-    private static final String EXTENSION = ".txt";
     private final String USER_CREDENTIALS_FILENAME = "SUPER_SECRET_FILE";
 
     private Context mContext;
@@ -28,22 +26,20 @@ public class LoginManager implements NetworkInterface {
         this.loginInterface = loginInterface;
         this.mContext = context;
 
-        this.alreadySignedUp = InternalStorageUtils.fileExists(PATH + USER_CREDENTIALS_FILENAME + EXTENSION);
+        this.alreadySignedUp = InternalStorageUtils.fileExists(USER_CREDENTIALS_FILENAME);
         this.userCredentialsForLogin = null;
     }
 
     public void prepareLogIn(){
 
         if (!isAlreadySignedUp()){
-            if (loginInterface != null){
-                loginInterface.showSignUpScreen();
-            }
+            loginInterface.showSignUpScreen();
         } else {
             signIn();
         }
     }
 
-    private boolean logIn(UserCredentials userCredentials){
+    private void logIn(UserCredentials userCredentials){
         String android_id = Settings.Secure.getString(mContext.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
@@ -55,13 +51,9 @@ public class LoginManager implements NetworkInterface {
         byte[] request = MessageProtocol.getInstance().createLoginRequest(userCredentials.getUsername()).getBytes();
         if (NetworkManager.getInstance().isConnectionOpen()) {
             NetworkManager.getInstance().send(request);
-            return true;
         } else {
-            if (loginInterface != null){
-                loginInterface.onConnectionClosed();
-            }
+            loginInterface.onConnectionClosed();
         }
-        return false;
     }
 
     private boolean isAlreadySignedUp(){
@@ -69,7 +61,7 @@ public class LoginManager implements NetworkInterface {
     }
 
     private UserCredentials getCredentials(){
-        byte[] file = InternalStorageUtils.readFile(PATH + USER_CREDENTIALS_FILENAME + EXTENSION);
+        byte[] file = InternalStorageUtils.readFile(USER_CREDENTIALS_FILENAME);
 
         try {
             JSONObject jsonObject = new JSONObject(new String(file));
@@ -85,20 +77,16 @@ public class LoginManager implements NetworkInterface {
         return null;
     }
 
-    public boolean signIn(){
+    public void signIn(){
         userCredentialsForLogin = getCredentials();
         if (userCredentialsForLogin != null) {
-            return logIn(userCredentialsForLogin);
+            logIn(userCredentialsForLogin);
         } else {
-            if (loginInterface != null){
-                loginInterface.onExplainingNeed("bad user credentials");
-            }
-            InternalStorageUtils.deleteFile(PATH + USER_CREDENTIALS_FILENAME + EXTENSION);
+            loginInterface.onExplainingNeed("bad user credentials");
+            InternalStorageUtils.deleteFile(USER_CREDENTIALS_FILENAME);
             this.alreadySignedUp = false;
             prepareLogIn();
         }
-
-        return false;
     }
 
     public void signUp(String ip, String port, String username){
@@ -108,7 +96,7 @@ public class LoginManager implements NetworkInterface {
 
             this.userCredentialsForLogin = new UserCredentials(ip, port, username);
 
-            InternalStorageUtils.deleteFile(PATH + USER_CREDENTIALS_FILENAME + EXTENSION);
+            InternalStorageUtils.deleteFile(USER_CREDENTIALS_FILENAME);
             this.alreadySignedUp = false;
 
             logIn(this.userCredentialsForLogin);
@@ -116,24 +104,22 @@ public class LoginManager implements NetworkInterface {
     }
 
     private boolean saveCredentials(UserCredentials userCredentials) {
-        return InternalStorageUtils.writeToFile(PATH + USER_CREDENTIALS_FILENAME + EXTENSION, userCredentials.toJSON().toString().getBytes());
+        return InternalStorageUtils.writeToFile(USER_CREDENTIALS_FILENAME, userCredentials.toJSON().toString().getBytes());
     }
 
     @Override
     public void onMessageReceive(final ChatMessage chatMessage) {
-        if (loginInterface != null){
-            if (chatMessage.getMessage().equals("ok")){
-                if ( !isAlreadySignedUp() && !(this.userCredentialsForLogin != null && saveCredentials(this.userCredentialsForLogin)) ){
-                    loginInterface.onExplainingNeed("Some issue with internal file system. Credentials was not saved.");
-                }
-                loginInterface.onLoginSuccess();
+        if (chatMessage.getMessage().equals("ok")){
+            if ( !isAlreadySignedUp() && !(this.userCredentialsForLogin != null && saveCredentials(this.userCredentialsForLogin)) ){
+                loginInterface.onExplainingNeed("Some issue with internal file system. Credentials was not saved.");
+            }
+            loginInterface.onLoginSuccess();
+        } else {
+            loginInterface.onExplainingNeed("Wrong log in. Try to change username.");
+            if (isAlreadySignedUp()) {
+                loginInterface.showSignUpScreen();
             } else {
-                loginInterface.onExplainingNeed("Wrong log in. Try to change username.");
-                if (isAlreadySignedUp()) {
-                    loginInterface.showSignUpScreen();
-                } else {
-                    loginInterface.onLoginFailed();
-                }
+                loginInterface.onSignUpFailed();
             }
         }
     }
