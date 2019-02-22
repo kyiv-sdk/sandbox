@@ -12,12 +12,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class InternalStorageUtils {
-    private static final String PATH = "/";
-    private static final String EXTENSION = ".txt";
+    
 
     public static boolean writeToFile(String fileName, byte[] data){
         try {
-            FileOutputStream stream = GDFileSystem.openFileOutput(PATH + fileName + EXTENSION, Context.MODE_PRIVATE);
+            FileOutputStream stream = GDFileSystem.openFileOutput(fileName, Context.MODE_PRIVATE);
             stream.write(data);
             stream.close();
             return true;
@@ -33,7 +32,7 @@ public class InternalStorageUtils {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         try {
-            FileInputStream in = GDFileSystem.openFileInput(PATH + fileName + EXTENSION);
+            FileInputStream in = GDFileSystem.openFileInput(fileName);
 
             int i = 0;
             int offset = 0;
@@ -59,13 +58,13 @@ public class InternalStorageUtils {
         return null;
     }
 
-    public static boolean fileExists(String filename){
-        File file = new File(PATH + filename + EXTENSION);
+    public static boolean fileExists(String fileName){
+        File file = new File(fileName);
         return file.exists();
     }
 
-    public static boolean deleteFile(String filename){
-        File file = new File(PATH + filename + EXTENSION);
+    public static boolean deleteFile(String fileName){
+        File file = new File(fileName);
         return file.delete();
     }
 

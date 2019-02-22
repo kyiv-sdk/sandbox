@@ -1,0 +1,110 @@
+apply plugin: 'com.android.application'
+
+apply from: 'createRandomizedDictonaries.gradle'
+
+buildscript {
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.4'
+    }
+
+    repositories {
+        jcenter()
+        google()
+        mavenCentral()
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        google()
+        mavenCentral()
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'key0'
+            keyPassword 'keypassword'
+            storeFile file('/Users/iyuro/keystores/my-keystore.jks')
+            storePassword 'keystorepassword'
+        }
+    }
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+    useLibrary 'org.apache.http.legacy'
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    defaultConfig {
+        applicationId "com.good.gd.example.services.greetings.client"
+        minSdkVersion 24
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
+    }
+    defaultPublishConfig "AppDebug"
+    publishNonDefault true
+    testBuildType "debug"
+    flavorDimensions 'default'
+    productFlavors {
+        App {
+        }
+        AppTest {
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            debuggable false
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
+}
+
+dependencies {
+    api project(':GDLibrary')
+    api project(':GDLibrary_BackupSupport')
+
+    implementation files('libs/smime.jar')
+
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+
+    implementation project(':storage')
+}
+
+tasks.whenTaskAdded { currentTask ->
+    def prefix = 'transformClassesAndResourcesWithProguardFor'
+    if (currentTask.name.startsWith(prefix)) {
+        def taskName = currentTask.name.replace(prefix, 'createProguardDictionariesFor')
+        task "$taskName" {
+            doLast {
+                tasks.getByName('createRandomizedDictonaries').execute()
+            }
+        }
+        currentTask.dependsOn "$taskName"
+    }
+}

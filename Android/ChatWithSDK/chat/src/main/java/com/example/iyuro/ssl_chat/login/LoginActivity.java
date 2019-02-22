@@ -76,7 +76,7 @@ public class LoginActivity extends Activity implements LoginInterface, GDStateLi
     }
 
     @Override
-    public void onSignUpFailed() {
+    public void onLoginFailed() {
         signUpBtn.setEnabled(true);
     }
 

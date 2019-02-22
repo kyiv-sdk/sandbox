@@ -3,8 +3,7 @@
     "GDApplicationID":"com.good.mygood",
     "GDApplicationVersion":"1.0.0.0",
     "GDConsoleLogger": [
-        "GDFilterAll",
-        "GDFilterNone_",
+        "GDFilterNone",
         "GDFilterErrors_",
         "GDFilterWarnings_",
         "GDFilterInfo_",

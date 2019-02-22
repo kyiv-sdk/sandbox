@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">StorageApp</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="login_mesg">\nEnter your GC credentials and password to fetch the provisioning key</string>
+    <string name="login_manual">\nEnter email and activation key</string>
+    <string name="heading">Activation Screen</string>
+    <string name="login_option"> \n\nThis app demonstrates how Application specific UI can be shown prior to GD provisioning UI using the GD Direct Activation APIs. 
+                                 \n\nHere the application shows its own UI at startup to let user select an option on how to fetch the activation key.
+                                 At this point the app is still in non GD mode and GD authorization and activation hasn\'t been triggered yet.
+                                 \n\nThe first option, uses the key-fetcher to automatically fetche the provisioning key from the GC. It requires the device to be
+                                 in a corporate wifi network.
+                                 \n\nThe second option, user can enter the provisioning key manually.</string>
+
+    <string name="button2_hint">Enter Provisioning key</string>
+    <string name="button1_hint">Fetch Key using key fetcher</string>
+
+    <string name="trust_message_waitingForAuthRequest">Waiting for Authentication Request</string>
+    <string name="trust_message_authRequestReceived">Authentication Request Received</string>
+    <string name="trust_message_empty">Empty</string>
+    <string name="trust_action_correctPassword">Correct Password</string>
+    <string name="trust_action_incorrectPassword">Incorrect Password</string>
+    <string name="trust_action_changePassword">Change Password</string>
+    <string name="trust_action_wipe">Wipe Device</string>
+    <string name="trust_action_startTemporaryLock">Start temporary Lock</string>
+    <string name="trust_action_block">Block Device</string>
+    <string name="trust_action_blockAndUnblockAfter10Seconds">Block, Unblock after 10 secs</string>
+    <string name="trust_action_idleLock">Idle Lock</string>
+    <string name="trust_action_getSecurityPolicy">Get Security Policy</string>
+</resources>
