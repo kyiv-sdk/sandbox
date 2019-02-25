@@ -46,6 +46,7 @@ void Basic_Connection::open_connection(const char *hostname, int port)
 void Basic_Connection::close_connection()
 {
     mConnected = false;
+    shutdown(mSock, 2);
     close(mSock);
 }
 
