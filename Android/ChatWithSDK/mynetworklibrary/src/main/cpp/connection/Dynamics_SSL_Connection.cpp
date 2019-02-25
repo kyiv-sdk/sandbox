@@ -15,7 +15,7 @@ Dynamics_SSL_Connection::Dynamics_SSL_Connection(){}
 
 void Dynamics_SSL_Connection::open_connection(const char *hostname, int port)
 {
-    Basic_Connection::open_connection(hostname, port);
+    Dynamics_Connection::open_connection(hostname, port);
 
     if (!mConnected){
         return;
