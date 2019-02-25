@@ -42,7 +42,7 @@ void Dynamics_Connection::open_connection(const char *hostname, int port)
     if ( GD_connect(mSock, (struct sockaddr *)&addr, sizeof(addr)) != 0 )
     {
         handle_error("connection failed");
-        perror(hostname);
+        handle_error(strerror(errno));
         close_connection();
     }
 }
@@ -50,6 +50,7 @@ void Dynamics_Connection::open_connection(const char *hostname, int port)
 void Dynamics_Connection::close_connection()
 {
     mConnected = false;
+    GD_shutdown(mSock, 2);
     GD_UNISTD_close(mSock);
 }
 
