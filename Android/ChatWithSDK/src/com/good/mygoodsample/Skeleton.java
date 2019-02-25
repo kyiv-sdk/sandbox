@@ -10,12 +10,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.iyuro.ssl_chat.login.LoginActivity;
-import com.example.iyuro.ssl_chat.login.LoginManager;
-import com.example.iyuro.ssl_chat.pick_to_send.PickToSendActivity;
 import com.good.gd.GDAndroid;
 import com.good.gd.GDStateListener;
-import com.good.gd.icc.GDServiceListener;
+import com.good.mygoodsample.login.LoginActivity;
 
 import java.util.Map;
 
@@ -27,7 +24,7 @@ public class Skeleton extends Activity implements GDStateListener {
 
 	private static final String TAG = Skeleton.class.getSimpleName();
 
-	private static boolean isServiceCalled = false;
+	private static boolean isAppRunningByUser = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +33,11 @@ public class Skeleton extends Activity implements GDStateListener {
 		Log.i(TAG, "Skeleton onCreate()");
 		
 		GDAndroid.getInstance().activityInit(this);
-
-//		SkeletonApplication app = (SkeletonApplication)getApplicationContext();
-//		app.setCurrentActivity(this);
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-
-		SkeletonApplication app = (SkeletonApplication)getApplicationContext();
-		app.setCurrentActivity(null);
 	}
 
 	/*
@@ -61,13 +52,9 @@ public class Skeleton extends Activity implements GDStateListener {
 		//the activity is started if the App is already authorized 
 		Log.i(TAG, "onAuthorized()");
 
-		if (!isServiceCalled) {
-			Intent intent = new Intent(this, LoginActivity.class);
-			startActivity(intent);
-		} else {
-//			isServiceCalled = false;
-//			finish();
-		}
+		isAppRunningByUser = true;
+		Intent intent = new Intent(this, LoginActivity.class);
+		startActivity(intent);
 	}
 
 	@Override
@@ -100,7 +87,7 @@ public class Skeleton extends Activity implements GDStateListener {
         Log.i(TAG, "onUpdateEntitlements()");
     }
 
-	public static void setIsServiceCalled(Boolean value){
-		isServiceCalled = value;
+	public static boolean isAppRunningByUser() {
+		return isAppRunningByUser;
 	}
 }

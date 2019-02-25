@@ -9,12 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.iyuro.ssl_chat.pick_to_send.PickToSendActivity;
 import com.good.gd.icc.GDService;
 import com.good.gd.icc.GDServiceException;
 import com.good.gd.icc.GDServiceListener;
+import com.good.mygoodsample.pick_to_send.PickToSendActivity;
 
-class SkeletonServerGDServiceListener implements GDServiceListener {
+public class SkeletonServerGDServiceListener implements GDServiceListener {
 	
 	private static SkeletonServerGDServiceListener _instance = null;
 	private static final String TAG = SkeletonServerGDServiceListener.class.getSimpleName();
@@ -55,8 +55,6 @@ class SkeletonServerGDServiceListener implements GDServiceListener {
 			String version, String method, Object params, String[] attachments,
 			String requestID) {
 		Log.d(TAG, "+ SkeletonServer.onReceiveMessage application=" + application);
-
-		Skeleton.setIsServiceCalled(true);
 		
 		String message = "";
 		String files[] = null;
@@ -109,7 +107,7 @@ class SkeletonServerGDServiceListener implements GDServiceListener {
 		Log.d(TAG, "- SkeletonServer.onReceiveMessage");
 	}
 
-	public void bringToFront(String application) {
+	public static void bringToFront(String application) {
 		try {
 			GDService.bringToFront(application);
 		} catch (GDServiceException e) {
@@ -119,13 +117,16 @@ class SkeletonServerGDServiceListener implements GDServiceListener {
 
 	public void showPickToSendActivity(final String application, final String requestID, final String fileName){
 		Log.i(TAG, "showPickToSendActivity() IN");
+
 		Intent intent = new Intent(mContext, PickToSendActivity.class);
 		intent.putExtra("isSSLEnabled", true);
 		intent.putExtra("application", application);
 		intent.putExtra("requestID", requestID);
 		intent.putExtra("fileName", fileName);
+        intent.putExtra("isAppRunningByUser", Skeleton.isAppRunningByUser());
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		mContext.startActivity(intent);
+
 		Log.i(TAG, "showPickToSendActivity() OUT");
 	}
 }
